@@ -1,4 +1,6 @@
+// ===============================
 // Telegram WebApp init
+// ===============================
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 
 let tgUser = null;
@@ -8,57 +10,15 @@ if (tg) {
   tgUser = tg.initDataUnsafe?.user || null;
 }
 
-// Твой Telegram user id (владелец)
-const OWNER_TG_ID = 658384304;
+// ===============================
+// CONFIG
+// ===============================
+const OWNER_TG_ID = 658384304; // ← ТВОЙ Telegram ID
+let role = null;
 
-let role = null; // 'owner' | 'manager' | 'mechanic'
-
-
-
-// Показываем нужный экран
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
-}
-
-// Авто-роль по Telegram (если зашли из TG)
-function detectRole() {
-  if (!tgUser) return null;
-  if (tgUser.id === OWNER_TG_ID) return 'owner';
-  return null; // остальных пока выбираем кнопкой
-}
-
-// Выбор роли
-function setRole(selectedRole) {
-  role = selectedRole;
-  showScreen('homeScreen');
-  renderHome();
-}
-
-// Выход
-function logout() {
-  role = null;
-  showScreen('roleScreen');
-}
-
-// Переходы
-function goTo(screen) {
-  showScreen(screen);
-}
-
-// При запуске
-(function init() {
-  const auto = detectRole();
-  if (auto) {
-    role = auto;
-    showScreen('homeScreen');
-    renderHome();
-  } else {
-    showScreen('roleScreen');
-  }
-})();
-// ===== ДАННЫЕ (пока статичные) =====
+// ===============================
+// MOCK DATA
+// ===============================
 const data = {
   stats: {
     total: 150,
@@ -66,65 +26,194 @@ const data = {
     repair: 10,
     idle: 10,
     accident: 3,
-    repairLoss: "459 000",
-    idleLoss: "35 000",
-    deposits: "350 000"
-  }
+    repairLoss: "459 000 ₽",
+    idleLoss: "35 000 ₽",
+    deposits: "350 000 ₽"
+  },
+  cars: [
+    {
+      number: "А123ВС",
+      model: "Hyundai Solaris",
+      status: "На линии",
+      days: 0,
+      driver: "Иванов",
+      loss: "—",
+      deposit: "20 000 ₽"
+    },
+    {
+      number: "В456ОР",
+      model: "Kia Rio",
+      status: "Простой",
+      days: 5,
+      driver: "Петров",
+      loss: "15 000 ₽",
+      deposit: "—"
+    }
+  ]
 };
 
-// ===== ГЛАВНАЯ =====
+// ===============================
+// UTILS
+// ===============================
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s =>
+    s.classList.remove("active")
+  );
+  const el = document.getElementById(id);
+  if (el) el.classList.add("active");
+}
+
+// ===============================
+// ROLE LOGIC
+// ===============================
+function detectRoleFromTelegram() {
+  if (!tgUser) return null;
+  if (tgUser.id === OWNER_TG_ID) return "owner";
+  return null; // остальных пускаем через выбор роли
+}
+
+function setRole(selectedRole) {
+  role = selectedRole;
+  localStorage.setItem("park_role", role);
+  showScreen("homeScreen");
+  renderHome();
+}
+
+function logout() {
+  role = null;
+  localStorage.removeItem("park_role");
+  showScreen("roleScreen");
+}
+
+// ===============================
+// HOME
+// ===============================
 function renderHome() {
-  // Заголовок приветствия
-  const welcome = document.getElementById('welcomeTitle');
-  if (welcome) {
-    welcome.innerText =
-      role === 'owner' ? 'Здравствуйте, владелец' :
-      role === 'manager' ? 'Здравствуйте, менеджер' :
-      'Здравствуйте, механик';
-  }
+  const title = document.getElementById("welcomeTitle");
 
-  // Статистика (видят все)
-  const statsEl = document.getElementById('stats');
-  if (statsEl) {
-    statsEl.innerHTML = `
-      <div class="card">🚘 Авто всего: ${data.stats.total}</div>
-      <div class="card">🟢 На линии: ${data.stats.active}</div>
-      <div class="card">🔧 В ремонте: ${data.stats.repair}</div>
-      <div class="card">⏸ В простое: ${data.stats.idle}</div>
-      <div class="card">⚠️ ДТП за неделю: ${data.stats.accident}</div>
-    `;
-  }
+  title.innerText =
+    role === "owner"
+      ? "Здравствуйте, владелец"
+      : role === "manager"
+      ? "Здравствуйте, менеджер"
+      : "Здравствуйте, механик";
 
-  // Финансы (по ролям)
-  const finance = document.getElementById('finance');
-  if (!finance) return;
+  const stats = document.getElementById("stats");
+  stats.innerHTML = `
+    <div class="card">🚗 Авто всего: ${data.stats.total}</div>
+    <div class="card">🟢 На линии: ${data.stats.active}</div>
+    <div class="card">🔧 В ремонте: ${data.stats.repair}</div>
+    <div class="card">⏸ Простой: ${data.stats.idle}</div>
+    <div class="card">⚠️ ДТП: ${data.stats.accident}</div>
+  `;
 
-  finance.innerHTML = '';
+  const finance = document.getElementById("finance");
+  finance.innerHTML = "";
 
-  if (role === 'owner') {
+  if (role === "owner") {
     finance.innerHTML = `
-      <div class="card">🔧 Потери на ремонте: -${data.stats.repairLoss}</div>
-      <div class="card">🚫 Потери на простое: -${data.stats.idleLoss}</div>
+      <div class="card">🔧 Потери на ремонте: ${data.stats.repairLoss}</div>
+      <div class="card">🚫 Потери на простое: ${data.stats.idleLoss}</div>
       <div class="card">💳 Депозиты: ${data.stats.deposits}</div>
     `;
-  } else if (role === 'manager') {
+  }
+
+  if (role === "manager") {
     finance.innerHTML = `
       <div class="card">🔧 Потери: есть</div>
       <div class="card">🚫 Простой: есть</div>
       <div class="card">💳 Депозиты: есть</div>
     `;
-  } else {
-    // mechanic — финансы не показываем
-    finance.innerHTML = '';
   }
 }
-window.setRole = setRole;
-window.goTo = goTo;
-window.openCar = openCar;
-window.saveInspection = saveInspection;
-window.logout = logout;
-document.addEventListener('DOMContentLoaded', () => {
-  role = detectRole();
-  showScreen('homeScreen');
-  renderHome();
-});
+
+// ===============================
+// NAVIGATION
+// ===============================
+function goTo(screen) {
+  showScreen(screen);
+  if (screen === "carsScreen") renderCars();
+}
+
+// ===============================
+// CARS
+// ===============================
+function renderCars() {
+  const list = document.getElementById("carsList");
+  list.innerHTML = data.cars
+    .map(
+      (car, i) => `
+    <div class="card" onclick="openCar(${i})" style="cursor:pointer;">
+      🚗 ${car.number} — ${car.model}
+
+      Статус: ${car.status}
+
+      Простой: ${car.days} дней
+    </div>
+  `
+    )
+    .join("");
+}
+
+let selectedCarIndex = null;
+
+function openCar(i) {
+  selectedCarIndex = i;
+  const car = data.cars[i];
+
+  document.getElementById(
+    "carTitle"
+ ).innerText = `${car.number} - ${car.model}`;
+
+  let html = `
+    <div class="card">
+      <b>Статус:</b> ${car.status}
+
+      <b>Простой:</b> ${car.days} дней
+    </div>
+  `;
+
+  if (role !== "mechanic") {
+
+
+html += <div class="card"><b>Водитель:</b> ${car.driver}</div>;
+  }
+
+  if (role === "owner") {
+    html += `
+      <div class="card"><b>Потери:</b> ${car.loss}</div>
+      <div class="card"><b>Депозит:</b> ${car.deposit}</div>
+    `;
+  }
+
+  document.getElementById("carInfo").innerHTML = html;
+
+  document.getElementById("mechBlock").style.display =
+    role === "mechanic" ? "block" : "none";
+
+  showScreen("carScreen");
+}
+
+// ===============================
+// INIT
+// ===============================
+(function initApp() {
+  const savedRole = localStorage.getItem("park_role");
+  const tgRole = detectRoleFromTelegram();
+
+  if (tgRole) {
+    role = tgRole;
+    showScreen("homeScreen");
+    renderHome();
+    return;
+  }
+
+  if (savedRole) {
+    role = savedRole;
+    showScreen("homeScreen");
+    renderHome();
+    return;
+  }
+
+  showScreen("roleScreen");
+})();
