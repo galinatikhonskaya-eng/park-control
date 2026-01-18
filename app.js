@@ -16,7 +16,12 @@ function detectRole() {
   return 'manager'; // по умолчанию (позже сделаем выдачу ролей парку)
 }
 let role = detectRole();
-
+if (role) {
+  showScreen('homeScreen');
+  renderHome();
+} else {
+  showScreen('roleScreen');
+}
 
 
 
