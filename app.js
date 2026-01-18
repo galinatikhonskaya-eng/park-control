@@ -1,8 +1,3 @@
-const tg = window.Telegram ? window.Telegram.WebApp : null;
-if (tg) {
-  tg.ready();
-  tg.expand();
-}
 // Telegram WebApp init
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 
@@ -17,6 +12,8 @@ if (tg) {
 const OWNER_TG_ID = 658384304;
 
 let role = null; // 'owner' | 'manager' | 'mechanic'
+
+
 
 // Показываем нужный экран
 function showScreen(id) {
@@ -126,6 +123,3 @@ window.goTo = goTo;
 window.openCar = openCar;
 window.saveInspection = saveInspection;
 window.logout = logout;
-
-
-
