@@ -1,4 +1,24 @@
-let role = null;
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+
+let tgUser = null;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  tgUser = tg.initDataUnsafe?.user || null;
+}
+
+// Сюда впиши свой Telegram user id (мы его возьмём из консоли ниже)
+const OWNER_TG_ID = 658384304;
+function detectRole() {
+
+  if (!tgUser) return null;
+  if (tgUser.id === OWNER_TG_ID) return 'owner';
+  return 'manager'; // по умолчанию (позже сделаем выдачу ролей парку)
+}
+let role = detectRole();
+
+
+
 
 const data = {
   stats: {
@@ -39,11 +59,78 @@ function logout() {
 }
 
 function renderHome() {
-  document.getElementById('welcomeTitle').innerText =
-    role === 'owner' ? 'Здравствуйте, владелец' :
-    role === 'manager' ? 'Здравствуйте, менеджер' :
-    'Здравствуйте, механик';
+  const userName = tgUser?.first_name || "Пользователь";
+  const s = data.stats;
 
+  const isOwner = role === 'owner';
+  const isManager = role === 'manager';
+  const isMechanic = role === 'mechanic';
+
+  const topStats = `
+    <div class="statsRow">
+      <div class="statCard">🚘 Авто всего
+<b>${s.total}</b></div>
+      <div class="statCard">🟢 На линии
+<b>${s.active}</b></div>
+      <div class="statCard">⚠️ ДТП / нед
+<b>${s.accident}</b></div>
+    </div>
+  `;
+
+  let finance = '';
+
+  if (isOwner) {
+    finance = `
+      <div class="blockTitle">Финансы</div>
+      <div class="statsRow">
+        <div class="statCard">🛠️ В ремонте
+<b>${s.repair}</b> | - <b>${s.repairLoss}</b></div>
+        <div class="statCard">⏸️ В простое
+<b>${s.idle}</b> | - <b>${s.idleLoss}</b></div>
+      </div>
+      <div class="statCard wide">💰 Депозиты
+<b>${s.deposits}</b></div>
+    `;
+  }
+
+  if (isManager) {
+    finance = `
+      <div class="blockTitle">Финансы</div>
+      <div class="statsRow">
+        <div class="statCard">🛠️ В ремонте
+<b>${s.repair}</b> | потери: есть</div>
+        <div class="statCard">⏸️ В простое
+<b>${s.idle}</b> | потери: есть</div>
+      </div>
+      <div class="statCard wide">💰 Депозиты
+<b>есть</b></div>
+    `;
+  }
+
+  if (isMechanic) {
+    finance = `
+      <div class="blockTitle">Статусы</div>
+      <div class="statsRow">
+        <div class="statCard">🛠️ В ремонте
+<b>${s.repair}</b></div>
+        <div class="statCard">⏸️ В простое
+<b>${s.idle}</b></div>
+      </div>
+    `;
+  }
+
+  document.getElementById('homeContent').innerHTML = `
+    <div class="headerCard">
+      <div class="avatar">👤</div>
+      <div>
+        <div class="hello"><b>Здравствуйте, ${userName}!</b></div>
+        <div class="sub">Park Control</div>
+      </div>
+    </div>
+    ${topStats}
+    ${finance}
+  `;
+}
   document.getElementById('stats').innerHTML = `
     <div class="card">🚘 Авто всего: ${data.stats.total}</div>
     <div class="card">🟢 На линии: ${data.stats.active}</div>
