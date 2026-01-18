@@ -1,98 +1,62 @@
-/************ Telegram WebApp init ************/
-const tg = window.Telegram ? window.Telegram.WebApp : null;
+// ===== Telegram WebApp init =====
+const tg = window.Telegram?.WebApp || null;
 
-let tgUser = null;
 if (tg) {
   tg.ready();
   tg.expand();
-  tgUser = tg.initDataUnsafe?.user || null;
 }
 
-/************ CONFIG ************/
-const OWNER_TG_ID = 658383404; // <-- твой Telegram ID
+const tgUser = tg?.initDataUnsafe?.user || null;
 
-/************ GLOBAL STATE ************/
+// Твой Telegram user id (владелец)
+const OWNER_TG_ID = 658384304; // <-- проверь, что это твой ID
+
+// 🔎 Если вдруг владелец не определяется — временно раскомментируй строку ниже
+// if (tgUser) alert("Ваш Telegram ID: " + tgUser.id);
+
+// ===== Global state =====
 let role = null;
 
-/************ DEMO DATA ************/
+// ===== Demo data =====
 const data = {
   stats: {
     total: 150,
-    active: 100,
+    active: 130,
     repair: 10,
-    idle: 40,
+    idle: 10,
+    accident: 3,
+    repairLoss: "459 000", // без ₽
+    idleLoss: "35 000",    // без ₽
+    deposits: "350 000"    // депозит можно показывать
   },
   cars: [
-    { number: "K526CA78", model: "Volkswagen Polo", status: "В ремонте", days: 2 },
-    { number: "A102BC77", model: "Hyundai Solaris", status: "На линии", days: 0 },
-    { number: "M883PK98", model: "Kia Rio", status: "В простое", days: 7 },
+    { number: "K526CA78", model: "Volkswagen Polo", driver: "Юрий Иванов", status: "В ремонте", days: 12, loss: "Потери", deposit: "—" },
+    { number: "A102BC77", model: "Hyundai Solaris", driver: "Артём Кузнецов", status: "На линии", days: 0, loss: "—", deposit: "10 000" },
+    { number: "M883PK98", model: "Kia Rio", driver: "Сергей Петров", status: "В простое", days: 7, loss: "есть", deposit: "8 000" },
+    { number: "T441OO78", model: "Skoda Rapid", driver: "Дмитрий Смирнов", status: "На линии", days: 0, loss: "—", deposit: "12 000" },
+    { number: "E909KK99", model: "Renault Logan", driver: "Илья Фёдоров", status: "В ремонте", days: 3, loss: "есть", deposit: "—" },
+    { number: "P120TT98", model: "Lada Granta", driver: "Никита Орлов", status: "На линии", days: 0, loss: "—", deposit: "5 000" },
+    { number: "C777MM78", model: "Chery Tiggo 4", driver: "Алексей Волков", status: "В простое", days: 10, loss: "есть", deposit: "15 000" }
   ]
 };
 
-/************ SCREENS ************/
+// ===== Screens =====
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   const el = document.getElementById(id);
   if (el) el.classList.add("active");
 }
 
-/************ ROLE DETECT ************/
+// ===== Auto-role for owner (if open from Telegram and id matches) =====
 function detectRoleByTelegram() {
   if (!tgUser) return null;
-  if (Number(tgUser.id) === OWNER_TG_ID) return "owner";
-  return null;
+  const uid = Number(tgUser.id);
+  if (uid === Number(OWNER_TG_ID)) return "owner";
+  return null; // остальных выбираем вручную
 }
 
-/************ ROLE SELECT ************/
-window.setRole = function (selectedRole) {
-  role = selectedRole;
-  showScreen("homeScreen");
-  renderHome();
-};
-
-/************ HOME ************/
-function renderHome() {
-  const title = document.getElementById("welcomeTitle");
-
-  if (role === "owner") title.innerText = "Здравствуйте, владелец";
-  if (role === "manager") title.innerText = "Здравствуйте, менеджер";
-  if (role === "mechanic") title.innerText = "Здравствуйте, механик";
-
-  const home = document.getElementById("homeContent");
-  home.innerHTML = `
-    <button onclick="goTo('carsScreen')">🚗 Авто</button>
-    <button onclick="alert('Документы в разработке')">📄 Документы</button>
-    <button onclick="logout()">Выйти</button>
-  `;
-}
-
-/************ NAV ************/
-window.goTo = function (screen) {
-  showScreen(screen);
-  if (screen === "carsScreen") renderCars();
-};
-
-window.logout = function () {
-  role = null;
-  showScreen("roleScreen");
-};
-
-/************ CARS ************/
-function renderCars() {
-  const list = document.getElementById("carsList");
-  list.innerHTML = data.cars.map(car => `
-    <div class="card">
-      <b>${car.number}</b> — ${car.model}
-
-      Статус: ${car.status}
-
-      Простой: ${car.days} дней
-    </div>
-  `).join("");
-}
-
-/************ INIT ************/
-(function initApp() {
+// ===== Init =====
+(function init() {
   const autoRole = detectRoleByTelegram();
   if (autoRole) {
     role = autoRole;
@@ -102,5 +66,92 @@ function renderCars() {
     showScreen("roleScreen");
   }
 })();
+
+// ===== Role selection =====
+window.setRole = function (selectedRole) {
+  role = selectedRole;
+  showScreen("homeScreen");
+  renderHome();
+};
+
+// ===== Home render =====
+function renderHome() {
+  const title = document.getElementById("welcomeTitle");
+  if (title) {
+    title.innerText =
+      role === "owner" ? "Здравствуйте, владелец" :
+      role === "manager" ? "Здравствуйте, менеджер" :
+      "Здравствуйте, механик";
+  }
+
+  // --- stats ---
+  const stats = document.getElementById("stats");
+  if (stats) {
+    stats.innerHTML = `
+      <div class="card">🚘 Авто всего: ${data.stats.total}</div>
+      <div class="card">🟢 На линии: ${data.stats.active}</div>
+      <div class="card">🔧 В ремонте: ${data.stats.repair}</div>
+      <div class="card">⏸ В простое: ${data.stats.idle}</div>
+      <div class="card">⚠️ ДТП за неделю: ${data.stats.accident}</div>
+    `;
+  }
+
+  // --- finance ---
+  const finance = document.getElementById("finance");
+  if (finance) {
+    finance.innerHTML = "";
+
+    if (role === "owner") {
+      finance.innerHTML = `
+        <div class="card">🔧 Потери на ремонте: -${data.stats.repairLoss} ₽</div>
+        <div class="card">🚫 Потери на простое: -${data.stats.idleLoss} ₽</div>
+        <div class="card">💳 Депозиты: ${data.stats.deposits} ₽</div>
+      `;
+    } else if (role === "manager") {
+      finance.innerHTML = `
+        <div class="card">🔧 Потери на ремонте: есть</div>
+        <div class="card">🚫 Потери на простое: есть</div>
+        <div class="card">💳 Депозиты: есть</div>
+      `;
+    } else {
+      // mechanic — финансы не показываем
+      finance.innerHTML = "";
+    }
+  }
+}
+
+// ===== Navigation =====
+window.goTo = function (screen) {
+  showScreen
+
+
+n);
+  if (screen === "carsScreen") renderCars();
+};
+
+window.logout = function () {
+  role = null;
+  showScreen("roleScreen");
+};
+
+// ===== Cars list =====
+function renderCars() {
+  const el = document.getElementById("carsList");
+  if (!el) return;
+
+  el.innerHTML = data.cars.map((car) => `
+    <div class="card">
+      🚗 <b>${car.number}</b> — ${car.model}
+
+      <div style="opacity:.85; margin-top:6px;">
+        Статус: ${car.status}
+
+        Простой: ${car.days} дней
+      </div>
+    </div>
+  `).join("");
+}(scree
+
+
 
 
