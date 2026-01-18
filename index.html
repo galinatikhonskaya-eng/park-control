@@ -26,64 +26,22 @@
 
     <!-- ГЛАВНАЯ -->
     <div id="homeScreen" class="screen">
-      <div id="homeContent"></div>
-
       <h2 id="welcomeTitle"></h2>
 
       <div id="stats"></div>
       <div id="finance"></div>
 
       <div class="nav">
-        <button onclick="goTo('carsScreen')">🚗 Авто</button>
-        <button onclick="goTo('docsScreen')">📄 Документы</button>
         <button onclick="logout()">Выйти</button>
       </div>
     </div>
 
-    <!-- АВТО -->
-    <div id="carsScreen" class="screen">
-      <h2>Авто</h2>
-      <div id="carsList"></div>
-      <button onclick="goTo('homeScreen')">← Назад</button>
-    </div>
-
-    <!-- КАРТОЧКА АВТО -->
-    <div id="carScreen" class="screen">
-      <h2 id="carTitle">Карточка авто</h2>
-
-      <div id="carInfo"></div>
-
-      <!-- Блок механика -->
-      <div id="mechBlock" class="card" style="display:none;">
-        <h3 style="margin-top:0;">🔧 Осмотр</h3>
-
-        <input id="mechPhotos" type="file" accept="image/*" multiple />
-        <textarea id="mechComment" rows="3" placeholder="Комментарий механика..."></textarea>
-
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0;">
-          <label><input type="checkbox" id="chkOk" /> ОК</label>
-          <label><input type="checkbox" id="chkRepair" /> Нужен ремонт</label>
-          <label><input type="checkbox" id="chkCritical" /> Критично</label>
-        </div>
-
-        <button onclick="saveInspection()">💾 Сохранить осмотр</button>
-        <div id="mechSaved" style="margin-top:8px; color:#9ca3af; font-size:13px;"></div>
-      </div>
-
-      <button onclick="goTo('carsScreen')">← Назад к авто</button>
-    </div>
-
-    <!-- ДОКУМЕНТЫ -->
-    <div id="docsScreen" class="screen">
-      <h2>Документы</h2>
-      <p>Раздел в разработке</p>
-      <button onclick="goTo('homeScreen')">← Назад</button>
-    </div>
-
   </div>
 
- <script src="app.js?v=7"></script>
+  <!-- ВАЖНО: app.js подключаем в самом конце -->
+  <script src="app.js"></script>
 </body>
 </html>
-</html>
+
+
 
