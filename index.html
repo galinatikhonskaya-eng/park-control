@@ -1,83 +1,88 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Park Control</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <div class="app">
 
-<div class="app">
+    <!-- ЭКРАН ВЫБОРА РОЛИ -->
+    <div id="roleScreen" class="screen active">
+      <h1>Park Control</h1>
+      <p class="subtitle">Выберите роль</p>
 
-  <!-- ЭКРАН ВЫБОРА РОЛИ -->
-  <div id="roleScreen" class="screen active">
-    <h1>Park Control</h1>
-    <p class="subtitle">Выберите роль</p>
-
-    <button onclick="setRole('owner')">👑 Владелец</button>
-    <button onclick="setRole('manager')">🧑‍💼 Менеджер</button>
-    <button onclick="setRole('mechanic')">🔧 Механик</button>
-  </div>
-
-  <!-- ГЛАВНАЯ -->
-  <div id="homeScreen" class="screen">
-    <h2 id="welcomeTitle"></h2>
-
-    <div id="stats"></div>
-    <div id="finance"></div>
-
-    <div class="nav">
-      <button onclick="goTo('carsScreen')">🚗 Авто</button>
-      <button onclick="goTo('docsScreen')">📄 Документы</button>
-      <button onclick="logout()">Выйти</button>
-    </div>
-  </div>
-
-  <!-- АВТО -->
-  <div id="carsScreen" class="screen">
-    <h2>Авто</h2>
-    <div id="carsList"></div>
-    <button onclick="goTo('homeScreen')">← Назад</button>
-  </div>
-<!-- КАРТОЧКА АВТО -->
-<div id="carScreen" class="screen">
-  <h2 id="carTitle">Карточка авто</h2>
-
-  <div id="carInfo"></div>
-
-  <!-- Блок механика -->
-  <div id="mechBlock" class="card" style="display:none;">
-    <h3 style="margin-top:0;">🔧 Осмотр</h3>
-
-    <input id="mechPhotos" type="file" accept="image/*" multiple>
-    <textarea id="mechComment" rows="3" placeholder="Комментарий механика..."></textarea>
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0;">
-      <label><input type="checkbox" id="chkOk"> ОК</label>
-      <label><input type="checkbox" id="chkRepair"> Нужен ремонт</label>
-      <label><input type="checkbox" id="chkCritical"> Критично</label>
+      <button onclick="setRole('owner')">👑 Владелец</button>
+      <button onclick="setRole('manager')">🧑‍💼 Менеджер</button>
+      <button onclick="setRole('mechanic')">🔧 Механик</button>
     </div>
 
-    <button onclick="saveInspection()">💾 Сохранить осмотр</button>
-    <div id="mechSaved" style="margin-top:8px; color:#9ca3af; font-size:13px;"></div>
+    <!-- ГЛАВНАЯ -->
+    <div id="homeScreen" class="screen">
+      <div id="homeContent"></div>
+
+      <h2 id="welcomeTitle"></h2>
+
+      <div id="stats"></div>
+      <div id="finance"></div>
+
+      <div class="nav">
+        <button onclick="goTo('carsScreen')">🚗 Авто</button>
+        <button onclick="goTo('docsScreen')">📄 Документы</button>
+        <button onclick="logout()">Выйти</button>
+      </div>
+    </div>
+
+    <!-- АВТО -->
+    <div id="carsScreen" class="screen">
+      <h2>Авто</h2>
+      <div id="carsList"></div>
+      <button onclick="goTo('homeScreen')">← Назад</button>
+    </div>
+
+    <!-- КАРТОЧКА АВТО -->
+    <div id="carScreen" class="screen">
+      <h2 id="carTitle">Карточка авто</h2>
+
+      <div id="carInfo"></div>
+
+      <!-- Блок механика -->
+      <div id="mechBlock" class="card" style="display:none;">
+        <h3 style="margin-top:0;">🔧 Осмотр</h3>
+
+        <input id="mechPhotos" type="file" accept="image/*" multiple />
+        <textarea id="mechComment" rows="3" placeholder="Комментарий механика..."></textarea>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0;">
+          <label><input type="checkbox" id="chkOk" /> ОК</label>
+          <label><input type="checkbox" id="chkRepair" /> Нужен ремонт</label>
+          <label><input type="checkbox" id="chkCritical" /> Критично</label>
+        </div>
+
+        <button onclick="saveInspection()">💾 Сохранить осмотр</button>
+        <div id="mechSaved" style="margin-top:8px; color:#9ca3af; font-size:13px;"></div>
+      </div>
+
+      <button onclick="goTo('carsScreen')">← Назад к авто</button>
+    </div>
+
+    <!-- ДОКУМЕНТЫ -->
+    <div id="docsScreen" class="screen">
+      <h2>Документы</h2>
+      <p>Раздел в разработке</p>
+      <button onclick="goTo('homeScreen')">← Назад</button>
+    </div>
+
   </div>
 
-  <button onclick="goTo('carsScreen')">← Назад к авто</button>
-</div>
-  <!-- ДОКУМЕНТЫ -->
-  <div id="docsScreen" class="screen">
-    <h2>Документы</h2>
-    <p>Раздел в разработке</p>
-    <button onclick="goTo('homeScreen')">← Назад</button>
-  </div>
-
-</div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
+</html>
 </html>
