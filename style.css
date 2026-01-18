@@ -1,0 +1,66 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f1115;
+  color: #ffffff;
+}
+
+.app {
+  padding: 20px;
+}
+
+h1, h2 {
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: #1f2937;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #374151;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.card{
+  background:#1f2937;
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+textarea, input[type="file"]{
+  width:100%;
+  box-sizing:border-box;
+  margin-top:10px;
+  background:#0f1115;
+  color:#fff;
+  border:1px solid #374151;
+  border-radius:10px;
+  padding:10px;
+}
+
+.nav {
+  margin-top: 20px;
+}
+
+
+
