@@ -1,67 +1,489 @@
-// Telegram init (без авто-ролей, чтобы ничего не ломалось)
-const tg = window.Telegram?.WebApp || null;
-if (tg) {
-  tg.ready();
-  tg.expand();
+'use strict';
+
+// Telegram init (safe)
+const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+
+function isTelegramEnv() {
+  return !!tg;
 }
 
-// state
-let role = null;
+function initTelegram() {
+  const chipEnv = document.getElementById('chip-env');
+  if (chipEnv) chipEnv.textContent = isTelegramEnv() ? 'Telegram' : 'Web';
 
-// demo cars
+  if (!tg) return;
+
+  try {
+    tg.ready();
+    tg.expand();
+
+    const tp = tg.themeParams || {};
+    if (tp.bg_color) document.documentElement.style.setProperty('--bg', tp.bg_color);
+    if (tp.text_color) document.documentElement.style.setProperty('--text', tp.text_color);
+    if (tp.hint_color) document.documentElement.style.setProperty('--muted', tp.hint_color);
+    if (tp.button_color) document.documentElement.style.setProperty('--accent', tp.button_color);
+
+    tg.BackButton.onClick(() => {
+      if (currentScreen === 'role') return;
+      goBack();
+    });
+  } catch (e) {
+    // no-op
+  }
+}
+
+// Mock data
+const state = { role: null, currentCarId: null };
+
+const stats = {
+  carsTotal: 150,
+  onLine: 100,
+  inRepair: 5,
+  idle: 2,
+  dptWeek: 1,
+  lossRepair: 593000,
+  lossIdle: 175000,
+  deposits: 320000
+};
+
 const cars = [
-  { number: "K526CA78", model: "Volkswagen Polo", status: "В ремонте", days: 12 },
-  { number: "A102BC77", model: "Hyundai Solaris", status: "На линии", days: 0 },
-  { number: "M883PK98", model: "Kia Rio", status: "В простое", days: 7 },
+  { id:'A101AA', model:'Kia Rio', status:'На линии', idleDays:0, driver:'Иван П.', loss: 0, deposit: 15000 },
+  { id:'B202BB', model:'Hyundai Solaris', status:'В ремонте', idleDays:6, driver:'Сергей К.', loss: 120000, deposit: 20000 },
+  { id:'C303CC', model:'VW Polo', status:'В простое', idleDays:3, driver:'Артем Н.', loss: 55000, deposit: 10000 },
+  { id:'D404DD', model:'Skoda Rapid', status:'На линии', idleDays:0, driver:'Максим Р.', loss: 0, deposit: 15000 },
+  { id:'E505EE', model:'Renault Logan', status:'ДТП', idleDays:2, driver:'Денис С.', loss: 180000, deposit: 0 }
 ];
 
-// helpers
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id)?.classList.add("active");
+function statusBadge(status) {
+  const s = String(status || '').toLowerCase();
+  if (s.includes('линии')) return { cls:'ok', text:'🟢 На линии' };
+  if (s.includes('ремонт')) return { cls:'warn', text:'🔧 В ремонте' };
+  if (s.includes('просто')) return { cls:'warn', text:'⏸ В простое' };
+  if (s.includes('дтп')) return { cls:'bad', text:'⚠️ ДТП' };
+  return { cls:'', text: status || '—' };
 }
 
-// global functions for HTML buttons
-window.setRole = function(selectedRole) {
-  role = selectedRole;
-  renderHome();
-  showScreen("homeScreen");
-};
+// Navigation
+const screens = {};
+let navStack = ['role'];
+let currentScreen = 'role';
 
-window.goTo = function(screenId) {
-  showScreen(screenId);
-  if (screenId === "carsScreen") renderCars();
-};
+function bindScreens() {
+  screens.role = document.getElementById('screen-role');
+  screens.home = document.getElementById('screen-home');
+  screens.cars = document.getElementById('screen-cars');
+  screens.car  = document.getElementById('screen-car');
+  screens.docs = document.getElementById('screen-docs');
+}
 
-window.logout = function() {
-  role = null;
-  showScreen("roleScreen");
-};
+function setActiveScreen(name) {
+  Object.keys(screens).forEach(k => screens[k] && screens[k].classList.remove('active'));
+  if (screens[name]) screens[name].classList.add('active');
+  currentScreen = name;
 
-// render
+  if (tg) {
+    try {
+      if (name === 'role') tg.BackButton.hide();
+      else tg.BackButton.show();
+    } catch (e) {}
+  }
+}
+
+function goTo(name) {
+  if (!screens[name]) return;
+  if (name === 'role') {
+    logout();
+    return;
+  }
+  navStack.push(name);
+  setActiveScreen(name);
+
+  if (name === 'home') renderHome();
+  if (name === 'cars') renderCarsList();
+  if (name === 'car') renderCarCard();
+}
+function goBack() {
+  if (navStack.length <= 1) return;
+  navStack.pop();
+  const prev = navStack[navStack.length - 1];
+  setActiveScreen(prev);
+
+  if (prev === 'home') renderHome();
+  if (prev === 'cars') renderCarsList();
+  if (prev === 'car') renderCarCard();
+}
+
+// Expose to window (required)
+window.goTo = goTo;
+window.goBack = goBack;
+
+// Role logic
+const LS_ROLE = 'pc_role';
+const LS_INSPECTIONS = 'pc_inspections';
+
+function getRoleTitle(role) {
+  if (role === 'owner') return 'Владелец';
+  if (role === 'manager') return 'Менеджер';
+  if (role === 'mechanic') return 'Механик';
+  return '';
+}
+function roleGreeting(role) {
+  if (role === 'owner') return 'Здравствуйте, владелец';
+  if (role === 'manager') return 'Здравствуйте, менеджер';
+  if (role === 'mechanic') return 'Здравствуйте, механик';
+  return 'Здравствуйте';
+}
+
+function loadRole() {
+  const saved = localStorage.getItem(LS_ROLE);
+if (saved === 'owner' || saved === 'manager' || saved === 'mechanic') {    state.role = saved;
+    return saved;
+  }
+  return null;
+}
+
+function setRole(role) {
+  if (!(role === 'owner' || role === 'manager' || role === 'mechanic')) return;
+  localStorage.setItem(LS_ROLE, role);
+  toast('Роль: ' + getRoleTitle(role));
+  goTo('home');
+}
+function logout() {
+  localStorage.removeItem(LS_ROLE);
+  state.role = null;
+  navStack = ['role'];
+  setActiveScreen('role');
+  toast('Роль сброшена');
+}
+
+window.setRole = setRole;
+window.logout = logout;
+
+// Screens render
 function renderHome() {
-  const title = document.getElementById("welcomeTitle");
-  if (!title) return;
+  const r = state.role;
 
-  title.textContent =
-    role === "owner" ? "Здравствуйте, владелец" :
-    role === "manager" ? "Здравствуйте, менеджер" :
-    "Здравствуйте, механик";
+  const greet = document.getElementById('home-greet');
+  if (greet) greet.textContent = roleGreeting(r);
+
+  const chipRole = document.getElementById('chip-role');
+  if (chipRole) chipRole.textContent = r ? getRoleTitle(r) : 'роль';
+
+  const chipUpd = document.getElementById('chip-upd');
+  if (chipUpd) chipUpd.textContent = 'обновлено: ' + new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+  const statsGrid = document.getElementById('stats-grid');
+  if (statsGrid) {
+    statsGrid.innerHTML = '';
+    const statCards = [
+      { k:'🚘 Авто всего', v: stats.carsTotal },
+      { k:'🟢 На линии', v: stats.onLine },
+      { k:'🔧 В ремонте', v: stats.inRepair },
+      { k:'⏸ В простое', v: stats.idle },
+      { k:'⚠️ ДТП за неделю', v: stats.dptWeek }
+    ];
+    statCards.forEach(x => {
+      const div = document.createElement('div');
+      div.className = 'metric';
+      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v">'+x.v+'</div>';
+      statsGrid.appendChild(div);
+    });
+  }
+
+  const financeWrap = document.getElementById('finance-wrap');
+  const financeGrid = document.getElementById('finance-grid');
+  if (!financeWrap || !financeGrid) return;
+
+  financeGrid.innerHTML = '';
+
+  if (r === 'mechanic') {
+    financeWrap.style.display = 'none';
+    return;
+  }
+  financeWrap.style.display = 'block';
+
+  if (r === 'owner') {
+    const cards = [
+      { k:'🔧 Потери на ремонте', v:'-' + fmtRub(stats.lossRepair), cls:'neg' },
+      { k:'🚫 Потери на простое', v:'-' + fmtRub(stats.lossIdle), cls:'neg' },
+      { k:'💳 Депозиты', v: fmtRub(stats.deposits), cls:'pos' }
+    ];
+    cards.forEach(x => {
+      const div = document.createElement('div');
+      div.className = 'metric';
+      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v small '+x.cls+'">'+x.v+'</div>';
+      financeGrid.appendChild(div);
+    });
+  } else if (r === 'manager') {
+    const cards = [
+      { k:'🔧 Потери на ремонте', v:'есть' },
+      { k:'🚫 Потери на простое', v:'есть' },
+      { k:'💳 Депозиты', v:'есть' }
+    ];
+    cards.forEach(x => {
+      const div = document.createElement('div');
+      div.className = 'metric';
+      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v small">'+x.v+'</div>';
+      financeGrid.appendChild(div);
+    });
+  }
 }
 
-function renderCars() {
-  const el = document.getElementById("carsList");
+function renderCarsList() {
+  const list = document.getElementById('cars-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  cars.forEach(c => {
+    const b = statusBadge(c.status);
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.onclick = () => openCar(c.id);
+
+    el.innerHTML =
+      '<div class="itemTop">' +
+        '<div class="itemTitle">🚗 '+escapeHtml(c.id)+' — '+escapeHtml(c.model)+'</div>' +
+        '<div class="badge '+b.cls+'">'+b.text+'</div>' +
+      '</div>' +
+      '<div class="row"><span>Простой</span><span>'+c.idleDays+' дн.</span></div>';
+
+    list.appendChild(el);
+  });
+}
+
+function openCar(carId) {
+  state.currentCarId = carId;
+  goTo('car');
+}
+window.openCar = openCar;
+
+function renderCarCard() {
+  const r = state.role;
+  const carId = state.currentCarId;
+  const c = cars.find(x => x.id === carId) || cars[0];
+  const b = statusBadge(c.status);
+
+  const carTitle = document.getElementById('car-title');
+  const carSub = document.getElementById('car-sub');
+  const carChip = document.getElementById('car-chip');
+  if (carTitle) carTitle.textContent = c.id + ' — ' + c.model;
+  if (carSub) carSub.
+textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
+  if (carChip) carChip.textContent = getRoleTitle(r) || 'роль';
+
+  const info = document.getElementById('car-info');
+  if (!info) return;
+
+  let html =
+    '<div class="row"><span>Статус</span><span>'+b.text+'</span></div>' +
+    '<div class="row"><span>Простой</span><span>'+c.idleDays+' дн.</span></div>';
+
+  if (r === 'owner' || r === 'manager') {
+    html += '<div class="row"><span>Водитель</span><span>'+escapeHtml(c.driver || '—')+'</span></div>';
+  }
+
+  if (r === 'owner') {
+    html +=
+      '<div class="row"><span>Потери</span><span class="'+(c.loss>0?'neg':'')+'">'+(c.loss>0 ? ('-' + fmtRub(c.loss)) : '0 ₽')+'</span></div>' +
+      '<div class="row"><span>Депозит</span><span class="'+(c.deposit>0?'pos':'')+'">'+fmtRub(c.deposit || 0)+'</span></div>';
+  }
+
+  if (r === 'manager') {
+    html +=
+      '<div class="row"><span>Потери</span><span>'+((c.loss && c.loss>0) ? 'есть' : 'нет')+'</span></div>' +
+      '<div class="row"><span>Депозит</span><span>'+((c.deposit && c.deposit>0) ? 'есть' : 'нет')+'</span></div>';
+  }
+
+  info.innerHTML = html;
+
+  const mech = document.getElementById('mech-inspection');
+  if (mech) {
+    if (r === 'mechanic') {
+      mech.style.display = 'block';
+      loadInspectionIntoUI(c.id);
+    } else {
+      mech.style.display = 'none';
+    }
+  }
+}
+
+// Mechanic inspection (local save)
+function getInspections() {
+  try {
+    const raw = localStorage.getItem(LS_INSPECTIONS);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+function setInspections(obj) {
+  localStorage.setItem(LS_INSPECTIONS, JSON.stringify(obj));
+}
+
+function getSelectedInspectionState() {
+  const el = document.querySelector('input[name="inspState"]:checked');
+  return el ? el.value : null;
+}
+function setSelectedInspectionState(val) {
+  const el = document.querySelector('input[name="inspState"][value="'+val+'"]');
+  if (el) el.checked = true;
+}
+
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result || ''));
+    fr.onerror = reject;
+    fr.readAsDataURL(file);
+  });
+}
+
+async function saveInspection() {
+  const carId = state.currentCarId || '';
+  if (!carId) return;
+
+  const commentEl = document.getElementById('insp-comment');
+  const photosEl = document.getElementById('insp-photos');
+  const thumbsEl = document.getElementById('insp-thumbs');
+
+  const comment = commentEl ? String(commentEl.value || '').trim() : '';
+  const st = getSelectedInspectionState();
+
+  if (!st) {
+    toast('Выберите состояние (ОК / Нужен ремонт / Критично)');
+    return;
+  }
+
+  const files = Array.from((photosEl && photosEl.files) ? photosEl.files : []);
+  const limited = files.slice(0, 4);
+  const photos = [];
+
+  for (const f of limited) {
+    try {
+      const dataUrl = await fileToDataURL(f);
+      photos.push(dataUrl);
+    } catch (e) {}
+  }
+
+  const inspections = getInspections();
+  inspections[carId] = { savedAt: Date.now(), state: st, comment, photos };
+  setInspections(inspections);
+
+  if (thumbsEl) thumbsEl.innerHTML = (photos.length ? thumbsEl.innerHTML : thumbsEl.innerHTML);
+  showSavedInspectionHint(inspections[carId]);
+  toast('Осмотр сохранён');
+}
+window.saveInspection = saveInspection;
+
+function loadInspectionIntoUI(carId) {
+  const inspections = getInspections();
+  const i = inspections[carId];
+
+  const commentEl = document.getElementById('insp-comment');
+  const photosEl = document.getElementById('insp-photos');
+  const thumbsEl = document.getElementById('insp-thumbs');
+  const savedEl = document.getElementById('insp-saved');
+
+  if (commentEl) commentEl.value = '';
+  if (thumbsEl) thumbsEl.innerHTML = '';
+  if (photosEl) photosEl.value = '';
+  document.querySelectorAll('input[name="inspState"]').forEach(x => (x.checked = false));
+  if (savedEl) savedEl.style.display = 'none';
+
+  if (!i) return;
+
+  if (commentEl && i.comment) commentEl.value = i.comment;
+  if (i.state) setSelectedInspectionState(i.state);
+
+  if (thumbsEl && Array.isArray(i.photos)) {
+    i.
+photos.slice(0, 8).forEach(src => {
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      img.src = src;
+      thumbsEl.appendChild(img);
+    });
+  }
+
+  showSavedInspectionHint(i);
+}
+
+function showSavedInspectionHint(i) {
+  const el = document.getElementById('insp-saved');
   if (!el) return;
 
-  el.innerHTML = cars.map(car => `
-    <div class="card">
-      🚗 <b>${car.number}</b> — ${car.model}
+  const dt = new Date(i.savedAt || Date.now());
+  const label = (i.state === 'ok') ? '✅ ОК'
+              : (i.state === 'need') ? '🛠 Нужен ремонт'
+              : '🚨 Критично';
 
-      <div style="opacity:.85; margin-top:6px;">
-        Статус: ${car.status}
-
-        Простой: ${car.days} дней
-      </div>
-    </div>
-  `).join("");
+  el.style.display = 'block';
+  el.className = 'mini';
+  el.textContent = 'Сохранено: ' + dt.toLocaleString('ru-RU') + ' • ' + label + (i.comment ? (' • ' + i.comment) : '');
 }
+
+// Photo thumbs preview
+function bindPhotoPreview() {
+  const photosInput = document.getElementById('insp-photos');
+  const thumbs = document.getElementById('insp-thumbs');
+  if (!photosInput || !thumbs) return;
+
+  photosInput.addEventListener('change', () => {
+    thumbs.innerHTML = '';
+    const files = Array.from(photosInput.files || []);
+    files.slice(0, 8).forEach(f => {
+      const url = URL.createObjectURL(f);
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      img.src = url;
+      img.onload = () => URL.revokeObjectURL(url);
+      thumbs.appendChild(img);
+    });
+  });
+}
+
+// Utils
+function fmtRub(n) {
+  const v = Number(n || 0);
+  return v.toLocaleString('ru-RU') + ' ₽';
+}
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+let toastTimer = null;
+function toast(text) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+}
+
+// Boot
+function boot() {
+  bindScreens();
+  initTelegram();
+  bindPhotoPreview();
+
+  // (Опционально позже) авто-роль по tg user id:
+  // if (tg?.initDataUnsafe?.user?.id === 123456789) { localStorage.setItem(LS_ROLE,'owner'); }
+
+  const role = loadRole();
+  if (role) {
+    navStack = ['role', 'home'];
+    setActiveScreen('home');
+    renderHome();
+  } else {
+    setActiveScreen('role');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', boot);
