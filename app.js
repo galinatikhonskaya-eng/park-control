@@ -123,3 +123,8 @@ window.goTo = goTo;
 window.openCar = openCar;
 window.saveInspection = saveInspection;
 window.logout = logout;
+document.addEventListener('DOMContentLoaded', () => {
+  role = detectRole();
+  showScreen('homeScreen');
+  renderHome();
+});
