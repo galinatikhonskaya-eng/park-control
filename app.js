@@ -1,4 +1,9 @@
-// ===== Telegram WebApp init =====
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
+// Telegram WebApp init
 const tg = window.Telegram ? window.Telegram.WebApp : null;
 
 let tgUser = null;
@@ -8,18 +13,54 @@ if (tg) {
   tgUser = tg.initDataUnsafe?.user || null;
 }
 
-// ===== РОЛИ (вставь сюда СВОЙ Telegram user id) =====
-const OWNER_TG_ID = 658384304; // <-- твой id (как на скрине)
+// Твой Telegram user id (владелец)
+const OWNER_TG_ID = 658384304;
 
-function detectRole() {
-  if (!tgUser) return null;
-  if (tgUser.id === OWNER_TG_ID) return "owner";
-  return "manager"; // по умолчанию, если не владелец
+let role = null; // 'owner' | 'manager' | 'mechanic'
+
+// Показываем нужный экран
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
 }
 
-// Глобальная переменная роли
-let role = null;
+// Авто-роль по Telegram (если зашли из TG)
+function detectRole() {
+  if (!tgUser) return null;
+  if (tgUser.id === OWNER_TG_ID) return 'owner';
+  return null; // остальных пока выбираем кнопкой
+}
 
+// Выбор роли
+function setRole(selectedRole) {
+  role = selectedRole;
+  showScreen('homeScreen');
+  renderHome();
+}
+
+// Выход
+function logout() {
+  role = null;
+  showScreen('roleScreen');
+}
+
+// Переходы
+function goTo(screen) {
+  showScreen(screen);
+}
+
+// При запуске
+(function init() {
+  const auto = detectRole();
+  if (auto) {
+    role = auto;
+    showScreen('homeScreen');
+    renderHome();
+  } else {
+    showScreen('roleScreen');
+  }
+})();
 // ===== ДАННЫЕ (пока статичные) =====
 const data = {
   stats: {
@@ -28,51 +69,25 @@ const data = {
     repair: 10,
     idle: 10,
     accident: 3,
-    repairLoss: "459 000 ₽",
-    idleLoss: "35 000 ₽",
-    deposits: "350 000 ₽",
+    repairLoss: "459 000",
+    idleLoss: "35 000",
+    deposits: "350 000"
   }
 };
 
-// ===== ЭКРАНЫ =====
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  const el = document.getElementById(id);
-  if (el) el.classList.add("active");
-}
-
-// ===== ВЫБОР РОЛИ =====
-function setRole(selectedRole) {
-  role = selectedRole;
-  showScreen("homeScreen");
-  renderHome();
-}
-
-// Авто-роль из Telegram (если открыли из TG)
-function initApp() {
-  role = detectRole();
-
-  if (role) {
-    showScreen("homeScreen");
-    renderHome();
-  } else {
-    showScreen("roleScreen");
-  }
-}
-
 // ===== ГЛАВНАЯ =====
 function renderHome() {
-  // Приветствие
-  const welcome = document.getElementById("welcomeTitle");
+  // Заголовок приветствия
+  const welcome = document.getElementById('welcomeTitle');
   if (welcome) {
     welcome.innerText =
-      role === "owner" ? "Здравствуйте, владелец" :
-      role === "manager" ? "Здравствуйте, менеджер" :
-      "Здравствуйте, механик";
+      role === 'owner' ? 'Здравствуйте, владелец' :
+      role === 'manager' ? 'Здравствуйте, менеджер' :
+      'Здравствуйте, механик';
   }
 
   // Статистика (видят все)
-  const statsEl = document.getElementById("stats");
+  const statsEl = document.getElementById('stats');
   if (statsEl) {
     statsEl.innerHTML = `
       <div class="card">🚘 Авто всего: ${data.stats.total}</div>
@@ -84,18 +99,18 @@ function renderHome() {
   }
 
   // Финансы (по ролям)
-  const finance = document.getElementById("finance");
+  const finance = document.getElementById('finance');
   if (!finance) return;
 
-  finance.innerHTML = "";
+  finance.innerHTML = '';
 
-  if (role === "owner") {
+  if (role === 'owner') {
     finance.innerHTML = `
       <div class="card">🔧 Потери на ремонте: -${data.stats.repairLoss}</div>
       <div class="card">🚫 Потери на простое: -${data.stats.idleLoss}</div>
       <div class="card">💳 Депозиты: ${data.stats.deposits}</div>
     `;
-  } else if (role === "manager") {
+  } else if (role === 'manager') {
     finance.innerHTML = `
       <div class="card">🔧 Потери: есть</div>
       <div class="card">🚫 Простой: есть</div>
@@ -103,23 +118,14 @@ function renderHome() {
     `;
   } else {
     // mechanic — финансы не показываем
-    finance.innerHTML = "";
+    finance.innerHTML = '';
   }
 }
-
-// ===== НАВИГАЦИЯ =====
-function goTo(screen) {
-  showScreen(screen);
-}
-
-// ===== ВЫХОД =====
-function logout() {
-  role = null;
-  showScreen("roleScreen");
-}
-
-// ===== Запуск после загрузки страницы =====
-document.addEventListener("DOMContentLoaded", initApp);
+window.setRole = setRole;
+window.goTo = goTo;
+window.openCar = openCar;
+window.saveInspection = saveInspection;
+window.logout = logout;
 
 
 
