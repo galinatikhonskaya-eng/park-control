@@ -32,16 +32,27 @@
       <div id="finance"></div>
 
       <div class="nav">
+        <button onclick="goTo('carsScreen')">🚗 Авто</button>
+        <button onclick="goTo('docsScreen')">📄 Документы</button>
         <button onclick="logout()">Выйти</button>
       </div>
     </div>
 
+    <!-- АВТО -->
+    <div id="carsScreen" class="screen">
+      <h2>🚗 Авто</h2>
+      <div id="carsList"></div>
+      <button onclick="goTo('homeScreen')">← Назад</button>
+    </div>
+
+    <!-- ДОКУМЕНТЫ -->
+    <div id="docsScreen" class="screen">
+      <h2>📄 Документы</h2>
+      <p>Раздел в разработке</p>
+      <button onclick="goTo('homeScreen')">← Назад</button>
+    </div>
+
   </div>
 
-  <!-- ВАЖНО: app.js подключаем в самом конце -->
   <script src="app.js"></script>
 </body>
-</html>
-
-
-
