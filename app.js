@@ -136,18 +136,22 @@ function roleGreeting(role) {
 
 function loadRole() {
   const saved = localStorage.getItem(LS_ROLE);
-if (saved === 'owner' || saved === 'manager' || saved === 'mechanic') {    state.role = saved;
+  if (saved === 'owner' || saved === 'manager' || saved === 'mechanic') {
+    state.role = saved;
     return saved;
   }
   return null;
 }
-
 function setRole(role) {
   if (!(role === 'owner' || role === 'manager' || role === 'mechanic')) return;
+
+  state.role = role;
   localStorage.setItem(LS_ROLE, role);
+
   toast('Роль: ' + getRoleTitle(role));
   goTo('home');
 }
+window.setRole = setRole;
 function logout() {
   localStorage.removeItem(LS_ROLE);
   state.role = null;
