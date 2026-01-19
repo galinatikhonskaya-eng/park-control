@@ -247,6 +247,27 @@ function renderHome() {
     });
   }
 }
+function normPlate(s) {
+  s = String(s || '').trim().toLowerCase();
+
+  const map = {
+    '\u0430': 'a', // а
+    '\u0432': 'b', // в
+    '\u0435': 'e', // е
+    '\u043a': 'k', // к
+    '\u043c': 'm', // м
+    '\u043d': 'h', // н
+    '\u043e': 'o', // о
+    '\u0440': 'p', // р
+    '\u0441': 'c', // с
+    '\u0442': 't', // т
+    '\u0443': 'y', // у
+    '\u0445': 'x'  // х
+  };
+
+  return s.replace(/[\u0430\u0432\u0435\u043a\u043c\u043d\u043e\u0440\u0441\u0442\u0443\u0445]/g, ch => map[ch] || ch);
+}
+
 function setCarFilter(filter, btn) {
   state.carFilter = filter;
 
@@ -263,13 +284,12 @@ function renderCarsList() {
   if (!list) return;
   list.innerHTML = '';
 
-  const q = (document.getElementById('cars-q')?.value || '').trim().toLowerCase();
+  const q = normPlate(document.getElementById('cars-q')?.value || '');
   const filter = state.carFilter || 'all'; // all | online | repair | idle | accident
 
   const filtered = cars.filter(c => {
-    const idStr = String(c.id ?? '').toLowerCase();
-    const modelStr = String(c.model ?? '').toLowerCase();
-
+   const idStr = normPlate(c.id ?? '');
+const modelStr = normPlate(c.model ?? '');
     const matchesQ = !q || idStr.includes(q) || modelStr.includes(q);
     const matchesF = (filter === 'all') || (String(c.status) === filter);
 
