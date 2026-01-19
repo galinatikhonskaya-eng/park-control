@@ -62,9 +62,11 @@ const stats = {
 };
 
 const cars = [
-  { id: 'А101АА', model: 'Kia Rio',         status: 'online',   idleDays: 0 },
-  { id: 'В202ВВ', model: 'Hyundai Solaris', status: 'repair',   idleDays: 6 },
-  { id: 'С303СС', model: 'VW Polo',         status: 'idle',     idleDays: 3 },
+  { id:'А101АА', model:'Kia Rio',          status:'online',   idleDays:0, driver:'Иван',   losses:593000, deposit:320000 },
+  { id:'В202ВВ', model:'Hyundai Solaris',  status:'repair',   idleDays:6, driver:'Сергей', losses:175000, deposit:120000 },
+  { id:'С303СС', model:'VW Polo',          status:'idle',     idleDays:3, driver:'—',      losses:0,      deposit:0 },
+  // остальные можно оставить как есть, или потом тоже дописать
+
   { id: 'Е505ЕЕ', model: 'Renault Logan',   status: 'accident', idleDays: 2 },
   { id: 'К777КК', model: 'Skoda Rapid',     status: 'online',   idleDays: 0 },
 
@@ -352,13 +354,13 @@ function renderCarCard() {
   const carId = state.currentCarId;
   const c = cars.find(x => x.id === carId) || cars[0];
   const b = statusBadge(c.status);
-
+const loss = Number(c.loss ?? c.losses ?? 0);
+const deposit = Number(c.deposit ?? 0);
   const carTitle = document.getElementById('car-title');
   const carSub = document.getElementById('car-sub');
   const carChip = document.getElementById('car-chip');
   if (carTitle) carTitle.textContent = c.id + ' — ' + c.model;
-  if (carSub) carSub.
-textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
+  if (carSub) carSub.textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
   if (carChip) carChip.textContent = getRoleTitle(r) || 'роль';
 
   const info = document.getElementById('car-info');
@@ -374,8 +376,8 @@ textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
 
   if (r === 'owner') {
     html +=
-      '<div class="row"><span>Потери</span><span class="'+(c.loss>0?'neg':'')+'">'+(c.loss>0 ? ('-' + fmtRub(c.loss)) : '0 ₽')+'</span></div>' +
-      '<div class="row"><span>Депозит</span><span class="'+(c.deposit>0?'pos':'')+'">'+fmtRub(c.deposit || 0)+'</span></div>';
+      '<div class="row"><span>Потери</span><span class="'+(loss>0?'neg':'')+'">'+(loss>0 ? ('-' + fmtRub(loss)) : '0 ₽')+'</span></div>' +
+'<div class="row"><span>Депозит</span><span class="'+(deposit>0?'pos':'')+'">'+fmtRub(deposit)+'</span></div>';
   }
 
   if (r === 'manager') {
@@ -576,4 +578,4 @@ function boot() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', boot)
+document.addEventListener('DOMContentLoaded', boot);
