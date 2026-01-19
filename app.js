@@ -363,7 +363,7 @@ textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
   if (carChip) carChip.textContent = getRoleTitle(r) || 'роль';
 
   const info = document.getElementById('car-info');
-if (!info) return;
+  if (!info) return;
 
 let html = '';
 
@@ -399,7 +399,6 @@ let html = '';
     }
   }
 }
-info.innerHTML = html;
 
 // Mechanic inspection (local save)
 function getInspections() {
