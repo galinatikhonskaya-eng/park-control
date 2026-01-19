@@ -62,12 +62,20 @@ const stats = {
 };
 
 const cars = [
-  { id:'A101AA', model:'Kia Rio', status:'На линии', idleDays:0, driver:'Иван П.', loss: 0, deposit: 15000 },
-  { id:'B202BB', model:'Hyundai Solaris', status:'В ремонте', idleDays:6, driver:'Сергей К.', loss: 120000, deposit: 20000 },
-  { id:'C303CC', model:'VW Polo', status:'В простое', idleDays:3, driver:'Артем Н.', loss: 55000, deposit: 10000 },
-  { id:'D404DD', model:'Skoda Rapid', status:'На линии', idleDays:0, driver:'Максим Р.', loss: 0, deposit: 15000 },
-  { id:'E505EE', model:'Renault Logan', status:'ДТП', idleDays:2, driver:'Денис С.', loss: 180000, deposit: 0 }
+  { id: 'А101АА', model: 'Kia Rio',         status: 'online',   idleDays: 0 },
+  { id: 'В202ВВ', model: 'Hyundai Solaris', status: 'repair',   idleDays: 6 },
+  { id: 'С303СС', model: 'VW Polo',         status: 'idle',     idleDays: 3 },
+  { id: 'Е505ЕЕ', model: 'Renault Logan',   status: 'accident', idleDays: 2 },
+  { id: 'К777КК', model: 'Skoda Rapid',     status: 'online',   idleDays: 0 },
+
+  { id: 'М111ММ', model: 'Toyota Camry',    status: 'online',   idleDays: 0 },
+  { id: 'Н222НН', model: 'Kia K5',          status: 'idle',     idleDays: 1 },
+  { id: 'О333ОО', model: 'Lada Granta',     status: 'repair',   idleDays: 9 },
+  { id: 'Р444РР', model: 'Chery Tiggo 7',   status: 'online',   idleDays: 0 },
+  { id: 'Т555ТТ', model: 'Geely Coolray',   status: 'idle',     idleDays: 4 },
 ];
+
+
 
 function statusBadge(status) {
   const s = String(status || '').toLowerCase();
