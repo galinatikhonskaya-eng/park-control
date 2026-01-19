@@ -253,7 +253,20 @@ function renderCarsList() {
   if (!list) return;
   list.innerHTML = '';
 
-  cars.forEach(c => {
+  const q = (document.getElementById('cars-q')?.value || '').trim().toLowerCase();
+  const filter = state.carFilter || 'all'; // all | online | repair | idle | accident
+
+  const filtered = cars.filter(c => {
+    const idStr = String(c.id ?? '').toLowerCase();
+    const modelStr = String(c.model ?? '').toLowerCase();
+
+    const matchesQ = !q || idStr.includes(q) || modelStr.includes(q);
+    const matchesF = (filter === 'all') || (String(c.status) === filter);
+
+    return matchesQ && matchesF;
+  });
+
+  filtered.forEach(c => {
     const b = statusBadge(c.status);
     const el = document.createElement('div');
     el.className = 'item';
@@ -261,14 +274,17 @@ function renderCarsList() {
 
     el.innerHTML =
       '<div class="itemTop">' +
-        '<div class="itemTitle">🚗 '+escapeHtml(c.id)+' — '+escapeHtml(c.model)+'</div>' +
-        '<div class="badge '+b.cls+'">'+b.text+'</div>' +
+        '<div class="itemTitle">🚗 ' + escapeHtml(c.id) + ' - ' + escapeHtml(c.model) + '</div>' +
+        '<div class="badge ' + b.cls + '">' + b.text + '</div>' +
       '</div>' +
-      '<div class="row"><span>Простой</span><span>'+c.idleDays+' дн.</span></div>';
+      '<div class="row"><span>Простой</span><span>' + (c.idleDays ?? 0) + ' дн.</span></div>';
 
     list.appendChild(el);
   });
 }
+
+
+
 
 function openCar(carId) {
   state.currentCarId = carId;
