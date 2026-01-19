@@ -247,7 +247,17 @@ function renderHome() {
     });
   }
 }
+function setCarFilter(filter, btn) {
+  state.carFilter = filter;
 
+  // подсветка активной кнопки
+  document.querySelectorAll('#screen-cars .chips .chipBtn, #screen-cars .chips .chip')
+    .forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  renderCarsList();
+}
+window.setCarFilter = setCarFilter;
 function renderCarsList() {
   const list = document.getElementById('cars-list');
   if (!list) return;
