@@ -62,10 +62,9 @@ const stats = {
 };
 
 const cars = [
-  { id:'А101АА', model:'Kia Rio',          status:'online',   idleDays:0, driver:'Иван',   losses:593000, deposit:320000 },
-  { id:'В202ВВ', model:'Hyundai Solaris',  status:'repair',   idleDays:6, driver:'Сергей', losses:175000, deposit:120000 },
-  { id:'С303СС', model:'VW Polo',          status:'idle',     idleDays:3, driver:'—',      losses:0,      deposit:0 },
-  // остальные можно оставить как есть, или потом тоже дописать
+  { id: 'А101АА', model: 'Kia Rio',         status: 'online',   idleDays: 0 },
+  { id: 'В202ВВ', model: 'Hyundai Solaris', status: 'repair',   idleDays: 6 },
+  { id: 'С303СС', model: 'VW Polo',         status: 'idle',     idleDays: 3 },
   { id: 'Е505ЕЕ', model: 'Renault Logan',   status: 'accident', idleDays: 2 },
   { id: 'К777КК', model: 'Skoda Rapid',     status: 'online',   idleDays: 0 },
 
@@ -363,11 +362,9 @@ textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
   if (carChip) carChip.textContent = getRoleTitle(r) || 'роль';
 
   const info = document.getElementById('car-info');
-if (!info) return;
+  if (!info) return;
 
-let html = '';
-
-  html =
+  let html =
     '<div class="row"><span>Статус</span><span>'+b.text+'</span></div>' +
     '<div class="row"><span>Простой</span><span>'+c.idleDays+' дн.</span></div>';
 
@@ -399,7 +396,6 @@ let html = '';
     }
   }
 }
-info.innerHTML = html;
 
 // Mechanic inspection (local save)
 function getInspections() {
@@ -580,4 +576,4 @@ function boot() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener('DOMContentLoaded', boot)
