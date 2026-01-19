@@ -93,8 +93,25 @@
           <div class="chip">🚗 Авто</div>
         </div>
 
-        <div class="sub" style="margin-top:0">Список машин карточками. Нажмите на авто, чтобы открыть карточку.</div>
-        <div class="list" id="cars-list"></div>
+        <div class="sub" style="margin-top:0">
+  Список машин карточками. Нажмите на авто, чтобы открыть карточку.
+</div>
+
+<div class="toolbar">
+  <input id="cars-q" class="input" placeholder="Поиск: номер или модель" oninput="renderCarsList()" />
+  <div class="chips">
+    <button class="chipBtn active" onclick="setCarFilter('all', this)">Все</button>
+    <button class="chipBtn" onclick="setCarFilter('online', this)">🟢 Линия</button>
+    <button class="chipBtn" onclick="setCarFilter('repair', this)">🔧 Ремонт</button>
+    <button class="chipBtn" onclick="setCarFilter('idle', this)">⏸ Простой</button>
+    <button class="chipBtn" onclick="setCarFilter('accident', this)">⚠️ ДТП</button>
+  </div>
+</div>
+
+<div class="list" id="cars-list"></div>
+
+
+
       </section>
 
       <!-- SCREEN 4: CAR CARD -->
