@@ -78,12 +78,29 @@ const cars = [
 
 
 function statusBadge(status) {
-  const s = String(status || '').toLowerCase();
-  if (s.includes('линии')) return { cls:'ok', text:'🟢 На линии' };
-  if (s.includes('ремонт')) return { cls:'warn', text:'🔧 В ремонте' };
-  if (s.includes('просто')) return { cls:'warn', text:'⏸ В простое' };
-  if (s.includes('дтп')) return { cls:'bad', text:'⚠️ ДТП' };
-  return { cls:'', text: status || '—' };
+  const s = String(status || '').trim().toLowerCase();
+
+  // online / линия
+  if (s === 'online' || s.includes('линия') || s.includes('на линии')) {
+    return { cls: 'ok', text: '🟢 На линии' };
+  }
+
+  // repair / ремонт
+  if (s === 'repair' || s.includes('ремонт') || s.includes('в ремонте')) {
+    return { cls: 'warn', text: '🛠 Ремонт' };
+  }
+
+  // idle / простой
+  if (s === 'idle' || s.includes('простой') || s.includes('в простое')) {
+    return { cls: 'warn', text: '⏸ Простой' };
+  }
+
+  // accident / дтп
+  if (s === 'accident' || s.includes('дтп')) {
+    return { cls: 'bad', text: '⚠️ ДТП' };
+  }
+
+  return { cls: '', text: status || '' };
 }
 
 // Navigation
