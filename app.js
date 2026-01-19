@@ -1,3 +1,18 @@
+const APP_VERSION = "3";
+const LS_VER = "pc_ver";
+
+(function forceUpdate() {
+  try {
+    const v = localStorage.getItem(LS_VER);
+    if (v !== APP_VERSION) {
+      localStorage.setItem(LS_VER, APP_VERSION);
+      // можно сбросить роль при обновлении, чтобы не тянуло старые состояния
+      localStorage.removeItem(LS_ROLE);
+    }
+  } catch (e) {}
+})();
+
+
 'use strict';
 
 // Telegram init (safe)
