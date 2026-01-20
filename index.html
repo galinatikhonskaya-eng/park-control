@@ -50,41 +50,68 @@
       </section>
 
       <!-- SCREEN 2: HOME -->
-      <section id="screen-home" class="screen">
-        <div class="topbar">
-          <button class="backBtn" onclick="goTo('role')">←</button>
-          <div class="chip" id="chip-role">роль</div>
-        </div>
+      <!-- HOME -->
+<section id="home" class="screen">
+  <div class="homeBar">
+    <div class="homeTitle">Автопарк | Управление</div>
+    <button class="homeDots" type="button" onclick="toast('Меню позже')">•••</button>
+  </div>
 
-        <div class="title" id="home-greet">Здравствуйте</div>
+  <div class="card hello">
+    <div class="avatar"></div>
+    <div class="helloText">
+      <div id="home-greet" class="helloH">Здравствуйте!</div>
+      <div class="helloSub">
+        На линии: <b id="home-online-drivers">0</b> водителей | <b id="home-total-cars">0</b> авто
+      </div>
+    </div>
+  </div>
 
-        <div class="sectionHeader">
-          <h3>Статистика</h3>
-          <span class="chip" id="chip-upd">обновлено</span>
-        </div>
+  <div id="home-tiles" class="tiles">
+    <button class="tile" data-screen="docs" type="button"><span class="i">📄</span><span class="t">Договоры</span></button>
+    <button class="tile" data-screen="cars" type="button"><span class="i">🚗</span><span class="t">Учёт авто</span></button>
+    <button class="tile" data-screen="drivers" type="button"><span class="i">👮</span><span class="t">Водители</span></button>
+    <button class="tile" data-screen="payouts" type="button"><span class="i">💳</span><span class="t">Выплаты</span></button>
+    <button class="tile" data-screen="fines" type="button"><span class="i">⚠️</span><span class="t">Штрафы</span></button>
+    <button class="tile" data-screen="gps" type="button"><span class="i">📍</span><span class="t">GPS Контроль</span></button>
+  </div>
 
-        <div class="grid2" id="stats-grid"></div>
+  <div class="miniStats">
+    <button class="mini" data-carfilter="repair" type="button">
+      <span class="i">🚘</span><span class="k">Авто в ремонте:</span><b id="home-repair">0</b>
+    </button>
+    <button class="mini" data-carfilter="accident" type="button">
+      <span class="i">🚨</span><span class="k">ДТП за неделю:</span><b id="home-dtp">0</b>
+    </button>
+  </div>
 
-        <div id="finance-wrap">
-          <div class="sectionHeader">
-            <h3>Финансы</h3>
-          </div>
-          <div class="grid2" id="finance-grid"></div>
-        </div>
+  <div class="card balance">
+    <div class="k">Баланс автопарка</div>
+    <div id="home-balance" class="v">0 ₽</div>
+  </div>
 
-        <div class="sectionHeader">
-          <h3>Навигация</h3>
-        </div>
+  <div id="home-finance" class="financeGrid">
+    <div class="card fin">
+      <div class="k">Потери на ремонте</div>
+      <div id="home-loss-repair" class="v neg">-0 ₽</div>
+    </div>
+    <div class="card fin">
+      <div class="k">Потери на простое</div>
+      <div id="home-loss-idle" class="v neg">-0 ₽</div>
+    </div>
+    <div class="card fin wide">
+      <div class="k">Депозит водителей</div>
+      <div id="home-deposits" class="v pos">0 ₽</div>
+    </div>
+  </div>
 
-        <div class="navRow">
-          <button class="btn primary" onclick="goTo('cars')"><span>🚗 Авто</span><span class="muted">→</span></button>
-          <button class="btn" onclick="goTo('docs')"><span>📄 Документы</span><span class="muted">→</span></button>
-        </div>
-
-        <div class="mini muted">
-          (Позже добавим “Выйти”. Сейчас роль можно сбросить кнопкой ← сверху.)
-        </div>
-      </section>
+  <nav class="bottomNav">
+    <button class="bn" data-screen="requests" type="button">📥<div>Заявки</div></button>
+    <button class="bn" data-screen="newDrivers" type="button">➕<div>Новые</div></button>
+    <button class="bn" data-screen="notify" type="button">🔔<div>Увед.</div></button>
+    <button class="bn" data-screen="more" type="button">⋯<div>Ещё</div></button>
+  </nav>
+</section>
 
       <!-- SCREEN 3: CARS LIST -->
       <section id="screen-cars" class="screen">
