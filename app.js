@@ -49,7 +49,7 @@ function initTelegram() {
 }
 
 // Mock data
-const state = { role: null, currentCarId: null };
+const state = { role: null, currentCarId: null, carFilter: null };
 
 const stats = {
   carsTotal: 150,
@@ -210,70 +210,95 @@ window.logout = logout;
 function renderHome() {
   const r = state.role;
 
+  // приветствие
   const greet = document.getElementById('home-greet');
   if (greet) greet.textContent = roleGreeting(r);
 
-  const chipRole = document.getElementById('chip-role');
-  if (chipRole) chipRole.textContent = r ? getRoleTitle(r) : 'роль';
+  // цифры в шапке
+  const elTotalCars = document.getElementById('home-total-cars');
+  const elOnlineDrivers = document.getElementById('home-online-drivers');
 
-  const chipUpd = document.getElementById('chip-upd');
-  if (chipUpd) chipUpd.textContent = 'обновлено: ' + new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const totalCars = (stats?.carsTotal ?? cars?.length ?? 0);
+  const onlineDrivers = (stats?.onLine ?? 0);
 
-  const statsGrid = document.getElementById('stats-grid');
-  if (statsGrid) {
-    statsGrid.innerHTML = '';
-    const statCards = [
-      { k:'🚘 Авто всего', v: stats.carsTotal },
-      { k:'🟢 На линии', v: stats.onLine },
-      { k:'🔧 В ремонте', v: stats.inRepair },
-      { k:'⏸ В простое', v: stats.idle },
-      { k:'⚠️ ДТП за неделю', v: stats.dptWeek }
-    ];
-    statCards.forEach(x => {
-      const div = document.createElement('div');
-      div.className = 'metric';
-      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v">'+x.v+'</div>';
-      statsGrid.appendChild(div);
-    });
-  }
+  if (elTotalCars) elTotalCars.textContent = String(totalCars);
+  if (elOnlineDrivers) elOnlineDrivers.textContent = String(onlineDrivers);
 
-  const financeWrap = document.getElementById('finance-wrap');
-  const financeGrid = document.getElementById('finance-grid');
-  if (!financeWrap || !financeGrid) return;
+  // мини-показатели
+  const elRepair = document.getElementById('home-repair');
+  const elDtp = document.getElementById('home-dtp');
+  if (elRepair) elRepair.textContent = String(stats?.inRepair ?? 0);
+  if (elDtp) elDtp.textContent = String(stats?.dptWeek ?? 0);
 
-  financeGrid.innerHTML = '';
-
+  // финансы (механику скрываем)
+  const financeWrap = document.getElementById('home-finance');
   if (r === 'mechanic') {
-    financeWrap.style.display = 'none';
-    return;
-  }
-  financeWrap.style.display = 'block';
+    if (financeWrap) financeWrap.style.display = 'none';
+  } else {
+    if (financeWrap) financeWrap.style.display = 'grid';
 
-  if (r === 'owner') {
-    const cards = [
-      { k:'🔧 Потери на ремонте', v:'-' + fmtRub(stats.lossRepair), cls:'neg' },
-      { k:'🚫 Потери на простое', v:'-' + fmtRub(stats.lossIdle), cls:'neg' },
-      { k:'💳 Депозиты', v: fmtRub(stats.deposits), cls:'pos' }
-    ];
-    cards.forEach(x => {
-      const div = document.createElement('div');
-      div.className = 'metric';
-      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v small '+x.cls+'">'+x.v+'</div>';
-      financeGrid.appendChild(div);
-    });
-  } else if (r === 'manager') {
-    const cards = [
-      { k:'🔧 Потери на ремонте', v:'есть' },
-      { k:'🚫 Потери на простое', v:'есть' },
-      { k:'💳 Депозиты', v:'есть' }
-    ];
-    cards.forEach(x => {
-      const div = document.createElement('div');
-      div.className = 'metric';
-      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v small">'+x.v+'</div>';
-      financeGrid.appendChild(div);
-    });
+    const lossRepair = Number(stats?.lossRepair ?? 0);
+    const lossIdle = Number(stats?.lossIdle ?? 0);
+    const deposits = Number(stats?.deposits ?? 0);
+    const balance = deposits - lossRepair - lossIdle;
+
+    const elLossRepair = document.getElementById('home-loss-repair');
+    const elLossIdle = document.getElementById('home-loss-idle');
+    const elDeposits = document.getElementById('home-deposits');
+    const elBalance = document.getElementById('home-balance');
+
+    if (elLossRepair) elLossRepair.textContent = '-' + fmtRub(lossRepair);
+    if (elLossIdle) elLossIdle.textContent = '-' + fmtRub(lossIdle);
+    if (elDeposits) elDeposits.textContent = fmtRub(deposits);
+    if (elBalance) elBalance.textContent = fmtRub(balance);
   }
+
+  // клики по плиткам (внутренние разделы)
+  const tiles = document.getElementById('home-tiles');
+  if (tiles && !tiles.dataset.bound) {
+    tiles.dataset.bound = '1';
+    tiles.querySelectorAll('.tile').forEach(btn => {
+      btn.onclick = () => {
+        const screen = btn.dataset.screen;
+        if (screen) goTo(screen);
+      };
+    });
+  
+
+  // клики по мини-статам (ремонт/дтп) -> сразу в авто с фильтром
+  const minis = document.querySelectorAll('.miniStats .mini');
+  minis.forEach(btn => {
+    if (btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.onclick = () => {
+      const f = btn.dataset.carfilter;
+      if (f) state.carFilter = f;
+      goTo('cars');
+      renderCarsList?.();
+    };
+  });
+
+  // нижнее меню
+  const bottom = document.querySelectorAll('.bottomNav [data-screen]');
+  bottom.forEach(btn => {
+    if (btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.onclick = () => {
+      const screen = btn.dataset.screen;
+      if (screen) goTo(screen);
+    };
+  });
+}
+
+  // Клики по мини-статам (ремонт/дтп) -> сразу в авто и фильтр
+  document.querySelectorAll('.miniStats .mini').forEach(btn => {
+    btn.onclick = () => {
+      const f = btn.dataset.carfilter;
+      if (f) state.carFilter = f; // если у тебя есть state.carFilter
+      goTo('cars');
+      renderCarsList?.();
+    };
+  });
 }
 function normPlate(s) {
   s = String(s || '').trim().toLowerCase();
