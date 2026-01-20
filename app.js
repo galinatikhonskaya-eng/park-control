@@ -371,9 +371,9 @@ let html = '';
 
 html += `<div class="row"><span>Статус</span><b>${b.text}</b></div>`;
 html += `<div class="row"><span>Простой</span><b>${c.idleDays || 0} дн.</b></div>`;
- 
+
 if (r === 'owner' || r === 'manager') {
-  html += `<div class="row"><span>Водитель</span><b>${escapeHtml(c.driver || '—')}</b></div>`;
+  html += `<div class="row"><span>Водитель</span><b>${escapeHtml(c.driver || '-')}</b></div>`;
 }
   if (r === 'owner') {
     html +=
