@@ -1,4 +1,4 @@
-const APP_VERSION = "3";
+ const APP_VERSION = "3";
 const LS_VER = "pc_ver";
 
 (function forceUpdate() {
