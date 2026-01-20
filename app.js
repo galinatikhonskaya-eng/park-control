@@ -367,14 +367,16 @@ const deposit = Number(c.deposit ?? 0);
   const info = document.getElementById('car-info');
   if (!info) return;
 
-  let html =
-    '<div class="row"><span>Статус</span><span>'+b.text+'</span></div>' +
-    '<div class="row"><span>Простой</span><span>'+c.idleDays+' дн.</span></div>';
+let html = '';
 
+html += `<div class="row"><span>Статус</span><b>${b.text}</b></div>`;
+html += `<div class="row"><span>Простой</span><b>${c.idleDays || 0} дн.</b></div>`;
   if (r === 'owner' || r === 'manager') {
     html += '<div class="row"><span>Водитель</span><span>'+escapeHtml(c.driver || '—')+'</span></div>';
   }
-
+if (r === 'owner' || r === 'manager') {
+  html += `<div class="row"><span>Водитель</span><b>${escapeHtml(c.driver || '—')}</b></div>`;
+}
   if (r === 'owner') {
     html +=
       '<div class="row"><span>Потери</span><span class="'+(loss>0?'neg':'')+'">'+(loss>0 ? ('-' + fmtRub(loss)) : '0 ₽')+'</span></div>' +
