@@ -244,5 +244,104 @@ body{
 /* Screens */
 .screen{ display: none; }
 .screen.active{ display: block; }
+.homeBar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 10px 14px;
+}
+.homeTitle{ font-weight: 700; font-size: 16px; opacity:.95; }
+.homeDots{
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  padding: 6px 10px;
+  color: inherit;
+}
 
+.card{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.hello{ display:flex; gap:12px; align-items:center; margin: 0 14px 12px; }
+.avatar{
+  width:44px; height:44px; border-radius: 50%;
+  background: rgba(255,255,255,.12);
+}
+.helloH{ font-size:18px; font-weight:800; }
+.helloSub{ opacity:.85; margin-top:2px; }
+
+.tiles{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 14px 12px;
+}
+.tile{
+  display:flex; align-items:center; gap:10px;
+  padding: 14px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  color: inherit;
+  text-align:left;
+}
+.tile .i{ font-size: 20px; }
+.tile .t{ font-weight: 700; }
+
+.miniStats{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 14px 12px;
+}
+.mini{
+  display:flex; align-items:center; gap:8px;
+  padding: 12px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  color: inherit;
+}
+.mini .k{ opacity:.9; }
+.mini b{ margin-left:auto; font-size: 16px; }
+
+.balance{ margin: 0 14px 12px; }
+.balance .k{ opacity:.8; margin-bottom:6px; }
+.balance .v{ font-size: 28px; font-weight: 900; }
+
+.financeGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 14px 90px;
+}
+.fin .k{ opacity:.8; margin-bottom:6px; }
+.fin .v{ font-size: 18px; font-weight: 900; }
+.fin.wide{ grid-column: 1 / -1; }
+.neg{ color: #ff6b6b; }
+.pos{ color: #2ecc71; }
+
+.bottomNav{
+  position: fixed;
+  left:0; right:0; bottom:0;
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 10px 10px 16px;
+  background: rgba(0,0,0,.55);
+  border-top: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+}
+.bn{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 10px 6px;
+  color: inherit;
+  font-weight: 700;
+}
+.bn div{ font-size: 12px; opacity:.9; margin-top:4px; }
 
