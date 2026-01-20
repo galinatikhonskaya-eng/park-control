@@ -1,4 +1,4 @@
- const APP_VERSION = "3";
+const APP_VERSION = "3";
 const LS_VER = "pc_ver";
 
 (function forceUpdate() {
@@ -16,10 +16,11 @@ const LS_VER = "pc_ver";
 'use strict';
 
 // Telegram init (safe)
-const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+const tg = window.Telegram?.WebApp || null;
 
 function isTelegramEnv() {
-  return !!tg;
+  // В реальном Telegram всегда есть initData (не пустая строка)
+  return !!(tg && typeof tg.initData === 'string' && tg.initData.length > 0);
 }
 
 function initTelegram() {
