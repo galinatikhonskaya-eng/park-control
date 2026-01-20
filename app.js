@@ -1,3 +1,12 @@
+window.addEventListener('error', (e) => {
+  try { toast('Ошибка: ' + e.message); } catch(_) {}
+  console.error(e);
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+  try { toast('Promise: ' + (e.reason?.message || e.reason)); } catch(_) {}
+  console.error(e);
+});
 const APP_VERSION = "3";
 const LS_VER = "pc_ver";
 
@@ -605,3 +614,4 @@ function boot() {
 }
 
 document.addEventListener('DOMContentLoaded', boot);
+
