@@ -122,8 +122,7 @@ let currentScreen = 'role';
 
 function bindScreens() {
   screens.role = document.getElementById('screen-role');
-  screens.home = document.getElementById('screen-home');
-  screens.cars = document.getElementById('screen-cars');
+screens.home = document.getElementById('home');  screens.cars = document.getElementById('screen-cars');
   screens.car  = document.getElementById('screen-car');
   screens.docs = document.getElementById('screen-docs');
 }
