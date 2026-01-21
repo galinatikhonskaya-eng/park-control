@@ -254,8 +254,8 @@ function renderHome() {
     const elLossRepair = document.getElementById('home-loss-repair');
     const elLossIdle = document.getElementById('home-loss-idle');
     const elDeposits = document.getElementById('home-deposits');
-    const elBalance = document.getElementById('home-balance');
-
+const elBalance = document.getElementById('home-balance');
+if (elBalance) elBalance.textContent = fmtRub(balance);
     if (elLossRepair) elLossRepair.textContent = '-' + fmtRub(lossRepair);
     if (elLossIdle) elLossIdle.textContent = '-' + fmtRub(lossIdle);
     if (elDeposits) elDeposits.textContent = fmtRub(deposits);
@@ -614,4 +614,3 @@ function boot() {
 }
 
 document.addEventListener('DOMContentLoaded', boot);
-
