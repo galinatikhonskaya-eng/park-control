@@ -345,3 +345,87 @@ body{
 }
 .bn div{ font-size: 12px; opacity:.9; margin-top:4px; }
 
+/* ===== FIX Telegram layout ===== */
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background: #0b0b0c;
+  color: #fff;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* общий контейнер домашней */
+#home {
+  padding: 14px;
+  padding-bottom: calc(90px + env(safe-area-inset-bottom));
+}
+
+/* плитки (Договоры/Учёт авто/Водители/...) */
+#home-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* сама плитка */
+#home-tiles .tile {
+  width: 100%;
+  min-width: 0;
+  height: 86px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+}
+
+/* иконка + текст */
+#home-tiles .tile .ico { font-size: 22px; line-height: 1; }
+#home-tiles .tile .txt { font-size: 16px; font-weight: 600; }
+
+/* мини-статы (Авто в ремонте / ДТП за неделю) */
+#home-mini {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+#home-mini .mini {
+  height: 62px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  min-width: 0;
+}
+
+/* нижнее меню — закрепляем */
+.bottomNav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(10,10,12,0.85);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+
