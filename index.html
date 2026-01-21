@@ -2,217 +2,23 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Park Control</title>
-
-  <!-- Telegram WebApp SDK -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<link rel="stylesheet" href="style.css?v=10">
-<script src="app.js?v=10025"></script>
-
+  <link rel="stylesheet" href="styles.css" />
+</head>
 <body>
-  <div class="app">
-    <div class="shell">
+  <div id="app" class="app">
+    <header class="topbar" id="topbar">
+      <button class="icon-btn" id="backBtn" type="button" aria-label="Назад">←</button>
+      <div class="topbar__title" id="topTitle">Park Control</div>
+      <div class="topbar__right" id="topRight"></div>
+    </header>
 
-      <!-- SCREEN 1: ROLE -->
-      <section id="screen-role" class="screen active">
-        <div class="topbar">
-          <div>
-            <div class="title">Park Control</div>
-            <div class="sub">Выберите роль</div>
-          </div>
-          <div class="chip" id="chip-env">Web</div>
-        </div>
+    <main class="content" id="content" aria-live="polite"></main>
 
-        <div class="card">
-          <div class="sub" style="margin-top:0">
-            Каркас WebApp: роли → Home → Авто → Карточка авто → назад. Работает в Telegram и браузере.
-          </div>
-
-          <div class="btnRow">
-            <button class="btn primary" onclick="setRole('owner')">
-              <span>👑 Владелец</span><span class="muted">→</span>
-            </button>
-            <button class="btn" onclick="setRole('manager')">
-              <span>🧑‍💼 Менеджер</span><span class="muted">→</span>
-            </button>
-            <button class="btn" onclick="setRole('mechanic')">
-              <span>🔧 Механик</span><span class="muted">→</span>
-            </button>
-          </div>
-
-          <div class="mini">
-            Роль сохраняется локально, при повторном входе выбирать заново не нужно.
-          </div>
-        </div>
-      </section>
-
-      <!-- SCREEN 2: HOME -->
-      <!-- HOME -->
-<section id="home" class="screen">
-  <div class="homeBar">
-    <div class="homeTitle">Автопарк | Управление</div>
-    <button class="homeDots" type="button" onclick="toast('Меню позже')">•••</button>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </div>
 
-  <div class="card hello">
-    <div class="avatar"></div>
-    <div class="helloText">
-      <div id="home-greet" class="helloH">Здравствуйте!</div>
-      <div id="home-balance" style="padding:12px;color:#fff;opacity:.8">
-  0 ₽
-</div>
-        <div class="chipsRow">
-  <div id="chip-role" class="chip">роль</div>
-  <div id="chip-upd" class="chipUpd">обновлено</div>
-</div>
-        На линии: <b id="home-online-drivers">0</b> водителей | <b id="home-total-cars">0</b> авто
-      </div>
-    </div>
-  </div>
-
-  <div id="home-tiles" class="tiles">
-    <button class="tile" data-screen="docs" type="button"><span class="i">📄</span><span class="t">Договоры</span></button>
-    <button class="tile" data-screen="cars" type="button"><span class="i">🚗</span><span class="t">Учёт авто</span></button>
-    <button class="tile" data-screen="drivers" type="button"><span class="i">👮</span><span class="t">Водители</span></button>
-    <button class="tile" data-screen="payouts" type="button"><span class="i">💳</span><span class="t">Выплаты</span></button>
-    <button class="tile" data-screen="fines" type="button"><span class="i">⚠️</span><span class="t">Штрафы</span></button>
-    <button class="tile" data-screen="gps" type="button"><span class="i">📍</span><span class="t">GPS Контроль</span></button>
-  </div>
-
-  <div class="miniStats">
-    <button class="mini" data-carfilter="repair" type="button">
-      <span class="i">🚘</span><span class="k">Авто в ремонте:</span><b id="home-repair">0</b>
-    </button>
-    <button class="mini" data-carfilter="accident" type="button">
-      <span class="i">🚨</span><span class="k">ДТП за неделю:</span><b id="home-dtp">0</b>
-    </button>
-  </div>
-
-  <div class="card balance">
-    <div class="k">Баланс автопарка</div>
-    <div id="home-balance" class="v">0 ₽</div>
-  </div>
-
-  <div id="home-finance" class="financeGrid">
-    <div class="card fin">
-      <div class="k">Потери на ремонте</div>
-      <div id="home-loss-repair" class="v neg">-0 ₽</div>
-    </div>
-    <div class="card fin">
-      <div class="k">Потери на простое</div>
-      <div id="home-loss-idle" class="v neg">-0 ₽</div>
-    </div>
-    <div class="card fin wide">
-      <div class="k">Депозит водителей</div>
-      <div id="home-deposits" class="v pos">0 ₽</div>
-    </div>
-  </div>
-
-  <nav class="bottomNav">
-    <button class="bn" data-screen="requests" type="button">📥<div>Заявки</div></button>
-    <button class="bn" data-screen="newDrivers" type="button">➕<div>Новые</div></button>
-    <button class="bn" data-screen="notify" type="button">🔔<div>Увед.</div></button>
-    <button class="bn" data-screen="more" type="button">⋯<div>Ещё</div></button>
-  </nav>
-</section>
-
-      <!-- SCREEN 3: CARS LIST -->
-      <section id="screen-cars" class="screen">
-        <div class="topbar">
-          <button class="backBtn" onclick="goBack()">← Назад</button>
-          <div class="chip">🚗 Авто</div>
-        </div>
-
-        <div class="sub" style="margin-top:0">
-  Список машин карточками. Нажмите на авто, чтобы открыть карточку.
-</div>
-
-<div class="toolbar">
-  <input id="cars-q" class="input" placeholder="Поиск: номер или модель" oninput="renderCarsList()" />
-<div class="chips">
-    <button class="chipBtn active" onclick="setCarFilter('all', this)">Все</button>
-    <button class="chipBtn" onclick="setCarFilter('online', this)">🟢 Линия</button>
-    <button class="chipBtn" onclick="setCarFilter('repair', this)">🔧 Ремонт</button>
-    <button class="chipBtn" onclick="setCarFilter('idle', this)">⏸ Простой</button>
-    <button class="chipBtn" onclick="setCarFilter('accident', this)">⚠️ ДТП</button>
-  </div>
-</div>
-
-<div class="list" id="cars-list"></div>
-
-
-
-      </section>
-
-      <!-- SCREEN 4: CAR CARD -->
-      <section id="screen-car" class="screen">
-        <div class="topbar">
-          <button class="backBtn" onclick="goBack()">← Назад</button>
-          <div class="chip" id="car-chip">карточка</div>
-        </div>
-
-        <div class="title" id="car-title">Номер — модель</div>
-        <div class="sub" id="car-sub">Статус и простой</div>
-
-        <div class="section">
-          <div class="card" id="car-info"></div>
-
-          <div class="card" id="mech-inspection" style="display:none">
-            <div class="title" style="font-size:15px">Осмотр</div>
-            <div class="sub" style="margin-top:6px">Фото, комментарий и отметки. Сохранение — локально.</div>
-
-            <div class="field">
-              <div class="label">Фото (несколько)</div>
-<input class="input" id="insp-photos" type="file" accept="image/*" multiple />
-              <div class="thumbs" id="insp-thumbs"></div>
-            </div>
-
-            <div class="field">
-              <div class="label">Комментарий</div>
-              <textarea class="textarea" id="insp-comment" placeholder="Например: стук справа, проверить ходовку..."></textarea>
-            </div>
-
-            <div class="field">
-              <div class="label">Состояние</div>
-              <div class="checks">
-                <label class="check"><input type="radio" name="inspState" value="ok" /> ✅ ОК</label>
-                <label class="check"><input type="radio" name="inspState" value="need" /> 🛠 Нужен ремонт</label>
-                <label class="check"><input type="radio" name="inspState" value="crit" /> 🚨 Критично</label>
-              </div>
-            </div>
-
-            <div class="btnRow">
-              <button class="btn primary" onclick="saveInspection()">
-                <span>Сохранить осмотр</span><span class="muted">✓</span>
-              </button>
-            </div>
-
-            <div class="mini" id="insp-saved" style="display:none"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SCREEN 5: DOCS -->
-      <section id="screen-docs" class="screen">
-        <div class="topbar">
-          <button class="backBtn" onclick="goBack()">← Назад</button>
-          <div class="chip">📄 Документы</div>
-        </div>
-
-        <div class="card">
-          <div class="title" style="font-size:15px">Раздел в разработке</div>
-          <div class="sub">Скоро добавим шаблоны, договоры, ДТП и прочие документы.</div>
-          <div class="btnRow">
-            <button class="btn primary" onclick="goBack()"><span>Назад</span><span class="muted">→</span></button>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </div>
-
-  <div id="toast" class="toast">Сохранено</div>
+  <script src="app.js"></script>
 </body>
 </html>
