@@ -40,6 +40,7 @@ body{
 .shell{
   width: 100%;
   max-width: var(--maxw);
+  margin: 0 auto;             /* ВАЖНО: центрирование и ограничение */
   padding: calc(var(--pad) + env(safe-area-inset-top)) var(--pad)
            calc(var(--pad) + env(safe-area-inset-bottom)) var(--pad);
 }
@@ -427,24 +428,23 @@ body {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
-.tiles{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:12px;
-}
-
-.tile{
-  width:100%;
-  min-height:72px;
-  height:auto;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:14px 14px;
-  border-radius:16px;
-}
 
 .tile .i{ font-size:22px; line-height:1; }
 .tile .t{ font-weight:600; }
+.screen{
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+/* запрет распирания сеток */
+#home, 
+#home-tiles, 
+.miniStats, 
+.financeGrid{
+  width: 100%;
+  max-width: 100%;
+}
 
-
+.tile, .mini, .card{
+  min-width: 0;
+}
