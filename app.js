@@ -1,617 +1,583 @@
-(() => {
-  'use strict';
 
-  // ===== DOM =====
-  const el = {
-    content: document.getElementById('content'),
-    topTitle: document.getElementById('topTitle'),
-    backBtn: document.getElementById('backBtn'),
-    toast: document.getElementById('toast'),
-  };
+const APP_VERSION = "3";
+const LS_VER = "pc_ver";
 
-  // ===== Telegram WebApp =====
-  const tg = window.Telegram?.WebApp || null;
+(function forceUpdate() {
+  try {
+    const v = localStorage.getItem(LS_VER);
+    if (v !== APP_VERSION) {
+      localStorage.setItem(LS_VER, APP_VERSION);
+      // можно сбросить роль при обновлении, чтобы не тянуло старые состояния
+      localStorage.removeItem(LS_ROLE);
+    }
+  } catch (e) {}
+})();
 
-  function hexToRgba(hex, a = 1) {
+
+'use strict';
+
+// Telegram init (safe)
+const tg = window.Telegram?.WebApp || null;
+
+function isTelegramEnv() {
+  // В реальном Telegram всегда есть initData (не пустая строка)
+  return !!(tg && typeof tg.initData === 'string' && tg.initData.length > 0);
+}
+
+function initTelegram() {
+  const chipEnv = document.getElementById('chip-env');
+  if (chipEnv) chipEnv.textContent = isTelegramEnv() ? 'Telegram' : 'Web';
+
+  if (!tg) return;
+
+  try {
+    tg.ready();
+    tg.expand();
+
+    const tp = tg.themeParams || {};
+    if (tp.bg_color) document.documentElement.style.setProperty('--bg', tp.bg_color);
+    if (tp.text_color) document.documentElement.style.setProperty('--text', tp.text_color);
+    if (tp.hint_color) document.documentElement.style.setProperty('--muted', tp.hint_color);
+    if (tp.button_color) document.documentElement.style.setProperty('--accent', tp.button_color);
+
+    tg.BackButton.onClick(() => {
+      if (currentScreen === 'role') return;
+      goBack();
+    });
+  } catch (e) {
+    // no-op
+  }
+}
+
+// Mock data
+const state = { role: null, currentCarId: null };
+
+const stats = {
+  carsTotal: 150,
+  onLine: 100,
+  inRepair: 5,
+  idle: 2,
+  dptWeek: 1,
+  lossRepair: 593000,
+  lossIdle: 175000,
+  deposits: 320000
+};
+
+const cars = [
+  { id:'А101АА', model:'Kia Rio',          status:'online',   idleDays:0, driver:'Иван',   loss:593000, deposit:320000 },
+  { id:'В202ВВ', model:'Hyundai Solaris',  status:'repair',   idleDays:6, driver:'Сергей', loss:175000, deposit:120000 },
+  { id:'С303СС', model:'VW Polo',          status:'idle',     idleDays:3, driver:'—',      loss:0,      deposit:0 },
+  // остальные можно оставить как есть, или потом тоже дописать
+
+  { id: 'Е505ЕЕ', model: 'Renault Logan',   status: 'accident', idleDays: 2 },
+  { id: 'К777КК', model: 'Skoda Rapid',     status: 'online',   idleDays: 0 },
+
+  { id: 'М111ММ', model: 'Toyota Camry',    status: 'online',   idleDays: 0 },
+  { id: 'Н222НН', model: 'Kia K5',          status: 'idle',     idleDays: 1 },
+  { id: 'О333ОО', model: 'Lada Granta',     status: 'repair',   idleDays: 9 },
+  { id: 'Р444РР', model: 'Chery Tiggo 7',   status: 'online',   idleDays: 0 },
+  { id: 'Т555ТТ', model: 'Geely Coolray',   status: 'idle',     idleDays: 4 },
+];
+
+
+
+function statusBadge(status) {
+  const s = String(status || '').trim().toLowerCase();
+
+  // online / линия
+  if (s === 'online' || s.includes('линия') || s.includes('на линии')) {
+    return { cls: 'ok', text: '🟢 На линии' };
+  }
+
+  // repair / ремонт
+  if (s === 'repair' || s.includes('ремонт') || s.includes('в ремонте')) {
+    return { cls: 'warn', text: '🛠 Ремонт' };
+  }
+
+  // idle / простой
+  if (s === 'idle' || s.includes('простой') || s.includes('в простое')) {
+    return { cls: 'warn', text: '⏸ Простой' };
+  }
+
+  // accident / дтп
+  if (s === 'accident' || s.includes('дтп')) {
+    return { cls: 'bad', text: '⚠️ ДТП' };
+  }
+
+  return { cls: '', text: status || '' };
+}
+
+// Navigation
+const screens = {};
+let navStack = ['role'];
+let currentScreen = 'role';
+
+function bindScreens() {
+  screens.role = document.getElementById('screen-role');
+  screens.home = document.getElementById('screen-home');
+  screens.cars = document.getElementById('screen-cars');
+  screens.car  = document.getElementById('screen-car');
+  screens.docs = document.getElementById('screen-docs');
+}
+
+function setActiveScreen(name) {
+  Object.keys(screens).forEach(k => screens[k] && screens[k].classList.remove('active'));
+  if (screens[name]) screens[name].classList.add('active');
+  currentScreen = name;
+
+  if (tg) {
     try {
-      let h = String(hex).replace('#', '').trim();
-      if (h.length === 3) h = h.split('').map(c => c + c).join('');
-      const n = parseInt(h, 16);
-      const r = (n >> 16) & 255;
-      const g = (n >> 8) & 255;
-      const b = n & 255;
-      return `rgba(${r},${g},${b},${a})`;
-    } catch {
-      return `rgba(255,255,255,${a})`;
-    }
+      if (name === 'role') tg.BackButton.hide();
+      else tg.BackButton.show();
+    } catch (e) {}
+  }
+}
+
+function goTo(name) {
+  if (!screens[name]) return;
+  if (name === 'role') {
+    logout();
+    return;
+  }
+  navStack.push(name);
+  setActiveScreen(name);
+
+  if (name === 'home') renderHome();
+  if (name === 'cars') renderCarsList();
+  if (name === 'car') renderCarCard();
+}
+function goBack() {
+  if (navStack.length <= 1) return;
+  navStack.pop();
+  const prev = navStack[navStack.length - 1];
+  setActiveScreen(prev);
+
+  if (prev === 'home') renderHome();
+  if (prev === 'cars') renderCarsList();
+  if (prev === 'car') renderCarCard();
+}
+
+// Expose to window (required)
+window.goTo = goTo;
+window.goBack = goBack;
+
+// Role logic
+const LS_ROLE = 'pc_role';
+const LS_INSPECTIONS = 'pc_inspections';
+
+function getRoleTitle(role) {
+  if (role === 'owner') return 'Владелец';
+  if (role === 'manager') return 'Менеджер';
+  if (role === 'mechanic') return 'Механик';
+  return '';
+}
+function roleGreeting(role) {
+  if (role === 'owner') return 'Здравствуйте, владелец';
+  if (role === 'manager') return 'Здравствуйте, менеджер';
+  if (role === 'mechanic') return 'Здравствуйте, механик';
+  return 'Здравствуйте';
+}
+
+function loadRole() {
+  const saved = localStorage.getItem(LS_ROLE);
+  if (saved === 'owner' || saved === 'manager' || saved === 'mechanic') {
+    state.role = saved;
+    return saved;
+  }
+  return null;
+}
+function setRole(role) {
+  if (!(role === 'owner' || role === 'manager' || role === 'mechanic')) return;
+
+  state.role = role;
+  localStorage.setItem(LS_ROLE, role);
+
+  toast('Роль: ' + getRoleTitle(role));
+  goTo('home');
+}
+window.setRole = setRole;
+function logout() {
+  localStorage.removeItem(LS_ROLE);
+  state.role = null;
+  navStack = ['role'];
+  setActiveScreen('role');
+  toast('Роль сброшена');
+}
+
+window.setRole = setRole;
+window.logout = logout;
+
+// Screens render
+function renderHome() {
+  const r = state.role;
+
+  const greet = document.getElementById('home-greet');
+  if (greet) greet.textContent = roleGreeting(r);
+
+  const chipRole = document.getElementById('chip-role');
+  if (chipRole) chipRole.textContent = r ? getRoleTitle(r) : 'роль';
+
+  const chipUpd = document.getElementById('chip-upd');
+  if (chipUpd) chipUpd.textContent = 'обновлено: ' + new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+  const statsGrid = document.getElementById('stats-grid');
+  if (statsGrid) {
+    statsGrid.innerHTML = '';
+    const statCards = [
+      { k:'🚘 Авто всего', v: stats.carsTotal },
+      { k:'🟢 На линии', v: stats.onLine },
+      { k:'🔧 В ремонте', v: stats.inRepair },
+      { k:'⏸ В простое', v: stats.idle },
+      { k:'⚠️ ДТП за неделю', v: stats.dptWeek }
+    ];
+    statCards.forEach(x => {
+      const div = document.createElement('div');
+      div.className = 'metric';
+      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v">'+x.v+'</div>';
+      statsGrid.appendChild(div);
+    });
   }
 
-  function applyThemeFromTelegram() {
-    const tp = tg?.themeParams || {};
-    const css = document.documentElement.style;
+  const financeWrap = document.getElementById('finance-wrap');
+  const financeGrid = document.getElementById('finance-grid');
+  if (!financeWrap || !financeGrid) return;
 
-    if (tp.bg_color) css.setProperty('--bg', tp.bg_color);
-    if (tp.secondary_bg_color) css.setProperty('--card', hexToRgba(tp.secondary_bg_color, 0.55));
-    if (tp.text_color) css.setProperty('--text', tp.text_color);
-    if (tp.hint_color) css.setProperty('--hint', hexToRgba(tp.hint_color, 0.85));
-    if (tp.button_color) css.setProperty('--accent', tp.button_color);
-    if (tp.text_color) css.setProperty('--line', hexToRgba(tp.text_color, 0.12));
+  financeGrid.innerHTML = '';
+
+  if (r === 'mechanic') {
+    financeWrap.style.display = 'none';
+    return;
   }
+  financeWrap.style.display = 'block';
 
-  function initTelegram() {
-    console.log('[init] Telegram WebApp available:', !!tg);
-    if (!tg) return;
-
-    try {
-      tg.ready();
-      tg.expand();
-
-      applyThemeFromTelegram();
-
-      try { tg.setHeaderColor?.('secondary_bg_color'); } catch (_) {}
-      try { tg.setBackgroundColor?.(tg.themeParams?.bg_color || '#0f1115'); } catch (_) {}
-      try { tg.disableVerticalSwipes?.(); } catch (_) {}
-
-      console.log('[init] themeParams:', tg.themeParams);
-    } catch (e) {
-      console.log('[init] Telegram init error:', e);
-    }
+  if (r === 'owner') {
+    const cards = [
+      { k:'🔧 Потери на ремонте', v:'-' + fmtRub(stats.lossRepair), cls:'neg' },
+      { k:'🚫 Потери на простое', v:'-' + fmtRub(stats.lossIdle), cls:'neg' },
+      { k:'💳 Депозиты', v: fmtRub(stats.deposits), cls:'pos' }
+    ];
+    cards.forEach(x => {
+      const div = document.createElement('div');
+      div.className = 'metric';
+      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v small '+x.cls+'">'+x.v+'</div>';
+      financeGrid.appendChild(div);
+    });
+  } else if (r === 'manager') {
+    const cards = [
+      { k:'🔧 Потери на ремонте', v:'есть' },
+      { k:'🚫 Потери на простое', v:'есть' },
+      { k:'💳 Депозиты', v:'есть' }
+    ];
+    cards.forEach(x => {
+      const div = document.createElement('div');
+      div.className = 'metric';
+      div.innerHTML = '<div class="k">'+x.k+'</div><div class="v small">'+x.v+'</div>';
+      financeGrid.appendChild(div);
+    });
   }
+}
+function normPlate(s) {
+  s = String(s || '').trim().toLowerCase();
 
-  // ===== Utils =====
-  function money(n) {
-    const s = String(n).replace(/[^\d]/g, '');
-    const parts = [];
-    for (let i = s.length; i > 0; i -= 3) parts.unshift(s.substring(Math.max(0, i - 3), i));
-    return parts.join(' ') + ' ₽';
-  }
-
-  function toast(msg) {
-    el.toast.textContent = msg;
-    el.toast.classList.add('show');
-    setTimeout(() => el.toast.classList.remove('show'), 1600);
-  }
-
-  function htm(str) {
-    const t = document.createElement('template');
-    t.innerHTML = str.trim();
-    return t.content.firstElementChild;
-  }
-
-  function mount(node) {
-    el.content.innerHTML = '';
-    el.content.appendChild(node);
-    el.content.scrollTop = 0;
-  }
-
-  function setTopbar({ title, canBack }) {
-    el.topTitle.textContent = title || 'Park Control';
-    el.backBtn.style.visibility = canBack ? 'visible' : 'hidden';
-  }
-
-  // ===== Demo data =====
-  const demo = {
-    user: { name: 'Иван' },
-    stats: {
-      total: 150,
-      active: 130,
-      repair: 10,
-      idle: 10,
-      accident: 3,
-      repairLoss: 459000,
-      idleLoss: 35000,
-      deposits: 350000
-    },
-    drivers: [
-      { id: 1, name: 'Юрий Иванов' },
-      { id: 2, name: 'Алексей Смирнов' },
-      { id: 3, name: 'Марат Ахметов' },
-      { id: 4, name: 'Сергей Петров' }
-    ],
-    cars: [
-      { id: 1, number: 'K526CA78', model: 'Volkswagen Polo', driverId: 1, status: 'repair', days: 4, mileage: 126450, lastTO: 120000 },
-      { id: 2, number: 'A112BC78', model: 'Kia Rio', driverId: 2, status: 'active', days: 12, mileage: 98420, lastTO: 90000 },
-      { id: 3, number: 'M904EE78', model: 'Hyundai Solaris', driverId: 3, status: 'idle', days: 2, mileage: 153120, lastTO: 150000 },
-      { id: 4, number: 'P771OP78', model: 'Skoda Rapid', driverId: 4, status: 'accident', days: 1, mileage: 73110, lastTO: 60000 },
-      { id: 5, number: 'T090TT78', model: 'Renault Logan', driverId: 1, status: 'active', days: 18, mileage: 201330, lastTO: 195000 },
-      { id: 6, number: 'X333XX78', model: 'Lada Granta', driverId: 2, status: 'repair', days: 7, mileage: 64120, lastTO: 60000 },
-      { id: 7, number: 'E404KE78', model: 'Geely Emgrand', driverId: 3, status: 'active', days: 9, mileage: 112020, lastTO: 105000 },
-      { id: 8, number: 'B808BB78', model: 'Chery Tiggo', driverId: 4, status: 'idle', days: 5, mileage: 45200, lastTO: 45000 },
-      { id: 9, number: 'H515HH78', model: 'Nissan Almera', driverId: 1, status: 'active', days: 22, mileage: 179990, lastTO: 170000 },
-      { id: 10, number: 'C700CC78', model: 'Toyota Corolla', driverId: 2, status: 'accident', days: 3, mileage: 245600, lastTO: 240000 },
-    ],
-    documents: {
-      templates: [
-        { id: 'rent', title: 'Договор аренды ТС', subtitle: 'Шаблон + автоподстановка (демо)' },
-        { id: 'act', title: 'Акт приёма-передачи', subtitle: 'Фиксация состояния (демо)' },
-        { id: 'deposit', title: 'Соглашение о депозите', subtitle: 'Условия удержаний (демо)' },
-        { id: 'power', title: 'Доверенность', subtitle: 'Для управления/перегона (демо)' },
-      ],
-      dtp: [
-        { id: 'dtp1', title: 'Заявление о ДТП', subtitle: 'Шаблон (демо)' },
-        { id: 'dtp2', title: 'Объяснительная водителя', subtitle: 'Шаблон (демо)' },
-        { id: 'dtp3', title: 'Чек-лист материалов', subtitle: 'Список фото/доков (демо)' },
-      ]
-    }
+  const map = {
+    '\u0430': 'a', // а
+    '\u0432': 'b', // в
+    '\u0435': 'e', // е
+    '\u043a': 'k', // к
+    '\u043c': 'm', // м
+    '\u043d': 'h', // н
+    '\u043e': 'o', // о
+    '\u0440': 'p', // р
+    '\u0441': 'c', // с
+    '\u0442': 't', // т
+    '\u0443': 'y', // у
+    '\u0445': 'x'  // х
   };
 
-  const STATUS = {
-    active: { label: 'На линии', emoji: '🟢' },
-    repair: { label: 'В ремонте', emoji: '🛠️' },
-    idle: { label: 'В простое', emoji: '⏸️' },
-    accident: { label: 'ДТП', emoji: '⚠️' },
-  };
-
-  const storageKeyRole = 'parkControl.role';
-
-  const state = {
-    role: localStorage.getItem(storageKeyRole) || null,
-    carFilter: 'all'
-  };
-
-  const navStack = []; // {screen, params}
-
-  function getDriverName(id) {
-    return demo.drivers.find(d => d.id === id)?.name || '—';
-  }
-
-  function navigate(screen, params = {}) {
-    console.log('[nav] ->', screen, params);
-    navStack.push({ screen, params });
-    render();
-  }
-
-  function replace(screen, params = {}) {
-    console.log('[nav] replace ->', screen, params);
-    if (navStack.length) navStack.pop();
-    navStack.push({ screen, params });
-    render();
-  }
-
-  function back() {
-    if (navStack.length <= 1) return;
-    navStack.pop();
-    console.log('[nav] <- back');
-    render();
-  }
-
-  function current() {
-    return navStack[navStack.length - 1] || { screen: 'role', params: {} };
-  }
-
-  // ===== Screens =====
-  function screenRole() {
-    setTopbar({ title: 'Park Control', canBack: false });
-
-    const root = htm(`
-      <div class="container">
-        <div class="h1">Выбор роли</div>
-        <p class="sub">Выберите роль. Сохранится в localStorage.</p>
-
-        <div class="list">
-          <div class="item" data-role="owner">
-            <div class="item__head">
-              <div class="item__title">👤 Владелец</div>
-              <span class="badge">полный доступ</span>
-            </div>
-            <div class="item__meta">Статистика, документы, авто, финансы.</div>
-          </div>
-
-          <div class="item" data-role="manager">
-            <div class="item__head">
-              <div class="item__title">🧩 Менеджер</div>
-              <span class="badge">операции</span>
-            </div>
-            <div class="item__meta">Учёт авто, водители, уведомления.</div>
-          </div>
-
-          <div class="item" data-role="mechanic">
-            <div class="item__head">
-              <div class="item__title">🛠️ Механик</div>
-              <span class="badge">тех.блок</span>
-            </div>
-            <div class="item__meta">Ремонт, ТО, фото повреждений.</div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-        <button class="btn" id="continueBtn" type="button">Продолжить</button>
-      </div>
-    `);
-
-    let selected = state.role || null;
-
-    function paint() {
-      root.querySelectorAll('.item').forEach((it) => {
-        const r = it.getAttribute('data-role');
-        it.style.outline = (r === selected) ? '2px solid rgba(46,166,255,0.45)' : 'none';
-      });
-    }
-
-    root.querySelectorAll('.item').forEach((it) => {
-      it.addEventListener('click', () => {
-        selected = it.getAttribute('data-role');
-        console.log('[role] selected:', selected);
-        toast('Роль выбрана');
-        paint();
-      });
-    });
-
-    root.querySelector('#continueBtn').addEventListener('click', () => {
-      if (!selected) return toast('Выберите роль');
-      state.role = selected;
-      localStorage.setItem(storageKeyRole, selected);
-      replace('dashboard');
-    });
-
-    paint();
-    return root;
-  }
-
-  function roleChips(activeRole) {
-    const root = htm(`
-      <div class="chips">
-        <div class="chip ${activeRole === 'owner' ? 'active' : ''}" data-role="owner">👤 Владелец</div>
-        <div class="chip ${activeRole === 'manager' ? 'active' : ''}" data-role="manager">🧩 Менеджер</div>
-        <div class="chip ${activeRole === 'mechanic' ? 'active' : ''}" data-role="mechanic">🛠️ Механик</div>
-      </div>
-    `);
-
-    root.querySelectorAll('.chip').forEach((c) => {
-      c.addEventListener('click', () => {
-        const r = c.getAttribute('data-role');
-        state.role = r;
-        localStorage.setItem(storageKeyRole, r);
-        console.log('[role] switched:', r);
-        toast('Роль изменена');
-        replace('dashboard');
-      });
-    });
-
-    return root;
-  }
-
-  function screenDashboard() {
-    setTopbar({ title: 'Park Control', canBack: false });
-
-    const s = demo.stats;
-
-    const root = htm(`
-      <div class="container">
-        <div class="card pad">
-          <div class="h1">Здравствуйте, ${demo.user.name}!</div>
-          <p class="sub" style="margin:0">Короткая сводка и разделы.</p>
-        </div>
-
-        <div class="section-title">Роли</div>
-        <div id="roleSlot"></div>
-
-        <div class="section-title">Статистика</div>
-        <div class="grid stats">
-          <div class="stat"><div class="stat__label">Всего авто</div><div class="stat__value">${s.total}</div></div>
-          <div class="stat"><div class="stat__label">На линии</div><div class="stat__value">${s.active}</div></div>
-          <div class="stat"><div class="stat__label">В ремонте</div><div class="stat__value">${s.repair}</div></div>
-          <div class="stat"><div class="stat__label">В простое</div><div class="stat__value">${s.idle}</div></div>
-
-          <div class="stat"><div class="stat__label">ДТП</div><div class="stat__value">${s.accident}</div></div>
-          <div class="stat"><div class="stat__label">Потери на ремонте</div><div class="stat__value small">${money(s.repairLoss)}</div></div>
-          <div class="stat"><div class="stat__label">Потери на простое</div><div class="stat__value small">${money(s.idleLoss)}</div></div>
-          <div class="stat"><div class="stat__label">Депозиты</div><div class="stat__value small">${money(s.deposits)}</div></div>
-        </div>
-
-        <div class="section-title">Разделы</div>
-        <div class="tiles">
-          <div class="tile" data-go="documents">
-            <div class="tile__top"><div class="tile__name">Договоры и документы</div><div class="tile__icon">📄</div></div>
-            <div class="tile__hint">Шаблоны + ДТП</div>
-          </div>
-
-          <div class="tile" data-go="cars">
-            <div class="tile__top"><div class="tile__name">Учёт авто</div><div class="tile__icon">🚗</div></div>
-            <div class="tile__hint">Список, фильтры, карточка</div>
-          </div>
-
-          <div class="tile" data-go="stub" data-title="Водители">
-            <div class="tile__top"><div class="tile__name">Водители</div><div class="tile__icon">🧑‍✈️</div></div>
-            <div class="tile__hint">Демо</div>
-          </div>
-
-          <div class="tile" data-go="stub" data-title="Депозиты">
-            <div class="tile__top"><div class="tile__name">Депозиты</div><div class="tile__icon">💰</div></div>
-            <div class="tile__hint">Демо</div>
-          </div>
-
-          <div class="tile" data-go="stub" data-title="Штрафы">
-            <div class="tile__top"><div class="tile__name">Штрафы</div><div class="tile__icon">🧾</div></div>
-            <div class="tile__hint">Демо</div>
-          </div>
-
-          <div class="tile" data-go="stub" data-title="GPS контроль">
-            <div class="tile__top"><div class="tile__name">GPS контроль</div><div class="tile__icon">📍</div></div>
-            <div class="tile__hint">Демо</div>
-          </div>
-
-          <div class="tile" data-go="stub" data-title="Уведомления">
-            <div class="tile__top"><div class="tile__name">Уведомления</div><div class="tile__icon">🔔</div></div>
-            <div class="tile__hint">Демо</div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-        <button class="btn" id="resetRoleBtn" type="button">Сбросить роль</button>
-      </div>
-    `);
-
-    root.querySelector('#roleSlot').appendChild(roleChips(state.role));
-
-    root.querySelectorAll('.tile').forEach((t) => {
-      t.addEventListener('click', () => {
-        const go = t.getAttribute('data-go');
-        if (go === 'documents') return navigate('documents');
-        if (go === 'cars') return navigate('cars');
-        toast((t.getAttribute('data-title') || 'Раздел') + ' (демо)');
-      });
-    });
-
-    root.querySelector('#resetRoleBtn').addEventListener('click', () => {
-      localStorage.removeItem(storageKeyRole);
-      state.role = null;
-      replace('role');
-    });
-
-    return root;
-  }
-
-  function screenCars(params) {
-    setTopbar({ title: 'Учёт авто', canBack: true });
-
-    const activeFilter = params?.filter || state.carFilter || 'all';
-
-    const root = htm(`
-      <div class="container">
-        <div class="card pad">
-          <div class="h1">Учёт авто</div>
-          <p class="sub" style="margin:0">Фильтры по статусам + список авто.</p>
-        </div>
-
-        <div class="section-title">Фильтры</div>
-        <div class="chips">
-          <div class="chip ${activeFilter === 'all' ? 'active' : ''}" data-filter="all">Все</div>
-          <div class="chip ${activeFilter === 'active' ? 'active' : ''}" data-filter="active">🟢 На линии</div>
-          <div class="chip ${activeFilter === 'repair' ? 'active' : ''}" data-filter="repair">🛠️ В ремонте</div>
-          <div class="chip ${activeFilter === 'idle' ? 'active' : ''}" data-filter="idle">⏸️ В простое</div>
-          <div class="chip ${activeFilter === 'accident' ? 'active' : ''}" data-filter="accident">⚠️ ДТП</div>
-        </div>
-
-        <div class="section-title">Автомобили</div>
-        <div class="list" id="carsList"></div>
-      </div>
-    `);
-
-    const list = root.querySelector('#carsList');
-
-    function getCars() {
-      if (activeFilter === 'all') return demo.cars;
-      return demo.cars.filter(c => c.status === activeFilter);
-    }
-
-    function renderList() {
-      list.innerHTML = '';
-      const cars = getCars();
-
-      cars.forEach((c) => {
-        const st = STATUS[c.status];
-        const node = htm(`
-          <div class="item" data-car="${c.id}">
-            <div class="item__head">
-              <div class="item__title">${c.number} · ${c.model}</div>
-              <span class="badge">${st.emoji} ${st.label}</span>
-            </div>
-            <div class="item__meta">
-              Водитель: <b style="color:var(--text)">${getDriverName(c.driverId)}</b><br/>
-              В статусе: <b style="color:var(--text)">${c.days} дн.</b>
-            </div>
-          </div>
-        `);
-        node.addEventListener('click', () => navigate('car', { carId: c.id }));
-        list.appendChild(node);
-      });
-
-      if (!cars.length) {
-        list.appendChild(htm(`<div class="card pad"><div class="sub" style="margin:0">Нет авто по фильтру.</div></div>`));
-      }
-    }
-
-    root.querySelectorAll('.chip').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        const f = chip.getAttribute('data-filter');
-        state.carFilter = f;
-        console.log('[cars] filter:', f);
-        replace('cars', { filter: f });
-      });
-    });
-
-    renderList();
-    return root;
-  }
-
-  function screenCar(params) {
-    setTopbar({ title: 'Карточка авто', canBack: true });
-
-    const carId = Number(params?.carId);
-    const car = demo.cars.find(c => c.id === carId);
-
-    if (!car) {
-      return htm(`
-        <div class="container">
-          <div class="card pad">
-            <div class="h1">Авто не найдено</div>
-            <p class="sub" style="margin:0">Неверный carId</p>
-          </div>
-        </div>
-      `);
-    }
-
-    const st = STATUS[car.status];
-
-    const root = htm(`
-      <div class="container">
-        <div class="card pad">
-          <div class="item__head">
-            <div class="item__title">${car.number} · ${car.model}</div>
-            <span class="badge">${st.emoji} ${st.label}</span>
-          </div>
-          <div class="item__meta">
-            Водитель: <b style="color:var(--text)">${getDriverName(car.driverId)}</b><br/>
-            В статусе: <b style="color:var(--text)">${car.days} дн.</b>
-          </div>
-        </div>
-
-        <div class="section-title">ТО / пробег</div>
-        <div class="card pad">
-          <div class="kv">
-            <div class="kv__row"><span>Пробег</span><b>${car.mileage.toLocaleString('ru-RU')} км</b></div>
-            <div class="kv__row"><span>Последнее ТО</span><b>${car.lastTO.toLocaleString('ru-RU')} км</b></div>
-          </div>
-        </div>
-
-        <div class="section-title">Фото повреждений</div>
-        <div class="card pad">
-          <p class="sub" style="margin:0 0 12px 0">Заглушка (демо).</p>
-          <button class="btn" id="addPhotoBtn" type="button">📷 Добавить фото</button>
-        </div>
-      </div>
-    `);
-
-    root.querySelector('#addPhotoBtn').addEventListener('click', () => {
-      console.log('[car] add photo click:', car.id);
-      toast('Добавить фото (демо)');
-    });
-
-    return root;
-  }
-
-  function screenDocuments() {
-    setTopbar({ title: 'Документы', canBack: true });
-
-    const root = htm(`
-      <div class="container">
-        <div class="card pad">
-          <div class="h1">Документы</div>
-          <p class="sub" style="margin:0">Шаблоны + блок по ДТП.</p>
-        </div>
-
-        <div class="section-title">Шаблоны</div>
-        <div class="list" id="tpl"></div>
-
-        <div class="section-title">ДТП-документы</div>
-        <div class="list" id="dtp"></div>
-
-        <div class="hr"></div>
-        <button class="btn" id="createBtn" type="button">✍️ Создать договор (демо)</button>
-      </div>
-    `);
-
-    const tpl = root.querySelector('#tpl');
-    demo.documents.templates.forEach((d) => {
-      const node = htm(`
-        <div class="item">
-          <div class="item__head">
-            <div class="item__title">📄 ${d.title}</div>
-            <span class="badge">шаблон</span>
-          </div>
-          <div class="item__meta">${d.subtitle}</div>
-        </div>
-      `);
-      node.addEventListener('click', () => toast('Открыть шаблон (демо)'));
-      tpl.appendChild(node);
-    });
-
-    const dtp = root.querySelector('#dtp');
-    demo.documents.dtp.forEach((d) => {
-      const node = htm(`
-        <div class="item">
-          <div class="item__head">
-            <div class="item__title">⚠️ ${d.title}</div>
-            <span class="badge">ДТП</span>
-          </div>
-          <div class="item__meta">${d.subtitle}</div>
-        </div>
-      `);
-      node.addEventListener('click', () => toast('Открыть документ (демо)'));
-      dtp.appendChild(node);
-    });
-
-    root.querySelector('#createBtn').addEventListener('click', () => {
-      console.log('[docs] create contract');
-      toast('Создать договор (демо)');
-    });
-
-    return root;
-  }
-
-  // ===== Render =====
-  function render() {
-    const { screen, params } = current();
-
-    if (!state.role && screen !== 'role') {
-      console.log('[guard] no role -> role');
-      replace('role');
-      return;
-    }
-
-    let node;
-    switch (screen) {
-      case 'role': node = screenRole(); break;
-      case 'dashboard': node = screenDashboard(); break;
-      case 'cars': node = screenCars(params); break;
-      case 'car': node = screenCar(params); break;
-      case 'documents': node = screenDocuments(); break;
-      default:
-        node = htm(`
-          <div class="container">
-            <div class="card pad">
-              <div class="h1">Экран не найден</div>
-              <p class="sub" style="margin:0">${screen}</p>
-            </div>
-          </div>
-        `);
-    }
-
-    mount(node);
-
-    const canBack = navStack.length > 1 && screen !== 'dashboard' && screen !== 'role';
-    setTopbar({ title: el.topTitle.textContent, canBack });
-
-    console.log('[render]', screen, params);
-  }
-
-  // ===== Events =====
-  el.backBtn.addEventListener('click', () => {
-    try { tg?.HapticFeedback?.impactOccurred?.('light'); } catch (_) {}
-    back();
+  return s.replace(/[\u0430\u0432\u0435\u043a\u043c\u043d\u043e\u0440\u0441\u0442\u0443\u0445]/g, ch => map[ch] || ch);
+}
+
+function setCarFilter(filter, btn) {
+  state.carFilter = filter;
+
+  // подсветка активной кнопки
+  document.querySelectorAll('#screen-cars .chips .chipBtn, #screen-cars .chips .chip')
+    .forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  renderCarsList();
+}
+window.setCarFilter = setCarFilter;
+function renderCarsList() {
+  const list = document.getElementById('cars-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  const q = normPlate(document.getElementById('cars-q')?.value || '');
+  const filter = state.carFilter || 'all'; // all | online | repair | idle | accident
+
+  const filtered = cars.filter(c => {
+   const idStr = normPlate(c.id ?? '');
+const modelStr = normPlate(c.model ?? '');
+    const matchesQ = !q || idStr.includes(q) || modelStr.includes(q);
+    const matchesF = (filter === 'all') || (String(c.status) === filter);
+
+    return matchesQ && matchesF;
   });
 
-  // ===== Boot =====
-  function boot() {
-    console.log('[boot] start');
-    initTelegram();
+  filtered.forEach(c => {
+    const b = statusBadge(c.status);
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.onclick = () => openCar(c.id);
 
-    if (state.role) navStack.push({ screen: 'dashboard', params: {} });
-    else navStack.push({ screen: 'role', params: {} });
+    el.innerHTML =
+      '<div class="itemTop">' +
+        '<div class="itemTitle">🚗 ' + escapeHtml(c.id) + ' - ' + escapeHtml(c.model) + '</div>' +
+        '<div class="badge ' + b.cls + '">' + b.text + '</div>' +
+      '</div>' +
+      '<div class="row"><span>Простой</span><span>' + (c.idleDays ?? 0) + ' дн.</span></div>';
 
-    render();
+    list.appendChild(el);
+  });
+}
 
-    window.addEventListener('error', (e) => {
-      console.log('[error]', e?.message || e);
-      toast('Ошибка JS (смотри консоль)');
-    });
 
-    window.addEventListener('unhandledrejection', (e) => {
-      console.log('[unhandledrejection]', e?.reason || e);
-      toast('Ошибка Promise (смотри консоль)');
+
+
+function openCar(carId) {
+  state.currentCarId = carId;
+  goTo('car');
+}
+window.openCar = openCar;
+
+function renderCarCard() {
+  const r = state.role;
+  const carId = state.currentCarId;
+  const c = cars.find(x => x.id === carId) || cars[0];
+  const b = statusBadge(c.status);
+const loss = Number(c.loss ?? c.losses ?? 0);
+const deposit = Number(c.deposit ?? 0);
+  const carTitle = document.getElementById('car-title');
+  const carSub = document.getElementById('car-sub');
+  const carChip = document.getElementById('car-chip');
+  if (carTitle) carTitle.textContent = c.id + ' — ' + c.model;
+  if (carSub) carSub.textContent = b.text + ' • Простой: ' + c.idleDays + ' дн.';
+  if (carChip) carChip.textContent = getRoleTitle(r) || 'роль';
+
+  const info = document.getElementById('car-info');
+  if (!info) return;
+
+let html = '';
+
+html += `<div class="row"><span>Статус</span><b>${b.text}</b></div>`;
+html += `<div class="row"><span>Простой</span><b>${c.idleDays || 0} дн.</b></div>`;
+
+if (r === 'owner' || r === 'manager') {
+  html += `<div class="row"><span>Водитель</span><b>${escapeHtml(c.driver || '-')}</b></div>`;
+}
+  if (r === 'owner') {
+    html +=
+      '<div class="row"><span>Потери</span><span class="'+(loss>0?'neg':'')+'">'+(loss>0 ? ('-' + fmtRub(loss)) : '0 ₽')+'</span></div>' +
+'<div class="row"><span>Депозит</span><span class="'+(deposit>0?'pos':'')+'">'+fmtRub(deposit)+'</span></div>';
+  }
+
+  if (r === 'manager') {
+    html +=
+      '<div class="row"><span>Потери</span><span>'+((c.loss && c.loss>0) ? 'есть' : 'нет')+'</span></div>' +
+      '<div class="row"><span>Депозит</span><span>'+((c.deposit && c.deposit>0) ? 'есть' : 'нет')+'</span></div>';
+  }
+
+  info.innerHTML = html;
+
+  const mech = document.getElementById('mech-inspection');
+  if (mech) {
+    if (r === 'mechanic') {
+      mech.style.display = 'block';
+      loadInspectionIntoUI(c.id);
+    } else {
+      mech.style.display = 'none';
+    }
+  }
+}
+
+// Mechanic inspection (local save)
+function getInspections() {
+  try {
+    const raw = localStorage.getItem(LS_INSPECTIONS);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+function setInspections(obj) {
+  localStorage.setItem(LS_INSPECTIONS, JSON.stringify(obj));
+}
+
+function getSelectedInspectionState() {
+  const el = document.querySelector('input[name="inspState"]:checked');
+  return el ? el.value : null;
+}
+function setSelectedInspectionState(val) {
+  const el = document.querySelector('input[name="inspState"][value="'+val+'"]');
+  if (el) el.checked = true;
+}
+
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result || ''));
+    fr.onerror = reject;
+    fr.readAsDataURL(file);
+  });
+}
+
+async function saveInspection() {
+  const carId = state.currentCarId || '';
+  if (!carId) return;
+
+  const commentEl = document.getElementById('insp-comment');
+  const photosEl = document.getElementById('insp-photos');
+  const thumbsEl = document.getElementById('insp-thumbs');
+
+  const comment = commentEl ? String(commentEl.value || '').trim() : '';
+  const st = getSelectedInspectionState();
+
+  if (!st) {
+    toast('Выберите состояние (ОК / Нужен ремонт / Критично)');
+    return;
+  }
+
+  const files = Array.from((photosEl && photosEl.files) ? photosEl.files : []);
+  const limited = files.slice(0, 4);
+  const photos = [];
+
+  for (const f of limited) {
+    try {
+      const dataUrl = await fileToDataURL(f);
+      photos.push(dataUrl);
+    } catch (e) {}
+  }
+
+  const inspections = getInspections();
+  inspections[carId] = { savedAt: Date.now(), state: st, comment, photos };
+  setInspections(inspections);
+
+  if (thumbsEl) thumbsEl.innerHTML = (photos.length ? thumbsEl.innerHTML : thumbsEl.innerHTML);
+  showSavedInspectionHint(inspections[carId]);
+  toast('Осмотр сохранён');
+}
+window.saveInspection = saveInspection;
+
+function loadInspectionIntoUI(carId) {
+  const inspections = getInspections();
+  const i = inspections[carId];
+
+  const commentEl = document.getElementById('insp-comment');
+  const photosEl = document.getElementById('insp-photos');
+  const thumbsEl = document.getElementById('insp-thumbs');
+  const savedEl = document.getElementById('insp-saved');
+
+  if (commentEl) commentEl.value = '';
+  if (thumbsEl) thumbsEl.innerHTML = '';
+  if (photosEl) photosEl.value = '';
+  document.querySelectorAll('input[name="inspState"]').forEach(x => (x.checked = false));
+  if (savedEl) savedEl.style.display = 'none';
+
+  if (!i) return;
+
+  if (commentEl && i.comment) commentEl.value = i.comment;
+  if (i.state) setSelectedInspectionState(i.state);
+
+  if (thumbsEl && Array.isArray(i.photos)) {
+    i.
+photos.slice(0, 8).forEach(src => {
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      img.src = src;
+      thumbsEl.appendChild(img);
     });
   }
 
-  boot();
-})();
+  showSavedInspectionHint(i);
+}
+
+function showSavedInspectionHint(i) {
+  const el = document.getElementById('insp-saved');
+  if (!el) return;
+
+  const dt = new Date(i.savedAt || Date.now());
+  const label = (i.state === 'ok') ? '✅ ОК'
+              : (i.state === 'need') ? '🛠 Нужен ремонт'
+              : '🚨 Критично';
+
+  el.style.display = 'block';
+  el.className = 'mini';
+  el.textContent = 'Сохранено: ' + dt.toLocaleString('ru-RU') + ' • ' + label + (i.comment ? (' • ' + i.comment) : '');
+}
+
+// Photo thumbs preview
+function bindPhotoPreview() {
+  const photosInput = document.getElementById('insp-photos');
+  const thumbs = document.getElementById('insp-thumbs');
+  if (!photosInput || !thumbs) return;
+
+  photosInput.addEventListener('change', () => {
+    thumbs.innerHTML = '';
+    const files = Array.from(photosInput.files || []);
+    files.slice(0, 8).forEach(f => {
+      const url = URL.createObjectURL(f);
+      const img = document.createElement('img');
+      img.className = 'thumb';
+      img.src = url;
+      img.onload = () => URL.revokeObjectURL(url);
+      thumbs.appendChild(img);
+    });
+  });
+}
+
+// Utils
+function fmtRub(n) {
+  const v = Number(n || 0);
+  return v.toLocaleString('ru-RU') + ' ₽';
+}
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+let toastTimer = null;
+function toast(text) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+}
+
+// Boot
+function boot() {
+  bindScreens();
+  initTelegram();
+  bindPhotoPreview();
+
+  // (Опционально позже) авто-роль по tg user id:
+  // if (tg?.initDataUnsafe?.user?.id === 123456789) { localStorage.setItem(LS_ROLE,'owner'); }
+
+  const role = loadRole();
+  if (role) {
+    navStack = ['role', 'home'];
+    setActiveScreen('home');
+    renderHome();
+  } else {
+    setActiveScreen('role');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', boot);
