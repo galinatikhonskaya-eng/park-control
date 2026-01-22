@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Park Control — Demo</title>
+
+  <!-- Telegram WebApp SDK (в браузере просто не мешает) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+ <link rel="stylesheet" href="./styles.css">
+<script src="./app.js"></script>
+</head>
+<body>
+  <!-- Фон-картинка (имитация как на примере) -->
+  <div class="bg" aria-hidden="true"></div>
+
+  <div class="app">
+    <!-- Верхняя панель -->
+    <header class="topbar glass">
+      <button class="icon-btn" id="btnBack" aria-label="Назад">←</button>
+<div class="topbar__title">Автопарк | Управление — v7</div>
+      <button class="icon-btn" id="btnMore" aria-label="Меню">⋯</button>
+    </header>
+
+    <!-- Контент (скроллится) -->
+    <main class="content">
+      <!-- Приветствие -->
+      <section class="card glass greet">
+        <div class="avatar" aria-hidden="true">👤</div>
+        <div class="greet__text">
+          <div class="greet__title">Здравствуйте, Илон Маск!</div>
+          <div class="greet__sub">BUILD: v7</div>
+          <div class="greet__sub">На линии: <b>58</b> водителей &nbsp;|&nbsp; <b>124</b> авто</div>
+        </div>
+      </section>
+
+      <!-- Сетка меню -->
+      <section class="grid">
+        <button class="tile glass" data-route="contracts">
+          <div class="tile__icon">📄</div>
+          <div class="tile__label">Договоры</div>
+          <span class="tile__badge">•</span>
+        </button>
+
+        <button class="tile glass" data-route="cars">
+          <div class="tile__icon">🚖</div>
+          <div class="tile__label">Учёт авто</div>
+        </button>
+
+        <button class="tile glass" data-route="drivers">
+          <div class="tile__icon">👮</div>
+          <div class="tile__label">Водители</div>
+        </button>
+
+        <button class="tile glass" data-route="payouts">
+          <div class="tile__icon">💵</div>
+          <div class="tile__label">Выплаты</div>
+        </button>
+
+        <button class="tile glass" data-route="fines">
+          <div class="tile__icon">⚠️</div>
+          <div class="tile__label">Штрафы</div>
+        </button>
+
+        <button class="tile glass" data-route="gps">
+          <div class="tile__icon">📍</div>
+          <div class="tile__label">GPS Контроль</div>
+        </button>
+      </section>
+
+      <!-- Быстрые показатели -->
+      <section class="row2">
+        <div class="chip glass">
+          <span class="chip__icon">🚙</span>
+          <span class="chip__text">Авто в ремонте:</span>
+          <b class="chip__value">3</b>
+        </div>
+
+        <div class="chip glass">
+          <span class="chip__icon">🚨</span>
+          <span class="chip__text">ДТП за неделю:</span>
+          <b class="chip__value chip__value--red">2</b>
+        </div>
+      </section>
+
+      <!-- Баланс -->
+      <section class="card glass balance">
+        <div class="balance__label">Баланс автопарка</div>
+        <div class="balance__amount">1 254 300 ₽</div>
+      </section>
+
+      <!-- Два блока как на примере -->
+      <section class="row2">
+        <div class="mini glass">
+          <div class="mini__top">
+            <span class="mini__icon">💼</span>
+            <span class="mini__title">Поступления</span>
+          </div>
+          <div class="mini__value">1 254 300 ₽</div>
+        </div>
+
+        <div class="mini glass mini--danger">
+          <div class="mini__top">
+            <span class="mini__icon">🧾</span>
+            <span class="mini__title">Расходы</span>
+          </div>
+          <div class="mini__value mini__value--red">- 47 600 ₽</div>
+        </div>
+      </section>
+
+      <!-- Депозит -->
+      <section class="card glass deposit">
+        <div class="deposit__label">Депозит водителей</div>
+        <div class="deposit__amount"><span class="deposit__icon">💰</span> 619 000 ₽</div>
+      </section>
+
+      <!-- нижний отступ под таббар -->
+      <div class="spacer"></div>
+    </main>
+
+    <!-- Нижняя навигация -->
+    <nav class="tabbar glass" role="navigation" aria-label="Нижнее меню">
+      <button class="tab active" data-tab="requests">
+        <div class="tab__icon">🗂️</div>
+        <div class="tab__label">Заявки</div>
+        <span class="badge">1</span>
+      </button>
+
+      <button class="tab" data-tab="newdrivers">
+        <div class="tab__icon">👥</div>
+        <div class="tab__label">Новые водители</div>
+      </button>
+
+      <button class="tab" data-tab="notifications">
+        <div class="tab__icon">🔔</div>
+        <div class="tab__label">Уведомления</div>
+        <span class="badge">5</span>
+      </button>
+
+      <button class="tab" data-tab="more">
+        <div class="tab__icon">⋯</div>
+        <div class="tab__label">Ещё</div>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
