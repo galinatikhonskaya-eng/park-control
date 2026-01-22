@@ -1,77 +1,89 @@
-const tg = window.Telegram?.WebApp || null;
+// Park Control — Demo (Telegram WebApp ready)
+(function () {
+  const tg = window.Telegram?.WebApp;
 
-function syncAppHeight() {
-  const h = tg?.viewportHeight || window.innerHeight;
-  document.documentElement.style.setProperty('--app-h', `${h}px`);
-}
+  // ===== Telegram init =====
+  function initTelegram() {
+    if (!tg) return;
 
-function applyTelegramTheme() {
-  if (!tg) return;
+    try { tg.ready(); } catch (_) {}
+    try { tg.expand(); } catch (_) {}
 
-  const p = tg.themeParams || {};
-  const root = document.documentElement;
+    // theme colors (safe)
+    try { tg.setHeaderColor?.('#0b1428'); } catch (_) {}
+    try { tg.setBackgroundColor?.('#0b1220'); } catch (_) {}
 
-  // Если Telegram отдаёт цвета — подстроим текст/подсказки
-  if (p.text_color) root.style.setProperty('--text', p.text_color);
-  if (p.hint_color) root.style.setProperty('--muted', p.hint_color);
-
-  // Попросим Telegram оформить системные цвета (если доступно)
-  try { tg.setHeaderColor?.('secondary_bg_color'); } catch (_) {}
-  try { tg.setBackgroundColor?.(p.bg_color || '#0b1220'); } catch (_) {}
-}
-
-function initTelegram() {
-  syncAppHeight();
-  window.addEventListener('resize', syncAppHeight);
-
-  if (!tg) return;
-
-  tg.ready();
-  tg.expand();
-
-  // помогает на iOS, чтобы не “дёргалось”
-  try { tg.disableVerticalSwipes?.(); } catch (_) {}
-
-  applyTelegramTheme();
-
-  try { tg.onEvent('viewportChanged', syncAppHeight); } catch (_) {}
-}
-
-function showDemoAction(text) {
-  if (tg?.showPopup) {
-    tg.showPopup({
-      title: 'Demo',
-      message: text,
-      buttons: [{ id: 'ok', type: 'ok', text: 'Ок' }]
-    });
-  } else {
-    alert(text);
+    // iOS viewport fixes
+    const setVh = () => {
+      const h = tg.viewportStableHeight || window.innerHeight;
+      document.documentElement.style.setProperty('--vh', `${h * 0.01}px`);
+    };
+    setVh();
+    try { tg.onEvent('viewportChanged', setVh); } catch (_) {}
   }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-  initTelegram();
+  // ===== Greeting + Avatar =====
+  function initGreeting() {
+    const titleEl = document.getElementById('helloTitle');
+    const avatarEl = document.getElementById('tgAvatar');
 
-  document.getElementById('btnBack')?.addEventListener('click', () => {
-    if (tg?.close) tg.close();
-    else history.back();
-  });
+    const fallbackName = 'Остап';
+    let name = fallbackName;
 
-  document.getElementById('btnMore')?.addEventListener('click', () => {
-    showDemoAction('Меню: позже добавим экран "Ещё".');
-  });
+    if (tg?.initDataUnsafe?.user) {
+      const u = tg.initDataUnsafe.user;
+      name = (u.first_name || u.username || fallbackName).trim();
+    }
 
-  document.querySelectorAll('.tile').forEach(btn => {
-    btn.addEventListener('click', () => {
-      showDemoAction(`Открыть раздел: ${btn.dataset.route} (демо).`);
+    if (titleEl) titleEl.textContent = `Здравствуйте, ${name}!`;
+
+    // Telegram WebApp не отдаёт photo_url напрямую.
+    // Делаем красивую телеграм-плашку с первой буквой имени.
+    if (avatarEl) {
+      const letter = (name || 'P').charAt(0).toUpperCase();
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2b6cff" stop-opacity="0.95"/>
+              <stop offset="1" stop-color="#25d3ff" stop-opacity="0.75"/>
+            </linearGradient>
+          </defs>
+          <rect width="120" height="120" rx="60" fill="url(#g)"/>
+          <text x="60" y="74" text-anchor="middle" font-size="56"
+                font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial"
+                fill="white" font-weight="800">${letter}</text>
+        </svg>`;
+      avatarEl.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+  }
+
+  // ===== Basic interactions (demo) =====
+  function bindUI() {
+    // back
+    document.querySelector('[data-action="back"]')?.addEventListener('click', () => {
+      if (tg?.BackButton) {
+        // Если захочешь реальную навигацию — сделаем роутер.
+      }
+      if (tg?.close) tg.close();
+      else history.back();
     });
-  });
 
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      showDemoAction(`Нижнее меню: ${tab.dataset.tab} (демо).`);
+    // tile click demo
+    document.querySelectorAll('[data-route]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const route = el.getAttribute('data-route');
+        if (tg?.HapticFeedback) {
+          try { tg.HapticFeedback.impactOccurred('light'); } catch (_) {}
+        }
+        console.log('route:', route);
+      });
     });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initTelegram();
+    initGreeting();
+    bindUI();
   });
-});
+})();
