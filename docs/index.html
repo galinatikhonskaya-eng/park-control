@@ -6,36 +6,39 @@
   <meta name="color-scheme" content="dark" />
   <title>Park Control</title>
 
-  <link rel="stylesheet" href="styles.css?v=101" />
+  <!-- ВАЖНО: меняй v=... после правок, чтобы Telegram точно обновлял -->
+  <link rel="stylesheet" href="./styles.css?v=200" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
 <body>
   <div class="app">
-    <!-- Верхняя панель -->
-  <header class="topbar">
-  <button class="iconbtn" type="button" aria-label="Назад" onclick="history.back()">←</button>
+    <!-- TOPBAR: без заголовка и без "..." -->
+    <header class="topbar glass">
+      <button class="iconbtn" type="button" aria-label="Назад" data-action="back">←</button>
 
-  <div class="topbar__center">
-    <div class="hello">
-  <div class="hello__avatar" id="tgAvatarWrap">
-    <img id="tgAvatar" alt="" />
-  </div>
+      <!-- Приветствие ВВЕРХУ (на месте заголовка) -->
+      <div class="topbar__center">
+        <div class="hello">
+          <div class="hello__avatar" id="tgAvatarWrap">
+            <img id="tgAvatar" alt="" />
+          </div>
 
-  <div class="hello__text">
-    <div class="hello__title" id="tgHelloTitle">Здравствуйте, D!</div>
-    <div class="hello__sub" id="tgHelloSub">На линии: 58 водителей · 124 авто</div>
-  </div>
-</div>
+          <div class="hello__text">
+            <div class="hello__title" id="tgHelloTitle">Здравствуйте, Остап!</div>
+            <div class="hello__sub" id="tgHelloSub">На линии: 58 водителей · 124 авто</div>
+          </div>
+        </div>
+      </div>
 
+      <!-- пустая кнопка-спейсер, чтобы центр не "уезжал" -->
+      <div class="topbar__spacer" aria-hidden="true"></div>
+    </header>
 
-</header>
-
-
-    <!-- Контент -->
     <main class="content">
-      <div class="grid2">
-        <button class="tile glass" type="button" data-route="contracts">
+      <!-- Плитки -->
+      <section class="grid2">
+        <button class="tile glass" type="button" data-route="docs">
           <div class="tile__emoji">📄</div>
           <div class="tile__label">Документы</div>
         </button>
@@ -52,21 +55,21 @@
 
         <button class="tile glass" type="button" data-route="payouts">
           <div class="tile__emoji">💳</div>
-          <div class="tile__label">Штрафы</div>
+          <div class="tile__label">Выплаты</div>
         </button>
 
         <button class="tile glass" type="button" data-route="fines">
           <div class="tile__emoji">⚠️</div>
-          <div class="tile__label">Запчасти</div>
+          <div class="tile__label">Штрафы</div>
         </button>
 
         <button class="tile glass" type="button" data-route="gps">
           <div class="tile__emoji">📍</div>
           <div class="tile__label">GPS Контроль</div>
         </button>
-      </div>
+      </section>
 
-      <!-- Нижние 2 плитки (под блоком штрафы) -->
+      <!-- KPI (под плитками) -->
       <section class="infogrid" aria-label="Показатели">
         <button class="infoitem glass" type="button" data-route="repair">
           <div class="infoitem__emoji">🚙</div>
@@ -75,6 +78,17 @@
             <div class="infoitem__sub">
               Расход ремонта:
               <span class="neg">- 402&nbsp;000₽</span>
+            </div>
+          </div>
+        </button>
+
+        <button class="infoitem glass" type="button" data-route="idle">
+          <div class="infoitem__emoji">🅿️</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">Авто в простое: <b>5</b></div>
+            <div class="infoitem__sub">
+              Потери:
+              <span class="neg">- 17&nbsp;500₽</span>
             </div>
           </div>
         </button>
@@ -90,34 +104,36 @@
           </div>
         </button>
       </section>
+
+      <div class="spacer"></div>
     </main>
 
-    <!-- Нижняя панель: БЕЗ ЛИНИЙ, только иконки + подписи -->
+    <!-- Нижняя навигация -->
     <nav class="bottombar glass" aria-label="Навигация">
-      <button class="navbtn active" type="button" data-route="requests">
+      <button class="navbtn active" type="button" data-route="requests" aria-label="Заявки">
         <span class="navbtn__emoji">🗂️</span>
         <span class="badge">1</span>
         <span class="navbtn__label">Заявки</span>
       </button>
 
-      <button class="navbtn" type="button" data-route="new">
+      <button class="navbtn" type="button" data-route="new" aria-label="Новые">
         <span class="navbtn__emoji">👥</span>
         <span class="navbtn__label">Новые</span>
       </button>
 
-      <button class="navbtn" type="button" data-route="alerts">
+      <button class="navbtn" type="button" data-route="alerts" aria-label="Уведомления">
         <span class="navbtn__emoji">🔔</span>
         <span class="badge">5</span>
         <span class="navbtn__label">Увед.</span>
       </button>
 
-      <button class="navbtn" type="button" data-route="more">
+      <button class="navbtn" type="button" data-route="more" aria-label="Ещё">
         <span class="navbtn__emoji">⋯</span>
         <span class="navbtn__label">Ещё</span>
       </button>
     </nav>
   </div>
 
-  <script src="app.js?v=101"></script>
+  <script src="./app.js?v=200"></script>
 </body>
 </html>
