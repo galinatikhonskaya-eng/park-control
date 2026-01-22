@@ -1,44 +1,31 @@
-// Park Control — Demo (Telegram WebApp ready)
 (function () {
-  const tg = window.Telegram?.WebApp;
+  const tg = window.Telegram?.WebApp || null;
 
-  // ===== Telegram init =====
   function initTelegram() {
     if (!tg) return;
 
     try { tg.ready(); } catch (_) {}
     try { tg.expand(); } catch (_) {}
 
-    // theme colors (safe)
     try { tg.setHeaderColor?.('#0b1428'); } catch (_) {}
     try { tg.setBackgroundColor?.('#0b1220'); } catch (_) {}
-
-    // iOS viewport fixes
-    const setVh = () => {
-      const h = tg.viewportStableHeight || window.innerHeight;
-      document.documentElement.style.setProperty('--vh', `${h * 0.01}px`);
-    };
-    setVh();
-    try { tg.onEvent('viewportChanged', setVh); } catch (_) {}
   }
 
-  // ===== Greeting + Avatar =====
   function initGreeting() {
     const titleEl = document.getElementById('helloTitle');
     const avatarEl = document.getElementById('tgAvatar');
 
-    const fallbackName = 'Остап';
-    let name = fallbackName;
+    let name = 'Остап';
 
     if (tg?.initDataUnsafe?.user) {
       const u = tg.initDataUnsafe.user;
-      name = (u.first_name || u.username || fallbackName).trim();
+      name = (u.first_name || u.username || 'Остап').trim();
     }
 
     if (titleEl) titleEl.textContent = `Здравствуйте, ${name}!`;
 
-    // Telegram WebApp не отдаёт photo_url напрямую.
-    // Делаем красивую телеграм-плашку с первой буквой имени.
+    // В WebApp нет прямого доступа к аватарке пользователя без бота/сервера.
+    // Делаем "телеграм-плашку" с первой буквой имени (визуально как аватар).
     if (avatarEl) {
       const letter = (name || 'P').charAt(0).toUpperCase();
       const svg = `
@@ -58,24 +45,16 @@
     }
   }
 
-  // ===== Basic interactions (demo) =====
   function bindUI() {
-    // back
     document.querySelector('[data-action="back"]')?.addEventListener('click', () => {
-      if (tg?.BackButton) {
-        // Если захочешь реальную навигацию — сделаем роутер.
-      }
       if (tg?.close) tg.close();
       else history.back();
     });
 
-    // tile click demo
     document.querySelectorAll('[data-route]').forEach((el) => {
       el.addEventListener('click', () => {
         const route = el.getAttribute('data-route');
-        if (tg?.HapticFeedback) {
-          try { tg.HapticFeedback.impactOccurred('light'); } catch (_) {}
-        }
+        try { tg?.HapticFeedback?.impactOccurred('light'); } catch (_) {}
         console.log('route:', route);
       });
     });
