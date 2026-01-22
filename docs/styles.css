@@ -15,6 +15,8 @@
 
   --topbar-h: 52px;
   --tabbar-h: 66px;
+
+  --infobar-h: 86px;
 }
 
 *{ box-sizing: border-box; }
@@ -153,51 +155,67 @@ body{
   border: 2px solid rgba(0,0,0,.28);
 }
 
-.row2{
-  margin-top: var(--gap);
+/* Spacer: учитываем инфобар + таббар */
+.spacer{
+  height: calc(var(--infobar-h) + var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);
+}
+
+/* ===== InfoBar (2 items) ===== */
+.infobar{
+  height: var(--infobar-h);
+  padding: 10px var(--pad);
   display:grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--gap);
+  gap: 10px;
+
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
 }
 
-.chip{
-  border-radius: var(--radius2);
-  padding: 10px 12px;
-  display:flex;
-  align-items:center;
-  gap: 8px;
-  background: rgba(255,255,255,.05);
+.infoitem{
   border: 1px solid rgba(255,255,255,.10);
-}
-
-.chip__emoji{ opacity: .88; }
-.chip__text{ color: var(--muted); font-size: 12.5px; }
-.chip__value{ margin-left:auto; font-size: 15px; font-weight: 850; }
-.chip__value--red{ color: var(--danger); }
-
-/* stacked chip (2 lines) */
-.chip--stack{ height: auto; }
-.chip__row{
+  background: rgba(255,255,255,.05);
+  border-radius: 14px;
+  padding: 10px 10px;
   display:flex;
-  align-items:center;
-  gap: 8px;
-  width: 100%;
+  align-items:flex-start;
+  gap: 10px;
+  color: var(--text);
+  text-align:left;
 }
-.chip__sub{
-  margin-top: 6px;
+
+.infoitem:active{ transform: translateY(1px); }
+
+.infoitem__emoji{
+  width: 22px;
+  display:flex;
+  justify-content:center;
+  font-size: 18px;
+  opacity: .90;
+  margin-top: 1px;
+}
+
+.infoitem__title{
+  font-size: 12.8px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.infoitem__sub{
+  margin-top: 5px;
   font-size: 12.5px;
   color: var(--muted);
+  line-height: 1.15;
 }
-.chip__sub--red{
+
+.neg{
   color: var(--danger);
-  font-weight: 750;
+  font-weight: 800;
 }
 
-.spacer{
-  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 8px);
-}
-
-/* Tabbar: только иконки, без рамок */
+/* ===== Tabbar: icons only ===== */
 .tabbar{
   height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
   padding: 8px var(--pad) calc(8px + env(safe-area-inset-bottom));
@@ -212,8 +230,8 @@ body{
 
 .tab{
   position: relative;
-  border: 0;                 /* убрали линию */
-  background: transparent;   /* без плашки */
+  border: 0;
+  background: transparent;
   color: var(--text);
   border-radius: 14px;
   padding: 10px 6px;
@@ -233,7 +251,6 @@ body{
   opacity: .92;
 }
 
-/* на всякий — если где-то остались подписи */
 .tab__label{ display:none; }
 
 .badge{
@@ -255,4 +272,6 @@ body{
 
 @media (max-width: 360px){
   .tile{ min-height: 52px; }
+  .infoitem__title{ font-size: 12.4px; }
+  .infoitem__sub{ font-size: 12.2px; }
 }
