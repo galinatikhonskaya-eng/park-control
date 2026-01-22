@@ -5,31 +5,26 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Park Control</title>
 
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- IMPORTANT: меняй v=... после каждого обновления, чтобы Telegram не кэшировал -->
-  <link rel="stylesheet" href="./styles.css?v=10" />
+  <!-- Меняй v=... после каждого обновления, чтобы Telegram не кэшировал -->
+  <link rel="stylesheet" href="./styles.css?v=12" />
 </head>
 
 <body>
   <div class="app">
-    <!-- Topbar (full width, no "window in window") -->
     <header class="topbar glass">
       <button class="icon-btn" id="btnBack" aria-label="Назад">←</button>
       <div class="topbar__title">Автопарк | Управление</div>
       <button class="icon-btn" id="btnMore" aria-label="Меню">⋯</button>
     </header>
 
-    <!-- Scrollable content -->
     <main class="content">
-      <!-- Compact header instead of greeting card -->
       <section class="hello">
         <div class="hello__title">Остап</div>
         <div class="hello__sub">На линии: <b>58</b> водителей • <b>124</b> авто</div>
       </section>
 
-      <!-- Menu tiles (emoji only, no square icon blocks) -->
       <section class="grid">
         <button class="tile glass" data-route="contracts">
           <span class="tile__emoji">📄</span>
@@ -63,74 +58,52 @@
         </button>
       </section>
 
-      <!-- Compact stats -->
+      <!-- Обновлённые блоки с расходами -->
       <section class="row2">
-        <div class="chip glass">
-          <span class="chip__emoji">🚙</span>
-          <span class="chip__text">В ремонте</span>
-          <b class="chip__value">3</b>
+        <div class="chip glass chip--stack">
+          <div class="chip__row">
+            <span class="chip__emoji">🚙</span>
+            <span class="chip__text">Авто в ремонте</span>
+            <b class="chip__value">3</b>
+          </div>
+          <div class="chip__sub chip__sub--red">Расход ремонта: - 402 000₽</div>
         </div>
 
-        <div class="chip glass">
-          <span class="chip__emoji">🚨</span>
-          <span class="chip__text">ДТП / нед.</span>
-          <b class="chip__value chip__value--red">2</b>
+        <div class="chip glass chip--stack">
+          <div class="chip__row">
+            <span class="chip__emoji">🚨</span>
+            <span class="chip__text">ДТП за месяц</span>
+            <b class="chip__value">2</b>
+          </div>
+          <div class="chip__sub chip__sub--red">Расход по ДТП: - 200 000₽</div>
         </div>
-      </section>
-
-      <!-- Balance (more compact so text fits) -->
-      <section class="card glass balance">
-        <div class="balance__label">Баланс автопарка</div>
-        <div class="balance__amount">1 254 300 ₽</div>
-      </section>
-
-      <section class="row2">
-        <div class="mini glass">
-          <div class="mini__top">Поступления</div>
-          <div class="mini__value">1 254 300 ₽</div>
-        </div>
-
-        <div class="mini glass">
-          <div class="mini__top mini__top--muted">Расходы</div>
-          <div class="mini__value mini__value--red">- 47 600 ₽</div>
-        </div>
-      </section>
-
-      <section class="card glass deposit">
-        <div class="deposit__label">Депозит водителей</div>
-        <div class="deposit__amount">619 000 ₽</div>
       </section>
 
       <div class="spacer"></div>
     </main>
 
-    <!-- Bottom tabbar (full width, modern) -->
+    <!-- Нижнее меню: только иконки, без рамок и без текста -->
     <nav class="tabbar glass" role="navigation" aria-label="Нижнее меню">
-      <button class="tab active" data-tab="requests">
+      <button class="tab active" data-tab="requests" aria-label="Заявки">
         <div class="tab__emoji">🗂️</div>
-        <div class="tab__label">Заявки</div>
         <span class="badge">1</span>
       </button>
 
-      <button class="tab" data-tab="newdrivers">
+      <button class="tab" data-tab="newdrivers" aria-label="Новые">
         <div class="tab__emoji">👥</div>
-        <div class="tab__label">Новые</div>
       </button>
 
-      <button class="tab" data-tab="notifications">
+      <button class="tab" data-tab="notifications" aria-label="Уведомления">
         <div class="tab__emoji">🔔</div>
-        <div class="tab__label">Уведомл.</div>
         <span class="badge">5</span>
       </button>
 
-      <button class="tab" data-tab="more">
+      <button class="tab" data-tab="more" aria-label="Ещё">
         <div class="tab__emoji">⋯</div>
-        <div class="tab__label">Ещё</div>
       </button>
     </nav>
   </div>
 
-  <!-- IMPORTANT: меняй v=... после каждого обновления -->
-  <script src="./app.js?v=10"></script>
+  <script src="./app.js?v=12"></script>
 </body>
 </html>
