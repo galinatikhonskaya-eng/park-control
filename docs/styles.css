@@ -267,3 +267,7 @@ body{
   .infoitem__title{ font-size: 12.4px; }
   .infoitem__sub{ font-size: 12.2px; }
 }
+.neg--break{
+  display: block;
+  margin-top: 4px;
+}
