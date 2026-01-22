@@ -271,3 +271,4 @@ body{
   display: block;
   margin-top: 4px;
 }
+.neg--nowrap{ white-space: nowrap; }
