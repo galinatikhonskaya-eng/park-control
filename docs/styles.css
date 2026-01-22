@@ -394,3 +394,34 @@ body{
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
+/* Приветствие без карточки/рамки */
+.hello{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Кружок аватара — без обводки и без заливки */
+.hello__avatar{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Фото аккуратно в кружке */
+.hello__avatar img{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Текст без подложки */
+.hello__text{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
