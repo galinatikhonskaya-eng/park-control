@@ -66,3 +66,43 @@
     bindUI();
   });
 })();
+function setTelegramUserUI() {
+  const tg = window.Telegram?.WebApp || null;
+  const user = tg?.initDataUnsafe?.user || null;
+
+  const titleEl = document.getElementById('tgHelloTitle');
+  const subEl = document.getElementById('tgHelloSub');
+
+  // Имя
+  const name =
+    user?.first_name ||
+    user?.username ||
+    'водитель';
+
+  if (titleEl) titleEl.textContent = `Здравствуйте, ${name}!`;
+
+  // Аватар (если Telegram отдаёт photo_url)
+  const img = document.getElementById('tgAvatar');
+  const fallback = document.getElementById('tgAvatarFallback');
+
+  if (img && fallback) {
+    const photo = user?.photo_url || '';
+    if (photo) {
+      img.src = photo;
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.textContent = (name?.[0] || '👤').toUpperCase();
+    }
+  }
+
+  // Подстрока (можешь позже менять цифры из данных)
+  if (subEl) subEl.textContent = 'На линии: 58 водителей · 124 авто';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setTelegramUserUI();
+});
+
