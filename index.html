@@ -51,41 +51,97 @@
       </section>
 
       <!-- SCREEN 2: HOME -->
-      <section id="screen-home" class="screen">
-        <div class="topbar">
-          <button class="backBtn" onclick="goTo('role')">←</button>
-          <div class="chip" id="chip-role">роль</div>
-        </div>
+<section id="screen-home" class="screen">
+  <!-- верхняя панель -->
+  <div class="homeBar">
+    <button class="backBtn" onclick="goTo('role')">←</button>
+    <div class="homeTitle">Автопарк | Управление</div>
+    <button class="dotsBtn" type="button" onclick="toast('Меню позже')">•••</button>
+  </div>
 
-        <div class="title" id="home-greet">Здравствуйте</div>
+  <!-- приветствие -->
+  <div class="card helloCard">
+    <div class="avatar"></div>
+    <div class="helloText">
+      <div class="helloH" id="home-greet">Здравствуйте!</div>
+      <div class="helloSub">
+        На линии: <b id="home-online-drivers">0</b> водителей | <b id="home-total-cars">0</b> авто
+      </div>
+      <div class="chipsRow">
+        <div class="chip" id="chip-role">роль</div>
+        <div class="chip chipUpd" id="chip-upd">обновлено</div>
+      </div>
+    </div>
+  </div>
 
-        <div class="sectionHeader">
-          <h3>Статистика</h3>
-          <span class="chip" id="chip-upd">обновлено</span>
-        </div>
+  <!-- плитки (окошечки) -->
+  <div id="home-tiles" class="tiles">
+    <button class="tile" data-screen="docs" type="button">
+      <span class="i">📄</span><span class="t">Договоры</span>
+    </button>
 
-        <div class="grid2" id="stats-grid"></div>
+    <button class="tile" data-screen="cars" type="button">
+      <span class="i">🚗</span><span class="t">Учёт авто</span>
+    </button>
 
-        <div id="finance-wrap">
-          <div class="sectionHeader">
-            <h3>Финансы</h3>
-          </div>
-          <div class="grid2" id="finance-grid"></div>
-        </div>
+    <button class="tile" data-screen="drivers" type="button">
+      <span class="i">🧑‍✈️</span><span class="t">Водители</span>
+    </button>
 
-        <div class="sectionHeader">
-          <h3>Навигация</h3>
-        </div>
+    <button class="tile" data-screen="payouts" type="button">
+      <span class="i">💳</span><span class="t">Выплаты</span>
+    </button>
 
-        <div class="navRow">
-          <button class="btn primary" onclick="goTo('cars')"><span>🚗 Авто</span><span class="muted">→</span></button>
-          <button class="btn" onclick="goTo('docs')"><span>📄 Документы</span><span class="muted">→</span></button>
-        </div>
+    <button class="tile" data-screen="fines" type="button">
+      <span class="i">⚠️</span><span class="t">Штрафы</span>
+    </button>
 
-        <div class="mini muted">
-          (Позже добавим “Выйти”. Сейчас роль можно сбросить кнопкой ← сверху.)
-        </div>
-      </section>
+    <button class="tile" data-screen="gps" type="button">
+      <span class="i">📍</span><span class="t">GPS Контроль</span>
+    </button>
+  </div>
+
+  <!-- мини-статы -->
+  <div class="miniStats">
+    <button class="mini" data-carfilter="repair" type="button">
+      <span class="i">🚗</span><span class="k">Авто в ремонте:</span><b id="home-repair">0</b>
+    </button>
+
+    <button class="mini" data-carfilter="accident" type="button">
+      <span class="i">⛑️</span><span class="k">ДТП за неделю:</span><b id="home-dtp">0</b>
+    </button>
+  </div>
+
+  <!-- финансы -->
+  <div id="home-finance" class="card financeCard">
+    <div class="financeTitle">Баланс автопарка</div>
+    <div class="financeValue" id="home-balance">0 ₽</div>
+
+    <div class="financeGrid">
+      <div class="fItem">
+        <div class="fK">Потери на ремонте</div>
+        <div class="fV neg" id="home-loss-repair">0 ₽</div>
+      </div>
+      <div class="fItem">
+        <div class="fK">Потери на простое</div>
+        <div class="fV neg" id="home-loss-idle">0 ₽</div>
+      </div>
+    </div>
+
+    <div class="depositRow">
+      <div class="fK">Депозиты</div>
+      <div class="fV" id="home-deposits">0 ₽</div>
+    </div>
+  </div>
+
+  <!-- нижнее меню -->
+  <nav class="bottomNav">
+    <button class="bItem active" data-screen="home" type="button"><span class="bi">📋</span><span class="bt">Заявки</span></button>
+    <button class="bItem" data-screen="new" type="button"><span class="bi">➕</span><span class="bt">Новые</span></button>
+    <button class="bItem" data-screen="notify" type="button"><span class="bi">🔔</span><span class="bt">Увед.</span></button>
+    <button class="bItem" data-screen="more" type="button"><span class="bi">⋯</span><span class="bt">Ещё</span></button>
+  </nav>
+</section>
 
       <!-- SCREEN 3: CARS LIST -->
       <section id="screen-cars" class="screen">
