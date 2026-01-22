@@ -11,10 +11,11 @@ function applyTelegramTheme() {
   const p = tg.themeParams || {};
   const root = document.documentElement;
 
-  if (p.bg_color) root.style.setProperty('--bg', p.bg_color);
+  // Если Telegram отдаёт цвета — подстроим текст/подсказки
   if (p.text_color) root.style.setProperty('--text', p.text_color);
   if (p.hint_color) root.style.setProperty('--muted', p.hint_color);
 
+  // Попросим Telegram оформить системные цвета (если доступно)
   try { tg.setHeaderColor?.('secondary_bg_color'); } catch (_) {}
   try { tg.setBackgroundColor?.(p.bg_color || '#0b1220'); } catch (_) {}
 }
@@ -28,6 +29,7 @@ function initTelegram() {
   tg.ready();
   tg.expand();
 
+  // помогает на iOS, чтобы не “дёргалось”
   try { tg.disableVerticalSwipes?.(); } catch (_) {}
 
   applyTelegramTheme();
