@@ -1,40 +1,44 @@
 // ===== Telegram WebApp init =====
 const tg = window.Telegram?.WebApp || null;
 
+function syncAppHeight() {
+  const h = tg?.viewportHeight || window.innerHeight;
+  document.documentElement.style.setProperty('--app-h', `${h}px`);
+}
+
 function applyTelegramTheme() {
   if (!tg) return;
 
   const p = tg.themeParams || {};
-  // Telegram часто отдаёт цвета, но не всегда.
-  // Делаем мягкую интеграцию: если есть — используем.
   const root = document.documentElement;
 
   if (p.bg_color) root.style.setProperty('--bg', p.bg_color);
   if (p.text_color) root.style.setProperty('--text', p.text_color);
   if (p.hint_color) root.style.setProperty('--muted', p.hint_color);
 
-  // Попросим Telegram покрасить системную шапку/фон (если доступно)
   try { tg.setHeaderColor?.('secondary_bg_color'); } catch (_) {}
   try { tg.setBackgroundColor?.(p.bg_color || '#0b1220'); } catch (_) {}
 }
 
 function initTelegram() {
+  // и для браузера тоже синхронизируем высоту
+  syncAppHeight();
+  window.addEventListener('resize', syncAppHeight);
+
   if (!tg) return;
 
   tg.ready();
   tg.expand();
 
+  try { tg.disableVerticalSwipes?.(); } catch (_) {}
+
   applyTelegramTheme();
 
-  // Если хотим: показать нативную кнопку назад Telegram
-  // (пока оставим свою, как на макете)
-  // tg.BackButton.show();
-  // tg.BackButton.onClick(() => console.log('Back'));
+  try { tg.onEvent('viewportChanged', syncAppHeight); } catch (_) {}
 }
 
-// ===== UI handlers =====
+// ===== UI helpers =====
 function showDemoAction(text) {
-  // Внутри Telegram лучше использовать встроенный popup, в браузере — alert
   if (tg?.showPopup) {
     tg.showPopup({
       title: 'Demo',
@@ -49,9 +53,7 @@ function showDemoAction(text) {
 document.addEventListener('DOMContentLoaded', () => {
   initTelegram();
 
-  // Topbar buttons
   document.getElementById('btnBack')?.addEventListener('click', () => {
-    // если внутри Telegram — можно закрывать миниапп
     if (tg?.close) tg.close();
     else history.back();
   });
@@ -60,15 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
     showDemoAction('Меню: позже добавим экран "Ещё".');
   });
 
-  // Tiles
   document.querySelectorAll('.tile').forEach(btn => {
     btn.addEventListener('click', () => {
-      const route = btn.dataset.route;
-      showDemoAction(`Открыть раздел: ${route} (демо).`);
+      showDemoAction(`Открыть раздел: ${btn.dataset.route} (демо).`);
     });
   });
 
-  // Tabs
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
