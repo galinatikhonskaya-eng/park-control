@@ -13,23 +13,26 @@
 <body>
   <div class="app">
     <!-- Верхняя панель -->
-    <header class="topbar glass">
-      <button class="iconbtn" type="button" aria-label="Назад" data-action="back">←</button>
-      <div class="topbar__title">Автопарк | Управление</div>
-      <button class="iconbtn" type="button" aria-label="Меню">⋯</button>
-    </header>
+  <header class="topbar">
+  <button class="iconbtn" type="button" aria-label="Назад" onclick="history.back()">←</button>
 
-    <!-- Приветствие (как в телеге) -->
-    <section class="hello glass">
-      <div class="hello__avatar">
-        <img id="tgAvatar" alt="avatar" />
+  <div class="topbar__center">
+    <div class="hello">
+      <div class="hello__avatar" id="tgAvatarWrap">
+        <img id="tgAvatar" alt="" />
+        <span class="hello__fallback" id="tgAvatarFallback">👤</span>
       </div>
 
       <div class="hello__text">
-        <div class="hello__title" id="helloTitle">Здравствуйте, Остап!</div>
-        <div class="hello__sub">На линии: <b>58</b> водителей • <b>124</b> авто</div>
+        <div class="hello__title" id="tgHelloTitle">Здравствуйте, D!</div>
+        <div class="hello__sub" id="tgHelloSub">На линии: 58 водителей · 124 авто</div>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <button class="iconbtn" type="button" aria-label="Меню">…</button>
+</header>
+
 
     <!-- Контент -->
     <main class="content">
