@@ -7,7 +7,8 @@
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <link rel="stylesheet" href="./styles.css?v=15" />
+  <!-- Меняй v=... после каждого обновления, чтобы Telegram не кэшировал -->
+  <link rel="stylesheet" href="./styles.css?v=14" />
 </head>
 
 <body>
@@ -57,27 +58,27 @@
         </button>
       </section>
 
+      <!-- ✅ ПЕРЕНЕСЛИ СЮДА (сразу под иконки) -->
+      <section class="infogrid" aria-label="Ключевые показатели">
+        <button class="infoitem glass" type="button" data-route="repair">
+          <div class="infoitem__emoji">🚙</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">Авто в ремонте: <b>3</b></div>
+            <div class="infoitem__sub">Расход ремонта: <span class="neg">- 402 000₽</span></div>
+          </div>
+        </button>
+
+        <button class="infoitem glass" type="button" data-route="accidents">
+          <div class="infoitem__emoji">🚨</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">ДТП за месяц: <b>2</b></div>
+            <div class="infoitem__sub">Расход по ДТП: <span class="neg">- 200 000₽</span></div>
+          </div>
+        </button>
+      </section>
+
       <div class="spacer"></div>
     </main>
-
-    <!-- НИЖНИЙ ИНФОБАР (2 иконки с подписями в 2 строки) -->
-    <section class="infobar glass" aria-label="Ключевые показатели">
-      <button class="infoitem" type="button" data-route="repair">
-        <div class="infoitem__emoji">🚙</div>
-        <div class="infoitem__text">
-          <div class="infoitem__title">Авто в ремонте: <b>3</b></div>
-          <div class="infoitem__sub">Расход ремонта: <span class="neg">- 402 000₽</span></div>
-        </div>
-      </button>
-
-      <button class="infoitem" type="button" data-route="accidents">
-        <div class="infoitem__emoji">🚨</div>
-        <div class="infoitem__text">
-          <div class="infoitem__title">ДТП за месяц: <b>2</b></div>
-          <div class="infoitem__sub">Расход по ДТП: <span class="neg">- 200 000₽</span></div>
-        </div>
-      </button>
-    </section>
 
     <!-- Нижнее меню: только иконки -->
     <nav class="tabbar glass" role="navigation" aria-label="Нижнее меню">
@@ -101,6 +102,6 @@
     </nav>
   </div>
 
-  <script src="./app.js?v=13"></script>
+  <script src="./app.js?v=14"></script>
 </body>
 </html>
