@@ -1,113 +1,122 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Park Control</title>
+  <meta name="color-scheme" content="dark" />
+  <title>Park Control — Demo</title>
 
+  <link rel="stylesheet" href="./styles.css?v=30" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- Меняй v=... после каждого обновления, чтобы Telegram не кэшировал -->
-  <link rel="stylesheet" href="./styles.css?v=15" />
 </head>
 
 <body>
   <div class="app">
+    <!-- Top bar -->
     <header class="topbar glass">
-      <button class="icon-btn" id="btnBack" aria-label="Назад">←</button>
+      <button class="iconbtn" type="button" aria-label="Назад" data-action="back">←</button>
       <div class="topbar__title">Автопарк | Управление</div>
-      <button class="icon-btn" id="btnMore" aria-label="Меню">⋯</button>
+      <button class="iconbtn" type="button" aria-label="Меню">⋯</button>
     </header>
 
-    <main class="content">
-      <section class="hello">
-        <div class="hello__title">Остап</div>
-        <div class="hello__sub">На линии: <b>58</b> водителей • <b>124</b> авто</div>
-      </section>
+    <!-- Greeting -->
+    <section class="hello glass">
+      <div class="hello__avatar">
+        <img id="tgAvatar" alt="avatar" />
+      </div>
 
-      <section class="grid">
-        <button class="tile glass" data-route="contracts">
-          <span class="tile__emoji">📄</span>
+      <div class="hello__text">
+        <div class="hello__title" id="helloTitle">Здравствуйте, Остап!</div>
+        <div class="hello__sub">На линии: <b>58</b> водителей • <b>124</b> авто</div>
+      </div>
+    </section>
+
+    <!-- Tiles -->
+    <main class="content">
+      <div class="grid2">
+        <button class="tile glass" type="button" data-route="contracts">
+          <div class="tile__emoji">📄</div>
           <div class="tile__label">Договоры</div>
-          <span class="tile__dot" aria-hidden="true"></span>
         </button>
 
-        <button class="tile glass" data-route="cars">
-          <span class="tile__emoji">🚖</span>
+        <button class="tile glass" type="button" data-route="cars">
+          <div class="tile__emoji">🚖</div>
           <div class="tile__label">Учёт авто</div>
         </button>
 
-        <button class="tile glass" data-route="drivers">
-          <span class="tile__emoji">👮</span>
+        <button class="tile glass" type="button" data-route="drivers">
+          <div class="tile__emoji">🧑‍✈️</div>
           <div class="tile__label">Водители</div>
         </button>
 
-        <button class="tile glass" data-route="payouts">
-          <span class="tile__emoji">💵</span>
+        <button class="tile glass" type="button" data-route="payouts">
+          <div class="tile__emoji">💳</div>
           <div class="tile__label">Выплаты</div>
         </button>
 
-        <button class="tile glass" data-route="fines">
-          <span class="tile__emoji">⚠️</span>
+        <button class="tile glass" type="button" data-route="fines">
+          <div class="tile__emoji">⚠️</div>
           <div class="tile__label">Штрафы</div>
         </button>
 
-        <button class="tile glass" data-route="gps">
-          <span class="tile__emoji">📍</span>
+        <button class="tile glass" type="button" data-route="gps">
+          <div class="tile__emoji">📍</div>
           <div class="tile__label">GPS Контроль</div>
         </button>
-      </section>
+      </div>
 
-      <!-- ✅ ПЕРЕНЕСЛИ СЮДА (сразу под иконки) -->
+      <!-- KPI 2 cards -->
       <section class="infogrid" aria-label="Ключевые показатели">
-  <button class="infoitem glass" type="button" data-route="repair">
-    <div class="infoitem__emoji">🚙</div>
-    <div class="infoitem__text">
-      <div class="infoitem__title">Авто в ремонте: <b>3</b></div>
-      <div class="infoitem__sub">
-        Расход ремонта:
-<span class="neg" style="white-space:nowrap;">- 402&nbsp;000₽</span>
-      </div>
-    </div>
-  </button>
+        <button class="infoitem glass" type="button" data-route="repair">
+          <div class="infoitem__emoji">🚙</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">Авто в ремонте: <b>3</b></div>
+            <div class="infoitem__sub">
+              Расход ремонта:
+              <span class="neg" style="white-space:nowrap;">- 402&nbsp;000₽</span>
+            </div>
+          </div>
+        </button>
 
-  <button class="infoitem glass" type="button" data-route="accidents">
-    <div class="infoitem__emoji">🚨</div>
-    <div class="infoitem__text">
-      <div class="infoitem__title">ДТП за месяц: <b>2</b></div>
-      <div class="infoitem__sub">
-        Расход по ДТП:
-<span class="neg" style="white-space:nowrap;">- 200&nbsp;000₽</span>
-      </div>
-    </div>
-  </button>
-</section>
-
-      <div class="spacer"></div>
+        <button class="infoitem glass" type="button" data-route="accidents">
+          <div class="infoitem__emoji">🚨</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">ДТП за месяц: <b>2</b></div>
+            <div class="infoitem__sub">
+              Расход по ДТП:
+              <span class="neg" style="white-space:nowrap;">- 200&nbsp;000₽</span>
+            </div>
+          </div>
+        </button>
+      </section>
     </main>
 
-    <!-- Нижнее меню: только иконки -->
-    <nav class="tabbar glass" role="navigation" aria-label="Нижнее меню">
-      <button class="tab active" data-tab="requests" aria-label="Заявки">
-        <div class="tab__emoji">🗂️</div>
+    <!-- Bottom bar -->
+    <nav class="bottombar glass" aria-label="Навигация">
+      <button class="navbtn active" type="button" data-route="requests" aria-label="Заявки">
+        <span class="navbtn__emoji">🗂️</span>
         <span class="badge">1</span>
+        <span class="navbtn__label">Заявки</span>
       </button>
 
-      <button class="tab" data-tab="newdrivers" aria-label="Новые">
-        <div class="tab__emoji">👥</div>
+      <button class="navbtn" type="button" data-route="new-drivers" aria-label="Новые">
+        <span class="navbtn__emoji">👥</span>
+        <span class="navbtn__label">Новые</span>
       </button>
 
-      <button class="tab" data-tab="notifications" aria-label="Уведомления">
-        <div class="tab__emoji">🔔</div>
+      <button class="navbtn" type="button" data-route="alerts" aria-label="Увед.">
+        <span class="navbtn__emoji">🔔</span>
         <span class="badge">5</span>
+        <span class="navbtn__label">Увед.</span>
       </button>
 
-      <button class="tab" data-tab="more" aria-label="Ещё">
-        <div class="tab__emoji">⋯</div>
+      <button class="navbtn" type="button" data-route="more" aria-label="Ещё">
+        <span class="navbtn__emoji">⋯</span>
+        <span class="navbtn__label">Ещё</span>
       </button>
     </nav>
   </div>
 
-  <script src="./app.js?v=14"></script>
+  <script src="./app.js?v=30"></script>
 </body>
 </html>
