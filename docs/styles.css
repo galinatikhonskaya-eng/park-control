@@ -15,8 +15,6 @@
 
   --topbar-h: 52px;
   --tabbar-h: 66px;
-
-  --infobar-h: 86px;
 }
 
 *{ box-sizing: border-box; }
@@ -155,37 +153,26 @@ body{
   border: 2px solid rgba(0,0,0,.28);
 }
 
-/* Spacer: учитываем инфобар + таббар */
-.spacer{
-  height: calc(var(--infobar-h) + var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);
-}
-
-/* ===== InfoBar (2 items) ===== */
-.infobar{
-  height: var(--infobar-h);
-  padding: 10px var(--pad);
+/* ✅ Инфо-блок под иконками */
+.infogrid{
+  margin-top: var(--gap);
   display:grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-
-  border-radius: 0;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 0;
+  gap: var(--gap);
 }
 
 .infoitem{
-  border: 1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.05);
-  border-radius: 14px;
+  border-radius: var(--radius2);
   padding: 10px 10px;
   display:flex;
   align-items:flex-start;
   gap: 10px;
-  color: var(--text);
   text-align:left;
-}
+  color: var(--text);
 
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+}
 .infoitem:active{ transform: translateY(1px); }
 
 .infoitem__emoji{
@@ -215,7 +202,12 @@ body{
   font-weight: 800;
 }
 
-/* ===== Tabbar: icons only ===== */
+/* Spacer: только под таббар */
+.spacer{
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 10px);
+}
+
+/* Tabbar: icons only */
 .tabbar{
   height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
   padding: 8px var(--pad) calc(8px + env(safe-area-inset-bottom));
