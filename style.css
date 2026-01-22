@@ -1,122 +1,377 @@
-/* ===== Fix scroll in Telegram ===== */
-html, body { height: 100%; }
-body { overflow-x: hidden; }
-.screen { overflow: auto; -webkit-overflow-scrolling: touch; }
+:root{
+  /* Fallback (браузер) */
+  --bg: #0b1220;
+  --text: #eaf0ff;
+  --muted: rgba(234,240,255,.72);
+  --glass: rgba(255,255,255,.14);
+  --glass2: rgba(255,255,255,.10);
+  --stroke: rgba(255,255,255,.18);
+  --shadow: rgba(0,0,0,.25);
+  --danger: #ff4d4f;
 
-/* чтобы контент не прятался под нижним меню */
-.shell { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+  --radius: 16px;
+  --radius2: 14px;
 
-/* ===== Home UI ===== */
-.homeBar{
-  display:flex; align-items:center; gap:10px;
-  padding: 8px 12px;
-}
-.homeTitle{
-  flex:1;
-  font-weight:700;
-  text-align:center;
-  opacity:.95;
-}
-.dotsBtn{
-  background:transparent; border:0; color:inherit;
-  font-size:18px; padding:6px 10px; border-radius:10px;
+  --pad: 14px;
+  --gap: 12px;
+
+  --topbar-h: 52px;
+  --tabbar-h: 78px;
 }
 
-.helloCard{
-  display:flex; gap:12px; align-items:flex-start;
-}
-.avatar{
-  width:44px; height:44px; border-radius:999px;
-  background: rgba(255,255,255,.10);
-  flex:0 0 auto;
-}
-.helloH{ font-size:18px; font-weight:800; }
-.helloSub{ margin-top:4px; opacity:.75; }
-.chipsRow{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
-.chipUpd{ opacity:.7; }
-
-.tiles{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
-}
-.tile{
-  width:100%;
-  display:flex; align-items:center; gap:10px;
-  min-height:72px;
-  padding:12px 12px;
-  border-radius:16px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.06);
-}
-.tile .i{ width:26px; text-align:center; font-size:18px; }
-.tile .t{ font-weight:700; }
-
-.miniStats{
-  margin-top:12px;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
-}
-.miniStats .mini{
-  width:100%;
-  display:flex; align-items:center; gap:8px;
-  padding:12px;
-  border-radius:16px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.05);
-}
-.miniStats .k{ opacity:.8; }
-.miniStats b{ margin-left:auto; font-size:18px; }
-
-.financeCard{ margin-top:12px; }
-.financeTitle{ opacity:.75; }
-.financeValue{ font-size:34px; font-weight:900; margin-top:6px; }
-.financeGrid{
-  margin-top:10px;
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
-}
-.fItem{
-  padding:12px;
-  border-radius:14px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.04);
-}
-.fK{ opacity:.75; }
-.fV{ margin-top:6px; font-weight:800; }
-.fV.neg{ color:#ff4d4d; }
-
-.depositRow{
-  margin-top:10px;
-  padding:12px;
-  border-radius:14px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.04);
-  display:flex; justify-content:space-between; align-items:center;
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden; /* важно: чтобы не было двойного скролла */
 }
 
-/* bottom nav */
-.bottomNav{
+/* Фон */
+.bg{
   position: fixed;
-  left: 0; right: 0; bottom: 0;
-  padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
-  display:grid;
+  inset: 0;
+  background:
+    radial-gradient(800px 500px at 30% 20%, rgba(120,180,255,.25), transparent 60%),
+    radial-gradient(900px 600px at 70% 80%, rgba(255,255,255,.10), transparent 65%),
+    linear-gradient(180deg, rgba(10,20,35,.85), rgba(10,20,35,.92));
+  filter: saturate(1.1);
+  transform: scale(1.04);
+}
+
+/* Контейнер приложения */
+.app{
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Общий “стеклянный” стиль */
+.glass{
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 10px 28px var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Верхняя панель */
+.topbar{
+  height: calc(var(--topbar-h) + env(safe-area-inset-top));
+  padding: calc(10px + env(safe-area-inset-top)) var(--pad) 10px;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 0 0 18px 18px;
+  margin: 0 var(--pad);
+  margin-top: 10px;
+}
+
+.topbar__title{
+  text-align: center;
+  font-weight: 650;
+  letter-spacing: .2px;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icon-btn{
+  width: 42px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.12);
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.icon-btn:active{ transform: translateY(1px); }
+
+/* Скроллящийся контент */
+.content{
+  flex: 1;
+  overflow: auto;
+  padding: var(--pad);
+  padding-top: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Приветствие */
+.card{
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.greet{
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar{
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 22px;
+}
+
+.greet__title{
+  font-size: 18px;
+  font-weight: 720;
+}
+
+.greet__sub{
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Сетка меню 2 колонки */
+.grid{
+  margin-top: var(--gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+}
+
+.tile{
+  border-radius: var(--radius2);
+  padding: 12px;
+  height: 62px;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--glass2);
+  color: var(--text);
+  position: relative;
+  cursor: pointer;
+}
+
+.tile__icon{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.16);
+  border: 1px solid rgba(255,255,255,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 18px;
+}
+
+.tile__label{
+  font-weight: 650;
+  font-size: 15px;
+}
+
+.tile__badge{
+  position:absolute;
+  left: 28px;
+  top: 32px;
+  width: 14px;
+  height: 14px;
+  border-radius: 99px;
+  background: #ff3b30;
+  border: 2px solid rgba(255,255,255,.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 0;
+}
+
+.tile:active{ transform: translateY(1px); }
+
+/* Два блока в ряд */
+.row2{
+  margin-top: var(--gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+}
+
+/* Небольшие “чипы” */
+.chip{
+  height: 44px;
+  border-radius: var(--radius2);
+  padding: 10px 12px;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  border: 1px solid var(--stroke);
+  background: var(--glass2);
+}
+
+.chip__icon{ width: 22px; display:flex; justify-content:center; }
+.chip__text{ color: var(--muted); font-size: 13px; }
+.chip__value{ margin-left: auto; font-size: 16px; font-weight: 750; }
+.chip__value--red{ color: var(--danger); }
+
+/* Баланс */
+.balance{
+  margin-top: var(--gap);
+  padding: 14px;
+}
+
+.balance__label{
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.balance__amount{
+  font-size: 30px;
+  font-weight: 820;
+  letter-spacing: .4px;
+}
+
+/* Мини карточки */
+.mini{
+  border-radius: var(--radius2);
+  padding: 12px;
+  border: 1px solid var(--stroke);
+  background: var(--glass2);
+}
+
+.mini__top{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.mini__icon{
+  width: 26px;
+  height: 26px;
+  border-radius: 10px;
+  background: rgba(0,0,0,.16);
+  border: 1px solid rgba(255,255,255,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.mini__value{
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.mini__value--red{ color: var(--danger); }
+
+/* Депозит */
+.deposit{
+  margin-top: var(--gap);
+  padding: 14px;
+}
+
+.deposit__label{
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.deposit__amount{
+  font-size: 22px;
+  font-weight: 820;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.deposit__icon{
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.16);
+  border: 1px solid rgba(255,255,255,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Спейсер под таббар */
+.spacer{
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 10px);
+}
+
+/* Нижняя панель */
+.tabbar{
+  position: sticky;
+  bottom: 0;
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  padding: 10px var(--pad) calc(10px + env(safe-area-inset-bottom));
+  display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap:10px;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(10px);
+  gap: 10px;
+  border-radius: 18px 18px 0 0;
+  margin: 0 var(--pad);
+  margin-bottom: 10px;
 }
-.bItem{
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:4px;
-  padding:10px 8px;
-  border-radius:16px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.06);
+
+.tab{
+  position: relative;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.10);
+  color: var(--text);
+  border-radius: 16px;
+  padding: 8px 8px;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center;
+  gap: 4px;
+  min-height: 56px;
+  cursor: pointer;
 }
-.bItem.active{ background: rgba(255,255,255,.10); }
-.bi{ font-size:18px; }
-.bt{ font-size:12px; opacity:.85; }
+
+.tab__icon{ font-size: 18px; }
+.tab__label{ font-size: 12px; color: var(--muted); }
+
+.tab.active{
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.22);
+}
+
+.badge{
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Чуть компактнее на очень узких экранах */
+@media (max-width: 360px){
+  .balance__amount{ font-size: 26px; }
+  .tile{ height: 58px; }
+}
