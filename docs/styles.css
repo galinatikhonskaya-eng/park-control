@@ -1,314 +1,134 @@
-:root{
-  --bg1:#0b0b18;
-  --bg2:#1b1231;
-
-  --stroke: rgba(255,255,255,.14);
-  --text: rgba(255,255,255,.92);
-  --muted: rgba(255,255,255,.62);
-
-  --accent1: #c9a7ff;   /* светло-фиолетовый */
-  --accent2: #7c4dff;   /* фиолетовый */
-  --danger: #ff4d6d;
-
-  --radius: 18px;
-  --gap: 12px;
-
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+* {
+  box-sizing: border-box;
 }
 
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
-
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  color:var(--text);
-  overflow:hidden;
-
-  background:
-    radial-gradient(1000px 700px at 15% -10%, rgba(201,167,255,.40), transparent 55%),
-    radial-gradient(900px 700px at 110% 10%, rgba(124,77,255,.30), transparent 60%),
-    linear-gradient(180deg, var(--bg1), var(--bg2));
-}
-
-.app{
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  gap: var(--gap);
-  padding: calc(var(--safe-top) + 10px) 12px calc(var(--safe-bottom) + 10px);
-}
-
-.glass{
-  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius);
-  box-shadow: 0 12px 30px rgba(0,0,0,.22);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* ===== TOPBAR ===== */
-.topbar{
-  display:grid;
-  grid-template-columns: 44px 1fr 44px;
-  align-items:center;
-  gap: 8px;
-  padding: calc(10px + var(--safe-top)) 10px 10px;
-
-  background:
-    linear-gradient(135deg, rgba(201,167,255,.22), rgba(124,77,255,.14));
-}
-
-.iconbtn{
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(0,0,0,.12);
-  color: var(--text);
-  font-size: 18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.topbar__spacer{
-  width: 40px;
-  height: 40px;
-}
-
-.topbar__center{
-  min-width: 0;
-}
-
-/* ===== HELLO (без плитки/обводки вокруг аватара и имени) ===== */
-.hello{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-
-  /* главное: без рамок/подложек */
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
+body {
   margin: 0;
-}
-
-.hello__avatar{
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  overflow: hidden;
-
-  /* без обводки и без заливки */
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  flex: 0 0 40px;
-}
-
-.hello__avatar img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 999px;
-  display: block;
-}
-
-.hello__text{ min-width:0; }
-
-.hello__title{
-  font-size: 16px;
-  font-weight: 850;
-  line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hello__sub{
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ===== CONTENT ===== */
-.content{
-  flex:1;
-  overflow:auto;
-  padding-bottom: 78px;
-}
-.content::-webkit-scrollbar{ width:0; height:0; }
-
-.spacer{ height: 10px; }
-
-/* ===== TILES ===== */
-.grid2{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap);
-}
-
-.tile{
-  border:none;
-  color:var(--text);
-  padding: 14px;
-  min-height: 62px;
-
-  display:flex;
-  align-items:center;
-  gap: 10px;
-}
-
-/* УБИРАЕМ "окно в окне": эмодзи без квадрата */
-.tile__emoji{
-  font-size: 20px;
-  line-height: 1;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  width: auto !important;
-  height: auto !important;
-  padding: 0 !important;
-  opacity: 1 !important;
-}
-
-.tile__label{
-  font-size: 15px;
-  font-weight: 850;
-}
-
-/* ===== KPI ===== */
-.infogrid{
-  margin-top: var(--gap);
-  display:grid;
-  /* 2 колонки, но при 3 карточках третья уйдет на новую строку */
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap);
-}
-
-.infoitem{
-  border:none;
-  color:var(--text);
-  padding: 12px;
-  min-height: 82px;
-
-  display:flex;
-  gap: 10px;
-  align-items:flex-start;
-}
-
-/* эмодзи KPI тоже без квадрата */
-.infoitem__emoji{
-  font-size: 20px;
-  line-height: 1;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  width: auto !important;
-  height: auto !important;
-  padding: 0 !important;
-  opacity: 1 !important;
-
-  margin-top: 2px;
-}
-
-.infoitem__text{ min-width:0; }
-
-.infoitem__title{
-  font-size: 14px;
-  font-weight: 850;
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.infoitem__sub{
-  margin-top: 6px;
-  font-size: 12.5px;
-  color: var(--muted);
-  line-height: 1.15;
-}
-
-/* сумма на новой строке */
-.neg{
-  display:block;
-  margin-top: 4px;
-  color: var(--danger);
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-/* ===== BOTTOM BAR ===== */
-.bottombar{
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: calc(var(--safe-bottom) + 10px);
-  height: 62px;
-
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  align-items:center;
-  padding: 6px 8px;
-
-  /* без линий */
-  border-top: none;
-}
-
-.navbtn{
-  position:relative;
-  border:none;
-  background: transparent;
-  color: var(--muted);
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap: 4px;
-  height: 100%;
-}
-
-.navbtn.active{ color: var(--text); }
-
-.navbtn__emoji{
-  font-size: 18px;
-  line-height: 1;
-}
-
-.navbtn__label{
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.badge{
-  position:absolute;
-  top: 6px;
-  right: 26px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size: 11px;
-  font-weight: 900;
+  background: #0e0e12;
   color: #fff;
-  background: #ff3b30;
-  border: 2px solid rgba(0,0,0,.35);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
 }
 
-@media (max-width: 360px){
-  .tile__label{ font-size: 14px; }
-  .infoitem__title{ font-size: 13px; }
+.app {
+  padding: 16px;
+}
+
+/* ===== Приветствие ===== */
+.hello {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hello-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.hello-sub {
+  font-size: 13px;
+  color: #9aa0ff;
+}
+
+/* ===== Метрики ===== */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.stat-title {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 6px 0;
+}
+
+.stat-sub {
+  font-size: 13px;
+  color: #bbb;
+}
+
+.neg {
+  color: #ff6b6b;
+}
+
+/* ===== Автопарк ===== */
+.fleet {
+  margin-top: 10px;
+  padding-bottom: 40px;
+}
+
+.fleet-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.fleet-line {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 8px 0 16px;
+}
+
+/* ===== Карточка авто ===== */
+.car {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.car-photo {
+  width: 90px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.car-info {
+  flex: 1;
+}
+
+.car-driver {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.car-meta {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.car-note {
+  font-size: 12px;
+  margin-top: 6px;
+  color: #8affc1;
+}
+
+.car-note.warning {
+  color: #ffd166;
+}
+
+.car-note.danger {
+  color: #ff6b6b;
 }
