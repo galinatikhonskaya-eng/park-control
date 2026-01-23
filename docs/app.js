@@ -1,14 +1,123 @@
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>Park Control</title>
 
-const user = tg.initDataUnsafe?.user;
+  <link rel="stylesheet" href="styles.css?v=101" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
 
-if (user) {
-  const name = user.first_name || 'друг';
-  document.getElementById('tgHello').textContent = `Здравствуйте, ${name}!`;
+<body>
+  <div class="app">
+    <!-- Верхняя панель -->
+  <header class="topbar">
+  <button class="iconbtn" type="button" aria-label="Назад" onclick="history.back()">←</button>
 
-  if (user.photo_url) {
-    document.getElementById('tgAvatar').src = user.photo_url;
-  }
-}
+  <div class="topbar__center">
+    <div class="hello">
+  <div class="hello__avatar" id="tgAvatarWrap">
+    <img id="tgAvatar" alt="" />
+  </div>
+
+  <div class="hello__text">
+    <div class="hello__title" id="tgHelloTitle">Здравствуйте, D!</div>
+    <div class="hello__sub" id="tgHelloSub">На линии: 58 водителей · 124 авто</div>
+  </div>
+</div>
+
+
+</header>
+
+
+    <!-- Контент -->
+    <main class="content">
+      <div class="grid2">
+        <button class="tile glass" type="button" data-route="contracts">
+          <div class="tile__emoji">📄</div>
+          <div class="tile__label">Документы</div>
+        </button>
+
+        <button class="tile glass" type="button" data-route="cars">
+          <div class="tile__emoji">🚖</div>
+          <div class="tile__label">Учёт авто</div>
+        </button>
+
+        <button class="tile glass" type="button" data-route="drivers">
+          <div class="tile__emoji">🧑‍✈️</div>
+          <div class="tile__label">Водители</div>
+        </button>
+
+        <button class="tile glass" type="button" data-route="payouts">
+          <div class="tile__emoji">💳</div>
+          <div class="tile__label">Штрафы</div>
+        </button>
+
+        <button class="tile glass" type="button" data-route="fines">
+          <div class="tile__emoji">⚠️</div>
+          <div class="tile__label">Запчасти</div>
+        </button>
+
+        <button class="tile glass" type="button" data-route="gps">
+          <div class="tile__emoji">📍</div>
+          <div class="tile__label">GPS Контроль</div>
+        </button>
+      </div>
+
+      <!-- Нижние 2 плитки (под блоком штрафы) -->
+      <section class="infogrid" aria-label="Показатели">
+        <button class="infoitem glass" type="button" data-route="repair">
+          <div class="infoitem__emoji">🚙</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">Авто в ремонте: <b>3</b></div>
+            <div class="infoitem__sub">
+              Расход ремонта:
+              <span class="neg">- 402&nbsp;000₽</span>
+            </div>
+          </div>
+        </button>
+
+        <button class="infoitem glass" type="button" data-route="accidents">
+          <div class="infoitem__emoji">🚨</div>
+          <div class="infoitem__text">
+            <div class="infoitem__title">ДТП за месяц: <b>2</b></div>
+            <div class="infoitem__sub">
+              Расход по ДТП:
+              <span class="neg">- 200&nbsp;000₽</span>
+            </div>
+          </div>
+        </button>
+      </section>
+    </main>
+
+    <!-- Нижняя панель: БЕЗ ЛИНИЙ, только иконки + подписи -->
+    <nav class="bottombar glass" aria-label="Навигация">
+      <button class="navbtn active" type="button" data-route="requests">
+        <span class="navbtn__emoji">🗂️</span>
+        <span class="badge">1</span>
+        <span class="navbtn__label">Заявки</span>
+      </button>
+
+      <button class="navbtn" type="button" data-route="new">
+        <span class="navbtn__emoji">👥</span>
+        <span class="navbtn__label">Новые</span>
+      </button>
+
+      <button class="navbtn" type="button" data-route="alerts">
+        <span class="navbtn__emoji">🔔</span>
+        <span class="badge">5</span>
+        <span class="navbtn__label">Увед.</span>
+      </button>
+
+      <button class="navbtn" type="button" data-route="more">
+        <span class="navbtn__emoji">⋯</span>
+        <span class="navbtn__label">Ещё</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js?v=101"></script>
+</body>
+</html>
