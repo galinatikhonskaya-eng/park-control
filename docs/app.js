@@ -1,123 +1,107 @@
-<!doctype html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="color-scheme" content="dark" />
-  <title>Park Control</title>
+(function () {
+  const tg = window.Telegram?.WebApp || null;
 
-  <link rel="stylesheet" href="styles.css?v=101" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
+  function initTelegram() {
+    if (!tg) return;
 
-<body>
-  <div class="app">
-    <!-- Верхняя панель -->
-  <header class="topbar">
-  <button class="iconbtn" type="button" aria-label="Назад" onclick="history.back()">←</button>
+    try { tg.ready(); } catch (_) {}
+    try { tg.expand(); } catch (_) {}
 
-  <div class="topbar__center">
-    <div class="hello">
-  <div class="hello__avatar" id="tgAvatarWrap">
-    <img id="tgAvatar" alt="" />
-  </div>
+    try { tg.setHeaderColor?.('#0b1428'); } catch (_) {}
+    try { tg.setBackgroundColor?.('#0b1220'); } catch (_) {}
+  }
 
-  <div class="hello__text">
-    <div class="hello__title" id="tgHelloTitle">Здравствуйте, D!</div>
-    <div class="hello__sub" id="tgHelloSub">На линии: 58 водителей · 124 авто</div>
-  </div>
-</div>
+  function initGreeting() {
+    const titleEl = document.getElementById('helloTitle');
+    const avatarEl = document.getElementById('tgAvatar');
 
+    let name = 'Остап';
 
-</header>
+    if (tg?.initDataUnsafe?.user) {
+      const u = tg.initDataUnsafe.user;
+      name = (u.first_name || u.username || 'Остап').trim();
+    }
 
+    if (titleEl) titleEl.textContent = `Здравствуйте, ${name}!`;
 
-    <!-- Контент -->
-    <main class="content">
-      <div class="grid2">
-        <button class="tile glass" type="button" data-route="contracts">
-          <div class="tile__emoji">📄</div>
-          <div class="tile__label">Документы</div>
-        </button>
+    // В WebApp нет прямого доступа к аватарке пользователя без бота/сервера.
+    // Делаем "телеграм-плашку" с первой буквой имени (визуально как аватар).
+    if (avatarEl) {
+      const letter = (name || 'P').charAt(0).toUpperCase();
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2b6cff" stop-opacity="0.95"/>
+              <stop offset="1" stop-color="#25d3ff" stop-opacity="0.75"/>
+            </linearGradient>
+          </defs>
+          <rect width="120" height="120" rx="60" fill="url(#g)"/>
+          <text x="60" y="74" text-anchor="middle" font-size="56"
+                font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial"
+                fill="white" font-weight="800">${letter}</text>
+        </svg>`;
+      avatarEl.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+  }
 
-        <button class="tile glass" type="button" data-route="cars">
-          <div class="tile__emoji">🚖</div>
-          <div class="tile__label">Учёт авто</div>
-        </button>
+  function bindUI() {
+    document.querySelector('[data-action="back"]')?.addEventListener('click', () => {
+      if (tg?.close) tg.close();
+      else history.back();
+    });
 
-        <button class="tile glass" type="button" data-route="drivers">
-          <div class="tile__emoji">🧑‍✈️</div>
-          <div class="tile__label">Водители</div>
-        </button>
+    document.querySelectorAll('[data-route]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const route = el.getAttribute('data-route');
+        try { tg?.HapticFeedback?.impactOccurred('light'); } catch (_) {}
+        console.log('route:', route);
+      });
+    });
+  }
 
-        <button class="tile glass" type="button" data-route="payouts">
-          <div class="tile__emoji">💳</div>
-          <div class="tile__label">Штрафы</div>
-        </button>
+  document.addEventListener('DOMContentLoaded', () => {
+    initTelegram();
+    initGreeting();
+    bindUI();
+  });
+})();
+function setTelegramUserUI() {
+  const tg = window.Telegram?.WebApp || null;
+  const user = tg?.initDataUnsafe?.user || null;
 
-        <button class="tile glass" type="button" data-route="fines">
-          <div class="tile__emoji">⚠️</div>
-          <div class="tile__label">Запчасти</div>
-        </button>
+  const titleEl = document.getElementById('tgHelloTitle');
+  const subEl = document.getElementById('tgHelloSub');
 
-        <button class="tile glass" type="button" data-route="gps">
-          <div class="tile__emoji">📍</div>
-          <div class="tile__label">GPS Контроль</div>
-        </button>
-      </div>
+  // Имя
+  const name =
+    user?.first_name ||
+    user?.username ||
+    'водитель';
 
-      <!-- Нижние 2 плитки (под блоком штрафы) -->
-      <section class="infogrid" aria-label="Показатели">
-        <button class="infoitem glass" type="button" data-route="repair">
-          <div class="infoitem__emoji">🚙</div>
-          <div class="infoitem__text">
-            <div class="infoitem__title">Авто в ремонте: <b>3</b></div>
-            <div class="infoitem__sub">
-              Расход ремонта:
-              <span class="neg">- 402&nbsp;000₽</span>
-            </div>
-          </div>
-        </button>
+  if (titleEl) titleEl.textContent = `Здравствуйте, ${name}!`;
 
-        <button class="infoitem glass" type="button" data-route="accidents">
-          <div class="infoitem__emoji">🚨</div>
-          <div class="infoitem__text">
-            <div class="infoitem__title">ДТП за месяц: <b>2</b></div>
-            <div class="infoitem__sub">
-              Расход по ДТП:
-              <span class="neg">- 200&nbsp;000₽</span>
-            </div>
-          </div>
-        </button>
-      </section>
-    </main>
+  // Аватар (если Telegram отдаёт photo_url)
+  const img = document.getElementById('tgAvatar');
+  const fallback = document.getElementById('tgAvatarFallback');
 
-    <!-- Нижняя панель: БЕЗ ЛИНИЙ, только иконки + подписи -->
-    <nav class="bottombar glass" aria-label="Навигация">
-      <button class="navbtn active" type="button" data-route="requests">
-        <span class="navbtn__emoji">🗂️</span>
-        <span class="badge">1</span>
-        <span class="navbtn__label">Заявки</span>
-      </button>
+  if (img && fallback) {
+    const photo = user?.photo_url || '';
+    if (photo) {
+      img.src = photo;
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.textContent = (name?.[0] || '👤').toUpperCase();
+    }
+  }
 
-      <button class="navbtn" type="button" data-route="new">
-        <span class="navbtn__emoji">👥</span>
-        <span class="navbtn__label">Новые</span>
-      </button>
+  // Подстрока (можешь позже менять цифры из данных)
+  if (subEl) subEl.textContent = 'На линии: 58 водителей · 124 авто';
+}
 
-      <button class="navbtn" type="button" data-route="alerts">
-        <span class="navbtn__emoji">🔔</span>
-        <span class="badge">5</span>
-        <span class="navbtn__label">Увед.</span>
-      </button>
-
-      <button class="navbtn" type="button" data-route="more">
-        <span class="navbtn__emoji">⋯</span>
-        <span class="navbtn__label">Ещё</span>
-      </button>
-    </nav>
-  </div>
-
-  <script src="app.js?v=101"></script>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+  setTelegramUserUI();
+});
