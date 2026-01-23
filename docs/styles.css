@@ -425,3 +425,66 @@ body{
   border: none !important;
   box-shadow: none !important;
 }
+
+/* Новая секция: Каталог автопарка */
+.park-list {
+  margin-top: var(--gap);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  background: transparent; /* Прозрачная */
+  border: none; /* Без рамки для прозрачности */
+  box-shadow: none; /* Без тени */
+}
+
+.park-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  align-self: flex-start; /* Слева в углу */
+}
+
+.park-divider {
+  border: none;
+  border-top: 1px solid var(--stroke);
+  margin: 8px 0;
+}
+
+.car-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background: rgba(255,255,255,.05); /* Легкая прозрачность для элементов списка */
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+}
+
+.car-photo {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.car-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.driver-name {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.car-details {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.note {
+  font-size: 12px;
+  color: var(--danger); /* Для уведомлений */
+}
