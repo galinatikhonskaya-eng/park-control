@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ПитерПарк — авто под такси</title>
 
-  <!-- TMA.js SDK (для надёжного отключения вертикального свайпа в Telegram) -->
+  <!-- TMA.js SDK для надёжного отключения свайпа закрытия -->
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
   <style>
@@ -25,9 +25,10 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      overscroll-behavior-y: none;
+      overflow-y: auto;              /* ← разрешаем вертикальный скролл */
+      overscroll-behavior-y: contain; /* ← Telegram не ловит overscroll вниз */
       overscroll-behavior-x: auto;
-      touch-action: pan-x;
+      touch-action: manipulation;     /* ← лучшее для мобильных: позволяет скролл, но убирает задержку */
     }
 
     .container {
@@ -123,7 +124,7 @@
       padding: 12px 0 24px;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
-      touch-action: pan-x;
+      touch-action: pan-x; /* только горизонтальный скролл внутри блока */
     }
 
     .car-card {
@@ -258,14 +259,14 @@
 const { swipeBehavior } = window.TelegramMiniApps || {};
 
 if (swipeBehavior?.isAvailable?.()) {
-  swipeBehavior.disableVertical();  // TMA.js — отключает вертикальный свайп
+  swipeBehavior.disableVertical();  // TMA.js — самое надёжное отключение свайпа вниз
 } else if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
   setTimeout(() => {
     window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
       allow_vertical_swipe: false
     }, (err) => {
-      if (err) console.error('Ошибка swipe_behavior:', err);
+      if (err) console.error('Ошибка настройки swipe:', err);
     });
     window.Telegram.WebApp.disableVerticalSwipes?.();
   }, 300);
