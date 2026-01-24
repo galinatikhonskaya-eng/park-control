@@ -93,6 +93,23 @@
       margin: 28px 0 16px;
     }
 
+    .video-banner {
+      margin: 20px 0 28px;
+      text-align: center;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .video-banner video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
     .horizontal-scroll {
       display: flex;
       gap: 14px;
@@ -103,7 +120,7 @@
     }
 
     .car-card {
-      flex: 0 0 220px;                  /* уменьшена ширина карточки */
+      flex: 0 0 220px;
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
@@ -113,7 +130,7 @@
 
     .car-card img {
       width: 100%;
-      height: 140px;                    /* маленькое фото, не на весь экран */
+      height: 140px;
       object-fit: cover;
     }
 
@@ -133,7 +150,6 @@
       color: var(--text2);
     }
 
-    /* Вертикальный список */
     .car-list {
       display: flex;
       flex-direction: column;
@@ -146,7 +162,7 @@
       border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 4px 14px rgba(0,0,0,0.5);
-      height: 100px;                    /* уменьшена высота плитки */
+      height: 100px;
     }
 
     .car-tile img {
@@ -188,7 +204,7 @@
 
     .btn-book:active { transform: scale(0.97); }
 
-    /* Модалка (пока простая) */
+    /* Модалка */
     #modal {
       position: fixed;
       inset: 0;
@@ -214,7 +230,6 @@
 
 <div class="container">
 
-  <!-- Главный экран -->
   <div id="landing">
     <div class="logo">ПитерПарк</div>
     <div class="subtitle">
@@ -223,8 +238,15 @@
     <button class="btn-cta" onclick="showCatalog()">Выбрать автомобиль</button>
   </div>
 
-  <!-- Каталог -->
   <div id="catalog">
+
+    <!-- Видео выше «Рекомендуем» -->
+    <div class="video-banner">
+      <video autoplay muted loop playsinline>
+        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/IMG_8208.mp4" type="video/mp4">
+        Видео не поддерживается
+      </video>
+    </div>
 
     <div class="section-title">Рекомендуем</div>
     <div class="horizontal-scroll">
@@ -260,7 +282,6 @@
 
 </div>
 
-<!-- Модалка -->
 <div id="modal">
   <div class="modal-box">
     <h2 style="margin-bottom:20px;">Бронирование<br><span id="carName"></span></h2>
@@ -271,7 +292,6 @@
 </div>
 
 <script>
-// Массив авто
 const cars = [
   {id:1, name:"Hyundai Solaris", year:"2022–2025", img:"https://images.unsplash.com/photo-1502877338535-766e3a6052c0?w=600"},
   {id:2, name:"Kia Rio",         year:"2021–2024", img:"https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?w=600"},
