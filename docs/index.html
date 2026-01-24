@@ -156,13 +156,16 @@
       border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 4px 14px rgba(0,0,0,0.5);
-      height: 100px;
+      min-height: 100px;               /* минимальная высота, но не жёсткая */
+      height: auto;                    /* высота подстраивается */
     }
 
     .car-tile img {
       width: 100px;
-      height: 100px;
-      object-fit: cover;
+      height: 100px;                   /* фиксированная ширина фото-секции */
+      object-fit: contain;             /* ← главное изменение: фото целиком, без обрезки */
+      background: #222;                /* фон на случай прозрачности */
+      flex-shrink: 0;
     }
 
     .car-tile-info {
@@ -260,7 +263,7 @@ const cars = [
   {id:4, name:"Volkswagen Polo", year:"2022–2024", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
   {id:5, name:"Toyota Camry",    year:"2021–2024", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
   {id:6, name:"Kia Cerato",      year:"2022–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
-  {id:7, name:"Hyundai Creta",   year:"2023–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
+  {id:7, name:"Hyundai Creta",   year:"2022–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
 function showCatalog() {
@@ -269,7 +272,7 @@ function showCatalog() {
 
   const recommended = document.getElementById('recommended');
   recommended.innerHTML = '';
-  cars.slice(0, 4).forEach(car => {  // Первые 4 в "Рекомендуем"
+  cars.slice(0, 4).forEach(car => {
     const card = document.createElement('div');
     card.className = 'car-card';
     card.innerHTML = `
