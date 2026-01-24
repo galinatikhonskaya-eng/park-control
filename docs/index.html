@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title></title> <!-- Пустой title, чтобы Telegram не показывал название -->
+  <title></title> <!-- Пустой title — Telegram не показывает название -->
 
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
@@ -145,7 +145,8 @@
 
 <div class="container">
 
-  <div id="catalog" style="display: block;"> <!-- сразу показываем каталог -->
+  <!-- Каталог открывается сразу, без первого экрана -->
+  <div id="catalog">
 
     <div class="video-banner">
       <video autoplay muted loop playsinline>
@@ -207,12 +208,8 @@ const cars = [
   {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
-// Автоматически загружаем каталог при запуске
+// Автоматически заполняем каталог при запуске
 window.addEventListener('load', () => {
-  showCatalog();
-});
-
-function showCatalog() {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
 
@@ -243,7 +240,7 @@ function showCatalog() {
       container.appendChild(card);
     });
   });
-}
+});
 
 function openModal(id) {
   const car = cars.find(c => c.id === id);
@@ -252,9 +249,6 @@ function openModal(id) {
     document.getElementById('modal').style.display = 'flex';
   }
 }
-
-// Разрешаем вертикальный скролл страницы даже при касании карточек
-document.addEventListener('touchmove', e => {}, { passive: true });
 </script>
 
 </body>
