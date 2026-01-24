@@ -91,10 +91,10 @@
     }
 
     .video-banner {
-      margin: 16px -16px 32px;          /* отрицательный margin → от края до края */
-      width: calc(100% + 32px);         /* компенсируем padding контейнера */
-      max-width: none;                  /* снимаем любое ограничение ширины */
-      border-radius: 0 0 16px 16px;     /* верх прямой, низ скруглён */
+      margin: 16px -16px 32px;
+      width: calc(100% + 32px);
+      max-width: none;
+      border-radius: 0 0 16px 16px;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
@@ -234,31 +234,7 @@
     </div>
 
     <div class="section-title">Рекомендуем</div>
-    <div class="horizontal-scroll">
-      <div class="car-card">
-        <img src="https://images.unsplash.com/photo-1502877338535-766e3a6052c0?w=600" alt="Solaris">
-        <div class="car-info">
-          <div class="car-name">Hyundai Solaris</div>
-          <div class="car-year">2022–2025</div>
-        </div>
-      </div>
-
-      <div class="car-card">
-        <img src="https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?w=600" alt="Kia Rio">
-        <div class="car-info">
-          <div class="car-name">Kia Rio</div>
-          <div class="car-year">2021–2024</div>
-        </div>
-      </div>
-
-      <div class="car-card">
-        <img src="https://images.unsplash.com/photo-1502489597346-d8389a3b1d3d?w=600" alt="Skoda Octavia">
-        <div class="car-info">
-          <div class="car-name">Skoda Octavia</div>
-          <div class="car-year">2023–2025</div>
-        </div>
-      </div>
-    </div>
+    <div class="horizontal-scroll" id="recommended"></div>
 
     <div class="section-title">Весь автопарк</div>
     <div class="car-list" id="carList"></div>
@@ -278,15 +254,33 @@
 
 <script>
 const cars = [
-  {id:1, name:"Hyundai Solaris", year:"2022–2025", img:"https://images.unsplash.com/photo-1502877338535-766e3a6052c0?w=600"},
-  {id:2, name:"Kia Rio",         year:"2021–2024", img:"https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?w=600"},
-  {id:3, name:"Skoda Octavia",   year:"2023–2025", img:"https://images.unsplash.com/photo-1502489597346-d8389a3b1d3d?w=600"},
-  {id:4, name:"Volkswagen Polo", year:"2022–2024", img:"https://images.unsplash.com/photo-1618843479313-40f2e308a518?w=600"},
+  {id:1, name:"Hyundai Solaris", year:"2022–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
+  {id:2, name:"Kia Rio",         year:"2021–2024", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
+  {id:3, name:"Skoda Octavia",   year:"2023–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg"},
+  {id:4, name:"Volkswagen Polo", year:"2022–2024", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
+  {id:5, name:"Toyota Camry",    year:"2021–2024", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
+  {id:6, name:"Kia Cerato",      year:"2022–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
+  {id:7, name:"Hyundai Creta",   year:"2023–2025", img:"https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
 function showCatalog() {
   document.getElementById('landing').style.display = 'none';
   document.getElementById('catalog').style.display = 'block';
+
+  const recommended = document.getElementById('recommended');
+  recommended.innerHTML = '';
+  cars.slice(0, 4).forEach(car => {  // Первые 4 в "Рекомендуем"
+    const card = document.createElement('div');
+    card.className = 'car-card';
+    card.innerHTML = `
+      <img src="${car.img}" alt="${car.name}">
+      <div class="car-info">
+        <div class="car-name">${car.name}</div>
+        <div class="car-year">${car.year}</div>
+      </div>
+    `;
+    recommended.appendChild(card);
+  });
 
   const list = document.getElementById('carList');
   list.innerHTML = '';
