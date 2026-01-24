@@ -72,31 +72,19 @@
       backdrop-filter: blur(10px);
     }
 
-    /* Мерцающий текст в одну строку */
-    .promo-text {
-      text-align: center;
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--yellow);
-      margin: -20px 0 32px;
-      animation: glowText 2.5s infinite ease-in-out;
-      text-shadow: 0 0 10px rgba(255,213,0,0.7);
-      letter-spacing: 0.5px;
-    }
-
-    @keyframes glowText {
-      0%, 100% { text-shadow: 0 0 10px rgba(255,213,0,0.7), 0 0 20px rgba(255,213,0,0.5); opacity: 1; }
-      50%      { text-shadow: 0 0 20px rgba(255,213,0,1), 0 0 30px rgba(255,213,0,0.8); opacity: 0.9; }
-    }
-
+    /* Стиль Premium для названий разделов */
     .section-title {
-      font-size: 1.8rem;
-      font-weight: 800;
-      margin: 32px 0 16px;
+      font-size: 1.9rem;
+      font-weight: 900;
+      margin: 40px 0 20px;
       text-align: center;
-      color: var(--yellow);
+      background: linear-gradient(90deg, #FFD500, #FFEA80, #FFD500);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(255,213,0,0.6);
     }
 
     .video-banner {
@@ -173,17 +161,13 @@
       cursor: pointer;
       align-self: center;
       margin-top: auto;
-      box-shadow: 0 0 15px rgba(255,213,0,0.7), 0 0 25px rgba(255,213,0,0.5);
-      animation: neonGlow 2.5s infinite ease-in-out;
+      box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4);
+      animation: softNeon 4s infinite ease-in-out;
     }
 
-    @keyframes neonGlow {
-      0%, 100% {
-        box-shadow: 0 0 15px rgba(255,213,0,0.7), 0 0 25px rgba(255,213,0,0.5), 0 0 35px rgba(255,213,0,0.3);
-      }
-      50% {
-        box-shadow: 0 0 25px rgba(255,213,0,1), 0 0 40px rgba(255,213,0,0.8), 0 0 55px rgba(255,213,0,0.5);
-      }
+    @keyframes softNeon {
+      0%, 100% { box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4); }
+      50%      { box-shadow: 0 0 18px rgba(255,213,0,0.9), 0 0 28px rgba(255,213,0,0.6); }
     }
 
     #modal {
@@ -209,10 +193,9 @@
 </head>
 <body>
 
-<!-- Кнопки в строку справа вверху (ниже) -->
 <div class="floating-buttons">
-  <a href="tel:+79000000000" class="btn-float">📞</a> <!-- Замени номер -->
-  <a href="https://wa.me/79000000000" class="btn-float">WA</a> <!-- Замени номер -->
+  <a href="tel:+79000000000" class="btn-float">📞</a>
+  <a href="https://wa.me/79000000000" class="btn-float">WA</a>
 </div>
 
 <div class="container">
@@ -224,9 +207,6 @@
         <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
       </video>
     </div>
-
-    <!-- Мерцающий текст в одну строку -->
-    <div class="promo-text">Авто под такси — в день обращения 🚕</div>
 
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
