@@ -29,14 +29,13 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       touch-action: auto;
-      position: relative;
     }
 
     body::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.65); /* тёмный оверлей для размытия */
+      background: rgba(0,0,0,0.65);
       backdrop-filter: blur(4px);
       z-index: -1;
     }
@@ -44,10 +43,9 @@
     .container {
       padding: 16px;
       min-height: 100vh;
-      padding-top: 120px; /* место под кнопки + видео */
+      padding-top: 120px;
     }
 
-    /* Кнопки — горизонтально, ниже */
     .floating-buttons {
       position: fixed;
       top: 80px;
@@ -62,7 +60,7 @@
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background: rgba(255,213,0,0.3); /* слегка прозрачный жёлтый */
+      background: rgba(255,213,0,0.3);
       color: #fff;
       display: flex;
       align-items: center;
@@ -74,21 +72,21 @@
       backdrop-filter: blur(10px);
     }
 
-    /* Мерцающий текст под видео */
+    /* Мерцающий текст в одну строку */
     .promo-text {
       text-align: center;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: var(--yellow);
       margin: -20px 0 32px;
-      animation: pulse 2s infinite;
-      text-shadow: 0 0 10px rgba(255,213,0,0.8);
+      animation: glowText 2.5s infinite ease-in-out;
+      text-shadow: 0 0 10px rgba(255,213,0,0.7);
+      letter-spacing: 0.5px;
     }
 
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.05); }
-      100% { opacity: 1; transform: scale(1); }
+    @keyframes glowText {
+      0%, 100% { text-shadow: 0 0 10px rgba(255,213,0,0.7), 0 0 20px rgba(255,213,0,0.5); opacity: 1; }
+      50%      { text-shadow: 0 0 20px rgba(255,213,0,1), 0 0 30px rgba(255,213,0,0.8); opacity: 0.9; }
     }
 
     .section-title {
@@ -165,7 +163,7 @@
     }
 
     .btn-book {
-      background: rgba(255,213,0,0.85); /* слегка прозрачный жёлтый */
+      background: rgba(255,213,0,0.85);
       color: #000;
       font-size: 1rem;
       font-weight: 700;
@@ -175,14 +173,17 @@
       cursor: pointer;
       align-self: center;
       margin-top: auto;
-      box-shadow: 0 4px 12px rgba(255,213,0,0.5);
-      animation: pulse-btn 2s infinite;
+      box-shadow: 0 0 15px rgba(255,213,0,0.7), 0 0 25px rgba(255,213,0,0.5);
+      animation: neonGlow 2.5s infinite ease-in-out;
     }
 
-    @keyframes pulse-btn {
-      0% { box-shadow: 0 4px 12px rgba(255,213,0,0.5); }
-      50% { box-shadow: 0 6px 20px rgba(255,213,0,0.8); transform: scale(1.05); }
-      100% { box-shadow: 0 4px 12px rgba(255,213,0,0.5); }
+    @keyframes neonGlow {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(255,213,0,0.7), 0 0 25px rgba(255,213,0,0.5), 0 0 35px rgba(255,213,0,0.3);
+      }
+      50% {
+        box-shadow: 0 0 25px rgba(255,213,0,1), 0 0 40px rgba(255,213,0,0.8), 0 0 55px rgba(255,213,0,0.5);
+      }
     }
 
     #modal {
@@ -224,8 +225,8 @@
       </video>
     </div>
 
-    <!-- Мерцающий текст под видео -->
-    <div class="promo-text">Авто под такси — в день обращения 😎</div>
+    <!-- Мерцающий текст в одну строку -->
+    <div class="promo-text">Авто под такси — в день обращения 🚕</div>
 
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
