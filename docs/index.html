@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ПитерПарк — авто под такси</title>
 
-  <!-- TMA.js SDK — самое надёжное отключение свайпа закрытия -->
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
   <style>
@@ -24,19 +23,13 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      margin: 0;
       overflow-x: hidden;
-      overflow-y: auto;               /* ← обязательно для нормального скролла */
-      -webkit-overflow-scrolling: touch; /* плавный скролл на iOS */
-      overscroll-behavior-y: contain; /* Telegram не ловит overscroll как закрытие */
-      touch-action: auto;             /* ← полный скролл, без тормозов */
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      touch-action: auto;
     }
 
-    .container {
-      max-width: 100%;
-      padding: 16px;
-      margin: 0 auto;
-    }
+    .container { max-width: 100%; padding: 16px; margin: 0 auto; }
 
     #landing {
       min-height: 100vh;
@@ -67,12 +60,7 @@
       50%     { background-position: 300% center; }
     }
 
-    .subtitle {
-      font-size: 1.18rem;
-      color: var(--text2);
-      line-height: 1.4;
-      margin: 12px 0 36px;
-    }
+    .subtitle { font-size: 1.18rem; color: var(--text2); line-height: 1.4; margin: 12px 0 36px; }
 
     .btn-cta {
       background: var(--yellow);
@@ -125,7 +113,7 @@
       padding: 12px 0 24px;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
-      touch-action: pan-x; /* горизонтальный скролл карточек */
+      touch-action: pan-x pan-y; /* ← разрешаем и горизонталь, и вертикаль */
     }
 
     .car-card {
@@ -138,12 +126,14 @@
       display: flex;
       flex-direction: column;
       height: 340px;
+      touch-action: auto; /* карточка тоже не блокирует */
     }
 
     .car-card img {
       width: 100%;
       height: 160px;
       object-fit: cover;
+      touch-action: auto;
     }
 
     .car-info {
@@ -155,17 +145,9 @@
       text-align: center;
     }
 
-    .car-name {
-      font-size: 1.18rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+    .car-name { font-size: 1.18rem; font-weight: 700; margin-bottom: 4px; }
 
-    .car-year {
-      font-size: 0.95rem;
-      color: var(--text2);
-      margin-bottom: 12px;
-    }
+    .car-year { font-size: 0.95rem; color: var(--text2); margin-bottom: 12px; }
 
     .btn-book {
       background: var(--yellow);
@@ -260,10 +242,9 @@
 const { swipeBehavior } = window.TelegramMiniApps || {};
 
 if (swipeBehavior?.isAvailable?.()) {
-  swipeBehavior.disableVertical();  // TMA.js — отключает свайп вниз
+  swipeBehavior.disableVertical();
 } else if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
-  // Вызываем метод несколько раз с задержкой — решает проблемы в некоторых версиях
   setTimeout(() => {
     window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
       allow_vertical_swipe: false
@@ -271,8 +252,20 @@ if (swipeBehavior?.isAvailable?.()) {
   }, 100);
   setTimeout(() => {
     window.Telegram.WebApp.disableVerticalSwipes?.();
-  }, 300);
+  }, 500);
 }
+
+// Хак для плавного скролла страницы даже при касании карточек
+document.addEventListener('touchstart', e => {
+  // Если касание на карточке — не блокируем вертикальный скролл
+  if (e.target.closest('.car-card') || e.target.closest('.horizontal-scroll')) {
+    // Ничего не делаем — пусть скролл страницы работает
+  }
+}, { passive: true });
+
+document.addEventListener('touchmove', e => {
+  // Разрешаем вертикальное движение
+}, { passive: true });
 
 const cars = [
   {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
