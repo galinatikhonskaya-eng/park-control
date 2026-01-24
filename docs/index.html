@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title></title> <!-- Пустой title — чтобы не показывало название в Telegram -->
+  <title></title> <!-- Пустой title, чтобы Telegram не показывал название -->
 
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
@@ -27,55 +27,13 @@
       overflow-x: hidden;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      touch-action: auto; /* полный скролл без задержек */
+      touch-action: auto;
     }
 
     .container {
       padding: 16px;
       min-height: 100vh;
     }
-
-    #landing {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0 20px;
-    }
-
-    .logo {
-      font-size: 3.6rem;
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      background: linear-gradient(90deg, var(--yellow) 20%, #ffea80 50%, var(--yellow) 80%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 20px;
-    }
-
-    .subtitle {
-      font-size: 1.18rem;
-      color: var(--text2);
-      line-height: 1.4;
-      margin: 12px 0 36px;
-    }
-
-    .btn-cta {
-      background: var(--yellow);
-      color: #000;
-      font-size: 1.12rem;
-      font-weight: 700;
-      padding: 16px 52px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(255,213,0,0.3);
-    }
-
-    #catalog { display: none; }
 
     .section-title {
       font-size: 1.8rem;
@@ -84,10 +42,11 @@
       text-align: center;
       color: var(--yellow);
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .video-banner {
-      margin: 16px -16px 32px;
+      margin: 0 -16px 32px;
       width: calc(100% + 32px);
       border-radius: 0 0 16px 16px;
       overflow: hidden;
@@ -160,21 +119,33 @@
       align-self: center;
       margin-top: auto;
     }
+
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #111;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 380px;
+      padding: 24px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
 
-  <div id="landing">
-    <div class="logo">ПитерПарк</div>
-    <div class="subtitle">
-      Аренда автомобилей под такси<br>в Санкт-Петербурге
-    </div>
-    <button class="btn-cta" onclick="showCatalog()">Выбрать автомобиль</button>
-  </div>
-
-  <div id="catalog">
+  <div id="catalog" style="display: block;"> <!-- сразу показываем каталог -->
 
     <div class="video-banner">
       <video autoplay muted loop playsinline>
@@ -236,10 +207,12 @@ const cars = [
   {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
-function showCatalog() {
-  document.getElementById('landing').style.display = 'none';
-  document.getElementById('catalog').style.display = 'block';
+// Автоматически загружаем каталог при запуске
+window.addEventListener('load', () => {
+  showCatalog();
+});
 
+function showCatalog() {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
 
@@ -280,10 +253,8 @@ function openModal(id) {
   }
 }
 
-// Разрешаем скролл страницы даже при касании карточек
-document.addEventListener('touchmove', e => {
-  // Не блокируем вертикальное движение
-}, { passive: true });
+// Разрешаем вертикальный скролл страницы даже при касании карточек
+document.addEventListener('touchmove', e => {}, { passive: true });
 </script>
 
 </body>
