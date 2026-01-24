@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ПитерПарк — авто под такси</title>
 
-  <!-- TMA.js SDK для надёжного отключения свайпа закрытия -->
+  <!-- TMA.js SDK — самое надёжное отключение свайпа закрытия -->
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
   <style>
@@ -24,11 +24,12 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      margin: 0;
       overflow-x: hidden;
-      overflow-y: auto;              /* ← разрешаем вертикальный скролл */
-      overscroll-behavior-y: contain; /* ← Telegram не ловит overscroll вниз */
-      overscroll-behavior-x: auto;
-      touch-action: manipulation;     /* ← лучшее для мобильных: позволяет скролл, но убирает задержку */
+      overflow-y: auto;               /* ← обязательно для нормального скролла */
+      -webkit-overflow-scrolling: touch; /* плавный скролл на iOS */
+      overscroll-behavior-y: contain; /* Telegram не ловит overscroll как закрытие */
+      touch-action: auto;             /* ← полный скролл, без тормозов */
     }
 
     .container {
@@ -124,7 +125,7 @@
       padding: 12px 0 24px;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
-      touch-action: pan-x; /* только горизонтальный скролл внутри блока */
+      touch-action: pan-x; /* горизонтальный скролл карточек */
     }
 
     .car-card {
@@ -259,15 +260,16 @@
 const { swipeBehavior } = window.TelegramMiniApps || {};
 
 if (swipeBehavior?.isAvailable?.()) {
-  swipeBehavior.disableVertical();  // TMA.js — самое надёжное отключение свайпа вниз
+  swipeBehavior.disableVertical();  // TMA.js — отключает свайп вниз
 } else if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
+  // Вызываем метод несколько раз с задержкой — решает проблемы в некоторых версиях
   setTimeout(() => {
     window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
       allow_vertical_swipe: false
-    }, (err) => {
-      if (err) console.error('Ошибка настройки swipe:', err);
     });
+  }, 100);
+  setTimeout(() => {
     window.Telegram.WebApp.disableVerticalSwipes?.();
   }, 300);
 }
