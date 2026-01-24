@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title></title>
+  <title>Аренда авто</title>
 
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
@@ -29,7 +29,6 @@
       overflow-x: hidden;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      touch-action: auto;
     }
 
     body::before {
@@ -141,7 +140,6 @@
       width: 100%;
       height: 160px;
       object-fit: cover;
-      loading: lazy;
     }
 
     .car-info {
@@ -270,9 +268,7 @@
 </div>
 
 <div class="container">
-
   <div id="catalog">
-
     <div class="video-banner">
       <video id="topVideo" preload="auto" autoplay muted loop playsinline>
         <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
@@ -296,9 +292,7 @@
 
     <div class="section-title">Elite</div>
     <div class="horizontal-scroll" id="elite"></div>
-
   </div>
-
 </div>
 
 <div id="modal">
@@ -306,39 +300,26 @@
 </div>
 
 <script>
-const { swipeBehavior } = window.TelegramMiniApps || {};
-
-if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
-  window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', { allow_vertical_swipe: false });
-} else if (swipeBehavior?.isAvailable?.()) {
-  swipeBehavior.disableVertical();
-}
-
 const cars = [
-  // Эконом — пусто или добавь, если нужно
-  // {id:2, category: "Эконом", name: "...", ...} — если нужно вернуть
-
   // Комфорт
-  {id:1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda"},
-  {id:5, category: "Комфорт", name: "Geely Emgrand", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely"},
+  { id: 1, category: "Комфорт", name: "OMODA S5",      year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
+  { id: 5, category: "Комфорт", name: "Geely Emgrand",  year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
 
   // Комфорт +
-  {id:2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo"},
-  {id:3, category: "Комфорт +", name: "EXEED LX", year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed"},
-  {id:4, category: "Комфорт +", name: "Belgee X70", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee"},
+  { id: 2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo" },
+  { id: 3, category: "Комфорт +", name: "EXEED LX",         year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
+  { id: 4, category: "Комфорт +", name: "Belgee X70",        year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
 
-  // Business
-  {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
-  {id:8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg"},
-  {id:9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg"},
+  // Business (оставляем как было)
+  { id: 6,  category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg" },
+  { id: 8,  category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
+  { id: 9,  category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
 
   // Premier
-  {id:10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C%D0%AC%D0%95%D0%A0.jpg"},
+  { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C%D0%AC%D0%95%D0%A0.jpg" },
 
-  // Забронированная машина
-  {id:6_old, category: "Комфорт", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true},
+  // Забронированная машина (Kia Rio)
+  { id: 999, category: "Комфорт", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -349,18 +330,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById(ids[index]);
     if (!container) return;
 
-    const filteredCars = cars.filter(car => car.category === cat);
+    const filtered = cars.filter(car => car.category === cat);
 
-    if (filteredCars.length === 0) {
+    if (filtered.length === 0) {
       container.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Пока нет автомобилей</p>';
       return;
     }
 
     const fragment = document.createDocumentFragment();
-    filteredCars.forEach(car => {
+
+    filtered.forEach(car => {
       const card = document.createElement('div');
       card.className = 'car-card';
-      let buttonHtml = car.booked 
+
+      const buttonHtml = car.booked
         ? `<button class="btn-book" disabled>Забронировано</button>`
         : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
 
@@ -376,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       fragment.appendChild(card);
     });
+
     container.appendChild(fragment);
   });
 
@@ -390,11 +374,10 @@ function openModal(id) {
   const modal = document.getElementById('modal');
   const content = document.getElementById('modalContent');
 
-  let html = '';
+  let html = `<h2 class="modal-title">${car.name}</h2>`;
 
   if (car.special === 'omoda') {
-    html = `
-      <h2 class="modal-title">OMODA S5</h2>
+    html += `
       <div class="modal-section-title">Почему именно OMODA S5:</div>
       <ul class="modal-list">
         <li>Новый, современный автомобиль <span class="highlight">2024–2025</span> года выпуска.</li>
@@ -412,8 +395,7 @@ function openModal(id) {
       </ul>
     `;
   } else if (car.special === 'tiggo') {
-    html = `
-      <h2 class="modal-title">Chery Tiggo 7 Pro</h2>
+    html += `
       <p class="alert">в аренду под такси — тариф Комфорт+ ❗ Без залога! ❗ Подключим к такси — Яндекс Про</p>
       <div class="modal-section-title">Что включено:</div>
       <ul class="modal-list">
@@ -423,8 +405,7 @@ function openModal(id) {
       </ul>
     `;
   } else if (car.special === 'exeed') {
-    html = `
-      <h2 class="modal-title">EXEED LX</h2>
+    html += `
       <p class="alert">БЕЗ ЗАЛОГА | БЕЗ ДЕПОЗИТА</p>
       <p>Есть детские кресла, в тарифе детский ЗАРАБОТОК НА 30% ВЫШЕ!</p>
       <p>Возьми в аренду новый автомобиль на АКПП и газе или бензине прямо сейчас!</p>
@@ -439,11 +420,9 @@ function openModal(id) {
       </ul>
     `;
   } else if (car.special === 'belgee') {
-    html = `
-      <h2 class="modal-title">Belgee X70</h2>
+    html += `
       <p class="alert">БЕЗ ЗАЛОГА | Комфорт+ | Готов к Яндекс Go</p>
       <p>🔑 Стартуй в такси без вложений уже сегодня!</p>
-      <p>Сдаём в аренду надёжный и комфортный Belgee X70 для работы в Яндекс Go — без залога, скрытых комиссий и ожиданий.</p>
       <div class="modal-section-title">✅ Почему это выгодно:</div>
       <ul class="modal-list">
         <li>🚫 Без залога — не замораживаешь деньги</li>
@@ -470,8 +449,7 @@ function openModal(id) {
       </ul>
     `;
   } else if (car.special === 'geely') {
-    html = `
-      <h2 class="modal-title">Geely Emgrand</h2>
+    html += `
       <div class="modal-section-title">Преимущества Geely Emgrand:</div>
       <ul class="modal-list">
         <li>Низкий расход — от <span class="highlight">6,5 л/100 км</span></li>
@@ -482,15 +460,12 @@ function openModal(id) {
       </ul>
     `;
   } else {
-    html = `
-      <h2 style="margin-bottom:20px; text-align:center;">Бронирование<br><span style="color:#FFD500;">${car.name}</span></h2>
-      <p style="color:#aaa; margin-bottom:24px; text-align:center;">Автомобиль выбран</p>
-    `;
+    html += `<p style="color:#aaa; text-align:center; margin:24px 0;">Автомобиль выбран</p>`;
   }
 
   if (!car.booked) {
     html += `
-      <button class="btn-book" style="width:100%; margin: 24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
+      <button class="btn-book" style="width:100%; margin:24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
     `;
   }
 
@@ -501,8 +476,6 @@ function openModal(id) {
   content.innerHTML = html;
   modal.style.display = 'flex';
 }
-
-document.addEventListener('touchmove', () => {}, { passive: true });
 </script>
 
 </body>
