@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title></title> <!-- Пустой title — Telegram не показывает название -->
+  <title></title>
 
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
@@ -38,7 +38,7 @@
     .section-title {
       font-size: 1.8rem;
       font-weight: 800;
-      margin: 40px 0 16px;
+      margin: 32px 0 16px;
       text-align: center;
       color: var(--yellow);
       text-transform: uppercase;
@@ -145,7 +145,6 @@
 
 <div class="container">
 
-  <!-- Каталог открывается сразу, без первого экрана -->
   <div id="catalog">
 
     <div class="video-banner">
@@ -193,9 +192,10 @@ if (swipeBehavior?.isAvailable?.()) {
   swipeBehavior.disableVertical();
 } else if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();  // Разворачиваем в полноэкранный режим сразу
   setTimeout(() => {
     window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', { allow_vertical_swipe: false });
-  }, 100);
+  }, 50);
 }
 
 const cars = [
@@ -208,14 +208,14 @@ const cars = [
   {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
-// Автоматически заполняем каталог при запуске
-window.addEventListener('load', () => {
+// Заполняем каталог сразу при загрузке DOM (без ожидания полной загрузки)
+document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
 
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
-    container.innerHTML = '';
+    if (!container) return;
 
     const filteredCars = cars.filter(car => car.category === cat);
 
@@ -249,6 +249,9 @@ function openModal(id) {
     document.getElementById('modal').style.display = 'flex';
   }
 }
+
+// Разрешаем вертикальный скролл везде
+document.addEventListener('touchmove', () => {}, { passive: true });
 </script>
 
 </body>
