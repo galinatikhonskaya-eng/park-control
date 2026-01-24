@@ -91,10 +91,10 @@
     }
 
     .video-banner {
-      margin: 16px auto 32px;
-      max-width: 320px;
-      width: 90%;
-      border-radius: 0 0 16px 16px; /* верх прямой, низ скруглён */
+      margin: 16px -16px 32px;          /* отрицательный margin → от края до края */
+      width: calc(100% + 32px);         /* компенсируем padding контейнера */
+      max-width: none;                  /* снимаем любое ограничение ширины */
+      border-radius: 0 0 16px 16px;     /* верх прямой, низ скруглён */
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
