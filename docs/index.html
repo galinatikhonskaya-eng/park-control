@@ -301,6 +301,9 @@
 
 <script>
 const cars = [
+  // Эконом — сюда перенесена Kia Rio (забронирована)
+  { id: 999, category: "Эконом", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true },
+
   // Комфорт
   { id: 1, category: "Комфорт", name: "OMODA S5",      year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
   { id: 5, category: "Комфорт", name: "Geely Emgrand",  year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
@@ -310,16 +313,13 @@ const cars = [
   { id: 3, category: "Комфорт +", name: "EXEED LX",         year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
   { id: 4, category: "Комфорт +", name: "Belgee X70",        year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
 
-  // Business (оставляем как было)
+  // Business
   { id: 6,  category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg" },
   { id: 8,  category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
   { id: 9,  category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
 
   // Premier
-  { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C%D0%AC%D0%95%D0%A0.jpg" },
-
-  // Забронированная машина (Kia Rio)
-  { id: 999, category: "Комфорт", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true }
+  { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C%D0%AC%D0%95%D0%A0.jpg" }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
