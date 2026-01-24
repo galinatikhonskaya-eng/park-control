@@ -14,6 +14,7 @@
       --card: #111111;
       --text: #F5F5F5;
       --text2: #AAAAAA;
+      --disabled: #555555;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -97,10 +98,7 @@
     #elite .section-title { animation-delay: 1.1s; }
 
     @keyframes appearPremium {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .video-banner {
@@ -181,6 +179,14 @@
       animation: softNeon 5s infinite ease-in-out;
     }
 
+    .btn-book:disabled {
+      background: var(--disabled);
+      color: #888;
+      cursor: not-allowed;
+      box-shadow: none;
+      animation: none;
+    }
+
     @keyframes softNeon {
       0%, 100% { box-shadow: 0 0 10px rgba(255,213,0,0.5), 0 0 15px rgba(255,213,0,0.3); }
       50%      { box-shadow: 0 0 15px rgba(255,213,0,0.8), 0 0 25px rgba(255,213,0,0.5); }
@@ -209,7 +215,7 @@
     }
 
     .modal-title {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 800;
       margin-bottom: 16px;
       color: var(--yellow);
@@ -231,7 +237,7 @@
 
     .modal-list li {
       margin: 8px 0;
-      padding-left: 24px;
+      padding-left: 28px;
       position: relative;
     }
 
@@ -240,11 +246,19 @@
       position: absolute;
       left: 0;
       color: #FFD500;
+      font-weight: bold;
     }
 
     .highlight {
       color: #FFD500;
       font-weight: 600;
+    }
+
+    .alert {
+      color: #ff4d4d;
+      font-weight: bold;
+      text-align: center;
+      margin: 12px 0;
     }
   </style>
 </head>
@@ -288,9 +302,7 @@
 </div>
 
 <div id="modal">
-  <div class="modal-box" id="modalContent">
-    <!-- Контент будет подставляться динамически -->
-  </div>
+  <div class="modal-box" id="modalContent"></div>
 </div>
 
 <script>
@@ -305,25 +317,28 @@ if (window.Telegram?.WebApp) {
 }
 
 const cars = [
-  // Эконом — убрали Solaris, т.к. он теперь в Комфорт как OMODA S5
-  {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
+  // Эконом — пусто или добавь, если нужно
+  // {id:2, category: "Эконом", name: "...", ...} — если нужно вернуть
 
-  // Комфорт — сюда переместили бывшую 1.jpg и переименовали
-  {id:1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
+  // Комфорт
+  {id:1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda"},
+  {id:5, category: "Комфорт", name: "Geely Emgrand", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely"},
 
-  {id:3, category: "Комфорт", name: "Skoda Octavia", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg"},
-  {id:4, category: "Комфорт", name: "Volkswagen Polo", year: "2022–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
+  // Комфорт +
+  {id:2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo"},
+  {id:3, category: "Комфорт +", name: "EXEED LX", year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed"},
+  {id:4, category: "Комфорт +", name: "Belgee X70", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee"},
 
-  {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
-
+  // Business
   {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
   {id:8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg"},
   {id:9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg"},
 
+  // Premier
   {id:10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C%D0%AC%D0%95%D0%A0.jpg"},
-  {id:7, category: "Premier", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 
-  {id:11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg"},
+  // Забронированная машина
+  {id:6_old, category: "Комфорт", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true},
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -345,6 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredCars.forEach(car => {
       const card = document.createElement('div');
       card.className = 'car-card';
+      let buttonHtml = car.booked 
+        ? `<button class="btn-book" disabled>Забронировано</button>`
+        : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
+
       card.innerHTML = `
         <img src="${car.img}" alt="${car.name}" loading="lazy">
         <div class="car-info">
@@ -352,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="car-name">${car.name}</div>
             <div class="car-year">${car.year}</div>
           </div>
-          <button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>
+          ${buttonHtml}
         </div>
       `;
       fragment.appendChild(card);
@@ -361,9 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const video = document.getElementById('topVideo');
-  if (video) {
-    video.play().catch(() => {});
-  }
+  if (video) video.play().catch(() => {});
 });
 
 function openModal(id) {
@@ -373,11 +390,11 @@ function openModal(id) {
   const modal = document.getElementById('modal');
   const content = document.getElementById('modalContent');
 
-  if (car.id === 1) {
-    // Специальное оформление для OMODA S5
-    content.innerHTML = `
+  let html = '';
+
+  if (car.special === 'omoda') {
+    html = `
       <h2 class="modal-title">OMODA S5</h2>
-      
       <div class="modal-section-title">Почему именно OMODA S5:</div>
       <ul class="modal-list">
         <li>Новый, современный автомобиль <span class="highlight">2024–2025</span> года выпуска.</li>
@@ -385,7 +402,6 @@ function openModal(id) {
         <li>Экономичный двигатель + <span class="highlight">низкий расход</span> топлива.</li>
         <li>Статус <span class="highlight">Комфорт</span> → повышенные заказы и доход.</li>
       </ul>
-
       <div class="modal-section-title">⚡ Условия аренды:</div>
       <ul class="modal-list">
         <li>Без залога и скрытых платежей.</li>
@@ -394,20 +410,95 @@ function openModal(id) {
         <li>Подключение к Яндекс GO за 10 минут.</li>
         <li>Поддержка 24/7.</li>
       </ul>
-
-      <button class="btn-book" style="width:100%; margin: 24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
-      <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:14px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
+    `;
+  } else if (car.special === 'tiggo') {
+    html = `
+      <h2 class="modal-title">Chery Tiggo 7 Pro</h2>
+      <p class="alert">в аренду под такси — тариф Комфорт+ ❗ Без залога! ❗ Подключим к такси — Яндекс Про</p>
+      <div class="modal-section-title">Что включено:</div>
+      <ul class="modal-list">
+        <li>КАСКО + ОСАГО</li>
+        <li>ТО за наш счёт</li>
+        <li>Поддержка 24/7</li>
+      </ul>
+    `;
+  } else if (car.special === 'exeed') {
+    html = `
+      <h2 class="modal-title">EXEED LX</h2>
+      <p class="alert">БЕЗ ЗАЛОГА | БЕЗ ДЕПОЗИТА</p>
+      <p>Есть детские кресла, в тарифе детский ЗАРАБОТОК НА 30% ВЫШЕ!</p>
+      <p>Возьми в аренду новый автомобиль на АКПП и газе или бензине прямо сейчас!</p>
+      <ul class="modal-list">
+        <li>🤝 Приветственный бонус - полный бак!</li>
+        <li>🛢 Два вида топлива - газ/бензин</li>
+        <li>🚖 Все авто в бренде: Яндекс такси!</li>
+        <li>🕐 Любой график работы, как подработка, так и постоянная занятость!</li>
+        <li>💵 Ежедневные выплаты!</li>
+        <li>📞 Круглосуточная поддержка водителей!</li>
+        <li>🔴 Максимальный приоритет в заказах, простоя нет!</li>
+      </ul>
+    `;
+  } else if (car.special === 'belgee') {
+    html = `
+      <h2 class="modal-title">Belgee X70</h2>
+      <p class="alert">БЕЗ ЗАЛОГА | Комфорт+ | Готов к Яндекс Go</p>
+      <p>🔑 Стартуй в такси без вложений уже сегодня!</p>
+      <p>Сдаём в аренду надёжный и комфортный Belgee X70 для работы в Яндекс Go — без залога, скрытых комиссий и ожиданий.</p>
+      <div class="modal-section-title">✅ Почему это выгодно:</div>
+      <ul class="modal-list">
+        <li>🚫 Без залога — не замораживаешь деньги</li>
+        <li>📅 От 1 дня аренда — без долгов и обязательств</li>
+        <li>🚘 Машина в отличном состоянии, свежая</li>
+        <li>⚙️ Полное ТО, страховка и лицензия включены</li>
+        <li>📲 Оформление всего за 15 минут</li>
+      </ul>
+      <div class="modal-section-title">🚗 Belgee X70 — комфорт и экономия:</div>
+      <ul class="modal-list">
+        <li>Комфорт+ класс — больше заказов в Яндексе</li>
+        <li>Автоматическая коробка, турбо двигатель</li>
+        <li>Просторный салон и высокий клиренс</li>
+        <li>Современный дизайн — пассажиры в восторге</li>
+        <li>Экономичный расход топлива</li>
+      </ul>
+      <div class="modal-section-title">💼 Условия:</div>
+      <ul class="modal-list">
+        <li>🔥 Без залога</li>
+        <li>🛡 КАСКО, ОСАГО, техобслуживание включено</li>
+        <li>🕒 Подключение в день обращения</li>
+        <li>✅ Поддержка 24/7, замена авто при необходимости</li>
+        <li>💸 Можно работать в аренду или сменный график</li>
+      </ul>
+    `;
+  } else if (car.special === 'geely') {
+    html = `
+      <h2 class="modal-title">Geely Emgrand</h2>
+      <div class="modal-section-title">Преимущества Geely Emgrand:</div>
+      <ul class="modal-list">
+        <li>Низкий расход — от <span class="highlight">6,5 л/100 км</span></li>
+        <li>АКПП — удобно для города</li>
+        <li>Просторный салон, большой багажник</li>
+        <li>Климат-контроль, мультимедиа с Bluetooth</li>
+        <li>Отличная шумоизоляция — комфорт в каждой смене</li>
+      </ul>
     `;
   } else {
-    // Обычное окно для остальных машин
-    content.innerHTML = `
+    html = `
       <h2 style="margin-bottom:20px; text-align:center;">Бронирование<br><span style="color:#FFD500;">${car.name}</span></h2>
       <p style="color:#aaa; margin-bottom:24px; text-align:center;">Автомобиль выбран</p>
-      <button class="btn-book" style="width:100%; margin-bottom:12px;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить</button>
-      <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:12px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
     `;
   }
 
+  if (!car.booked) {
+    html += `
+      <button class="btn-book" style="width:100%; margin: 24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
+    `;
+  }
+
+  html += `
+    <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:14px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
+  `;
+
+  content.innerHTML = html;
   modal.style.display = 'flex';
 }
 
