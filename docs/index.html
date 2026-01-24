@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Аренда авто</title>
-
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
-
   <style>
     :root {
       --bg: #000000;
@@ -16,9 +14,7 @@
       --text2: #AAAAAA;
       --disabled: #555555;
     }
-
     * { margin:0; padding:0; box-sizing:border-box; }
-
     html, body {
       font-family: system-ui, -apple-system, sans-serif;
       background: url('https://images.unsplash.com/photo-1551524559-8af2410f0c3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center fixed;
@@ -30,7 +26,6 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
-
     body::before {
       content: '';
       position: absolute;
@@ -39,13 +34,11 @@
       backdrop-filter: blur(4px);
       z-index: -1;
     }
-
     .container {
       padding: 16px;
       min-height: 100vh;
       padding-top: 120px;
     }
-
     .floating-buttons {
       position: fixed;
       top: 80px;
@@ -55,7 +48,6 @@
       flex-direction: row;
       gap: 12px;
     }
-
     .btn-float {
       width: 56px;
       height: 56px;
@@ -71,7 +63,6 @@
       text-decoration: none;
       backdrop-filter: blur(10px);
     }
-
     .section-title {
       font-size: 2rem;
       font-weight: 900;
@@ -88,18 +79,15 @@
       transform: translateY(30px);
       animation: appearPremium 0.8s ease-out forwards;
     }
-
     #econom .section-title { animation-delay: 0.1s; }
     #comfort .section-title { animation-delay: 0.3s; }
     #comfort-plus .section-title { animation-delay: 0.5s; }
     #business .section-title { animation-delay: 0.7s; }
     #premier .section-title { animation-delay: 0.9s; }
     #elite .section-title { animation-delay: 1.1s; }
-
     @keyframes appearPremium {
       to { opacity: 1; transform: translateY(0); }
     }
-
     .video-banner {
       margin: 0 -16px 32px;
       width: calc(100% + 32px);
@@ -108,14 +96,12 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
     }
-
     .video-banner video {
       width: 100%;
       height: auto;
       display: block;
       object-fit: cover;
     }
-
     .horizontal-scroll {
       display: flex;
       gap: 16px;
@@ -124,7 +110,6 @@
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
     }
-
     .car-card {
       flex: 0 0 240px;
       background: var(--card);
@@ -135,13 +120,11 @@
       flex-direction: column;
       height: 340px;
     }
-
     .car-card img {
       width: 100%;
       height: 160px;
       object-fit: cover;
     }
-
     .car-info {
       padding: 12px;
       flex: 1;
@@ -150,18 +133,15 @@
       justify-content: space-between;
       text-align: center;
     }
-
     .car-name {
       font-size: 1.18rem;
       font-weight: 700;
     }
-
     .car-year {
       font-size: 0.95rem;
       color: var(--text2);
       margin: 4px 0 12px;
     }
-
     .btn-book {
       background: rgba(255,213,0,0.85);
       color: #000;
@@ -176,7 +156,6 @@
       box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4);
       animation: softNeon 5s infinite ease-in-out;
     }
-
     .btn-book:disabled {
       background: var(--disabled);
       color: #888;
@@ -184,12 +163,10 @@
       box-shadow: none;
       animation: none;
     }
-
     @keyframes softNeon {
       0%, 100% { box-shadow: 0 0 10px rgba(255,213,0,0.5), 0 0 15px rgba(255,213,0,0.3); }
-      50%      { box-shadow: 0 0 15px rgba(255,213,0,0.8), 0 0 25px rgba(255,213,0,0.5); }
+      50% { box-shadow: 0 0 15px rgba(255,213,0,0.8), 0 0 25px rgba(255,213,0,0.5); }
     }
-
     #modal {
       position: fixed;
       inset: 0;
@@ -200,7 +177,6 @@
       z-index: 100;
       padding: 20px;
     }
-
     .modal-box {
       background: #111;
       border-radius: 20px;
@@ -211,7 +187,6 @@
       max-height: 85vh;
       overflow-y: auto;
     }
-
     .modal-title {
       font-size: 1.6rem;
       font-weight: 800;
@@ -219,26 +194,22 @@
       color: var(--yellow);
       text-align: center;
     }
-
     .modal-section-title {
       font-size: 1.22rem;
       font-weight: 700;
       margin: 20px 0 8px;
       color: #FFD500;
     }
-
     .modal-list {
       list-style: none;
       padding-left: 0;
       margin: 8px 0 16px 0;
     }
-
     .modal-list li {
       margin: 8px 0;
       padding-left: 28px;
       position: relative;
     }
-
     .modal-list li::before {
       content: "→";
       position: absolute;
@@ -246,12 +217,10 @@
       color: #FFD500;
       font-weight: bold;
     }
-
     .highlight {
       color: #FFD500;
       font-weight: 600;
     }
-
     .alert {
       color: #ff4d4d;
       font-weight: bold;
@@ -261,40 +230,32 @@
   </style>
 </head>
 <body>
-
 <div class="floating-buttons">
   <a href="tel:+79000000000" class="btn-float">📞</a>
   <a href="https://wa.me/79000000000" class="btn-float">WA</a>
 </div>
-
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <video id="topVideo" preload="auto" autoplay muted loop playsinline>
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
+      <video id="topVideo" preload="auto" autoplay muted loop playsinline poster="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/poster.jpg">
+        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
       </video>
     </div>
-
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
-
     <div class="section-title">Комфорт</div>
     <div class="horizontal-scroll" id="comfort"></div>
-
     <div class="section-title">Комфорт +</div>
     <div class="horizontal-scroll" id="comfort-plus"></div>
-
     <div class="section-title">Business</div>
     <div class="horizontal-scroll" id="business"></div>
-
     <div class="section-title">Premier</div>
     <div class="horizontal-scroll" id="premier"></div>
-
     <div class="section-title">Elite</div>
     <div class="horizontal-scroll" id="elite"></div>
   </div>
 </div>
-
 <div id="modal">
   <div class="modal-box" id="modalContent"></div>
 </div>
@@ -303,54 +264,47 @@
 const cars = [
   // Эконом
   { id: 999, category: "Эконом", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true },
-
   // Комфорт
-  { id: 1, category: "Комфорт", name: "OMODA S5",      year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
-  { id: 5, category: "Комфорт", name: "Geely Emgrand",  year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
-
+  { id: 1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
+  { id: 5, category: "Комфорт", name: "Geely Emgrand", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
   // Комфорт +
   { id: 2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo" },
-  { id: 3, category: "Комфорт +", name: "EXEED LX",         year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
-  { id: 4, category: "Комфорт +", name: "Belgee X70",        year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
-
+  { id: 3, category: "Комфорт +", name: "EXEED LX", year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
+  { id: 4, category: "Комфорт +", name: "Belgee X70", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
   // Business
-  { id: 8,  category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
-  { id: 9,  category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9.jpg" },
-
+  { id: 8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8.jpg" },
+  { id: 9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9.jpg" },
   // Premier
-  { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C.jpg" },
-
-  // Elite — добавлена карточка 11
-  { id: 11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg" }
+  { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10.jpg" },
+  // Elite
+  { id: 11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11.jpg" }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Premier", "Elite"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "premier", "elite"];
-
+  
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
     if (!container) return;
-
+    
     const filtered = cars.filter(car => car.category === cat);
-
     if (filtered.length === 0) {
       container.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Пока нет автомобилей</p>';
       return;
     }
-
+    
     const fragment = document.createDocumentFragment();
-
     filtered.forEach(car => {
       const card = document.createElement('div');
       card.className = 'car-card';
-
+      
       const buttonHtml = car.booked
         ? `<button class="btn-book" disabled>Забронировано</button>`
         : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
-
+      
       card.innerHTML = `
-        <img src="${car.img}" alt="${car.name}" loading="lazy">
+        <img src="${car.img}" alt="${car.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/240x160?text=Фото+не+загружено';">
         <div class="car-info">
           <div>
             <div class="car-name">${car.name}</div>
@@ -361,23 +315,24 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       fragment.appendChild(card);
     });
-
     container.appendChild(fragment);
   });
 
   const video = document.getElementById('topVideo');
-  if (video) video.play().catch(() => {});
+  if (video) {
+    video.play().catch(e => console.log("Автозапуск видео заблокирован:", e));
+  }
 });
 
 function openModal(id) {
   const car = cars.find(c => c.id === id);
   if (!car) return;
-
+  
   const modal = document.getElementById('modal');
   const content = document.getElementById('modalContent');
-
+  
   let html = `<h2 class="modal-title">${car.name}</h2>`;
-
+  
   if (car.special === 'omoda') {
     html += `
       <div class="modal-section-title">Почему именно OMODA S5:</div>
@@ -464,21 +419,20 @@ function openModal(id) {
   } else {
     html += `<p style="color:#aaa; text-align:center; margin:24px 0;">Автомобиль выбран</p>`;
   }
-
+  
   if (!car.booked) {
     html += `
       <button class="btn-book" style="width:100%; margin:24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
     `;
   }
-
+  
   html += `
     <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:14px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
   `;
-
+  
   content.innerHTML = html;
   modal.style.display = 'flex';
 }
 </script>
-
 </body>
 </html>
