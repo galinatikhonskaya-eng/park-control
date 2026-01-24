@@ -244,13 +244,10 @@
         muted 
         loop 
         playsinline 
-        webkit-playsinline 
-        x5-playsinline 
-        x5-video-player-type="h5" 
-        x5-video-player-fullscreen="false" 
+        webkit-playsinline="true" 
         poster="https://via.placeholder.com/800x450/000/FFD500?text=Видео+загружается..."
       >
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/quicktime">
+        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video.mp4" type="video/mp4">
         Ваш браузер не поддерживает видео.
       </video>
     </div>
@@ -324,23 +321,14 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(fragment);
   });
 
-  // Усиленный автозапуск видео
   const video = document.getElementById('topVideo');
   if (video) {
-    video.muted = true; // на всякий случай принудительно
-    const playPromise = video.play();
-    
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => console.log('Видео запущено автоматически'))
-        .catch(err => {
-          console.log('Автозапуск заблокирован:', err);
-          // Если не запустилось — пробуем после небольшого взаимодействия (touch/scroll)
-          document.addEventListener('touchstart', () => {
-            video.play().catch(() => {});
-          }, { once: true });
-        });
-    }
+    video.muted = true;
+    video.play().catch(err => {
+      console.log('Автозапуск не удался:', err);
+      // Резерв: запуск после любого касания экрана
+      document.body.addEventListener('touchstart', () => video.play().catch(() => {}), {once: true});
+    });
   }
 });
 
