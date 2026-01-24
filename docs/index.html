@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ПитерПарк — авто под такси</title>
+  <title></title> <!-- Пустой title — чтобы не показывало название в Telegram -->
 
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
 
@@ -22,14 +22,18 @@
       font-family: system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
+      height: 100%;
+      margin: 0;
       overflow-x: hidden;
-      overflow-y: scroll;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      touch-action: auto;
+      touch-action: auto; /* полный скролл без задержек */
     }
 
-    .container { max-width: 100%; padding: 16px; margin: 0 auto; }
+    .container {
+      padding: 16px;
+      min-height: 100vh;
+    }
 
     #landing {
       min-height: 100vh;
@@ -49,18 +53,15 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      background-size: 300% auto;
-      animation: glowFlow 6s ease infinite;
-      text-shadow: 0 0 50px rgba(255,213,0,0.5);
       margin-bottom: 20px;
     }
 
-    @keyframes glowFlow {
-      0%,100% { background-position: 0% center; }
-      50%     { background-position: 300% center; }
+    .subtitle {
+      font-size: 1.18rem;
+      color: var(--text2);
+      line-height: 1.4;
+      margin: 12px 0 36px;
     }
-
-    .subtitle { font-size: 1.18rem; color: var(--text2); line-height: 1.4; margin: 12px 0 36px; }
 
     .btn-cta {
       background: var(--yellow);
@@ -72,27 +73,22 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 10px 30px rgba(255,213,0,0.3);
-      transition: all 0.2s ease;
     }
-
-    .btn-cta:active { transform: scale(0.96); }
 
     #catalog { display: none; }
 
     .section-title {
       font-size: 1.8rem;
       font-weight: 800;
-      margin: 32px 0 16px;
+      margin: 40px 0 16px;
       text-align: center;
       color: var(--yellow);
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .video-banner {
       margin: 16px -16px 32px;
       width: calc(100% + 32px);
-      max-width: none;
       border-radius: 0 0 16px 16px;
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
@@ -113,7 +109,6 @@
       padding: 12px 0 24px;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
-      touch-action: pan-x pan-y; /* ← разрешаем и горизонталь, и вертикаль */
     }
 
     .car-card {
@@ -122,22 +117,19 @@
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 6px 18px rgba(0,0,0,0.5);
-      scroll-snap-align: start;
       display: flex;
       flex-direction: column;
       height: 340px;
-      touch-action: auto; /* карточка тоже не блокирует */
     }
 
     .car-card img {
       width: 100%;
       height: 160px;
       object-fit: cover;
-      touch-action: auto;
     }
 
     .car-info {
-      padding: 12px 12px 16px;
+      padding: 12px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -145,9 +137,16 @@
       text-align: center;
     }
 
-    .car-name { font-size: 1.18rem; font-weight: 700; margin-bottom: 4px; }
+    .car-name {
+      font-size: 1.18rem;
+      font-weight: 700;
+    }
 
-    .car-year { font-size: 0.95rem; color: var(--text2); margin-bottom: 12px; }
+    .car-year {
+      font-size: 0.95rem;
+      color: var(--text2);
+      margin: 4px 0 12px;
+    }
 
     .btn-book {
       background: var(--yellow);
@@ -158,31 +157,8 @@
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(255,213,0,0.3);
       align-self: center;
       margin-top: auto;
-    }
-
-    .btn-book:active { transform: scale(0.97); }
-
-    #modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 20px;
-    }
-
-    .modal-box {
-      background: #111;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 380px;
-      padding: 24px;
-      text-align: center;
     }
   </style>
 </head>
@@ -246,26 +222,9 @@ if (swipeBehavior?.isAvailable?.()) {
 } else if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
   setTimeout(() => {
-    window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
-      allow_vertical_swipe: false
-    });
+    window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', { allow_vertical_swipe: false });
   }, 100);
-  setTimeout(() => {
-    window.Telegram.WebApp.disableVerticalSwipes?.();
-  }, 500);
 }
-
-// Хак для плавного скролла страницы даже при касании карточек
-document.addEventListener('touchstart', e => {
-  // Если касание на карточке — не блокируем вертикальный скролл
-  if (e.target.closest('.car-card') || e.target.closest('.horizontal-scroll')) {
-    // Ничего не делаем — пусть скролл страницы работает
-  }
-}, { passive: true });
-
-document.addEventListener('touchmove', e => {
-  // Разрешаем вертикальное движение
-}, { passive: true });
 
 const cars = [
   {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
@@ -320,6 +279,11 @@ function openModal(id) {
     document.getElementById('modal').style.display = 'flex';
   }
 }
+
+// Разрешаем скролл страницы даже при касании карточек
+document.addEventListener('touchmove', e => {
+  // Не блокируем вертикальное движение
+}, { passive: true });
 </script>
 
 </body>
