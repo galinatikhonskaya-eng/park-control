@@ -30,7 +30,7 @@
       margin: 0 auto;
     }
 
-    /* Landing */
+    /* Главный экран */
     #landing {
       min-height: 100vh;
       display: flex;
@@ -80,9 +80,7 @@
       transition: all 0.2s ease;
     }
 
-    .btn-cta:active {
-      transform: scale(0.96);
-    }
+    .btn-cta:active { transform: scale(0.96); }
 
     /* Каталог */
     #catalog { display: none; }
@@ -91,17 +89,18 @@
       font-size: 1.5rem;
       font-weight: 700;
       margin: 28px 0 16px;
+      text-align: center;
     }
 
+    /* Видео-баннер — маленький */
     .video-banner {
-      margin: 20px 0 28px;
-      text-align: center;
+      margin: 16px auto 32px;
+      max-width: 320px;
+      width: 90%;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      max-width: 360px;
-      margin-left: auto;
-      margin-right: auto;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      background: #000;
     }
 
     .video-banner video {
@@ -145,10 +144,7 @@
       margin-bottom: 4px;
     }
 
-    .car-year {
-      font-size: 0.9rem;
-      color: var(--text2);
-    }
+    .car-year { font-size: 0.9rem; color: var(--text2); }
 
     .car-list {
       display: flex;
@@ -179,15 +175,8 @@
       justify-content: space-between;
     }
 
-    .car-tile-title {
-      font-size: 1.08rem;
-      font-weight: 700;
-    }
-
-    .car-tile-year {
-      font-size: 0.88rem;
-      color: var(--text2);
-    }
+    .car-tile-title { font-size: 1.08rem; font-weight: 700; }
+    .car-tile-year { font-size: 0.88rem; color: var(--text2); }
 
     .btn-book {
       background: var(--yellow);
@@ -240,10 +229,10 @@
 
   <div id="catalog">
 
-    <!-- Видео выше «Рекомендуем» -->
+    <!-- Видео-баннер (маленький) -->
     <div class="video-banner">
       <video autoplay muted loop playsinline>
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/IMG_8208.mp4" type="video/mp4">
+        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-AAD7-571ABSF...mp4" type="video/mp4">
         Видео не поддерживается
       </video>
     </div>
@@ -282,6 +271,7 @@
 
 </div>
 
+<!-- Модальное окно -->
 <div id="modal">
   <div class="modal-box">
     <h2 style="margin-bottom:20px;">Бронирование<br><span id="carName"></span></h2>
