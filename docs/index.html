@@ -91,21 +91,22 @@
     }
 
     .video-banner {
-  margin: 16px -16px 32px;   /* отрицательные margin компенсируют padding контейнера */
-  width: calc(100% + 32px);  /* +2×padding по бокам */
-  max-width: none;           /* убираем ограничение 320px */
-  border-radius: 0;          /* убираем скругление по бокам, если хочешь полный экран */
-  overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-  background: #000;
-}
+      margin: 16px -16px 32px;
+      width: calc(100% + 32px);
+      max-width: none;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      background: #000;
+    }
 
-.video-banner video {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;         /* на случай, если пропорции не совпадают */
-}
+    .video-banner video {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      border-radius: inherit;
+    }
 
     .horizontal-scroll {
       display: flex;
