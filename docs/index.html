@@ -237,9 +237,20 @@
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <video id="topVideo" preload="auto" autoplay muted loop playsinline poster="https://via.placeholder.com/800x450/000/FFD500?text=Видео+загружается...">
+      <video 
+        id="topVideo" 
+        preload="auto" 
+        autoplay 
+        muted 
+        loop 
+        playsinline 
+        webkit-playsinline 
+        x5-playsinline 
+        x5-video-player-type="h5" 
+        x5-video-player-fullscreen="false" 
+        poster="https://via.placeholder.com/800x450/000/FFD500?text=Видео+загружается..."
+      >
         <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/quicktime">
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4"> <!-- fallback если переименуешь в mp4 -->
         Ваш браузер не поддерживает видео.
       </video>
     </div>
@@ -263,21 +274,15 @@
 
 <script>
 const cars = [
-  // Эконом
   { id: 999, category: "Эконом", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true },
-  // Комфорт
   { id: 1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
   { id: 5, category: "Комфорт", name: "Geely Emgrand", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
-  // Комфорт +
   { id: 2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo" },
   { id: 3, category: "Комфорт +", name: "EXEED LX", year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
   { id: 4, category: "Комфорт +", name: "Belgee X70", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
-  // Business
   { id: 8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
   { id: 9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91.jpg" },
-  // Premier
   { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C.jpg" },
-  // Elite
   { id: 11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg" }
 ];
 
@@ -319,9 +324,23 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(fragment);
   });
 
+  // Усиленный автозапуск видео
   const video = document.getElementById('topVideo');
   if (video) {
-    video.play().catch(e => console.log("Автозапуск видео:", e));
+    video.muted = true; // на всякий случай принудительно
+    const playPromise = video.play();
+    
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => console.log('Видео запущено автоматически'))
+        .catch(err => {
+          console.log('Автозапуск заблокирован:', err);
+          // Если не запустилось — пробуем после небольшого взаимодействия (touch/scroll)
+          document.addEventListener('touchstart', () => {
+            video.play().catch(() => {});
+          }, { once: true });
+        });
+    }
   }
 });
 
@@ -334,7 +353,6 @@ function openModal(id) {
   
   let html = `<h2 class="modal-title">${car.name}</h2>`;
   
-  // Здесь оставляем твои оригинальные блоки для special-машин (я не менял их содержимое)
   if (car.special === 'omoda') {
     html += `
       <div class="modal-section-title">Почему именно OMODA S5:</div>
