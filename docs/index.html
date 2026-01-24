@@ -200,10 +200,51 @@
     .modal-box {
       background: #111;
       border-radius: 20px;
-      width: 90%;
-      max-width: 380px;
+      width: 92%;
+      max-width: 420px;
       padding: 24px;
+      text-align: left;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--yellow);
       text-align: center;
+    }
+
+    .modal-section-title {
+      font-size: 1.22rem;
+      font-weight: 700;
+      margin: 20px 0 8px;
+      color: #FFD500;
+    }
+
+    .modal-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 8px 0 16px 0;
+    }
+
+    .modal-list li {
+      margin: 8px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .modal-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #FFD500;
+    }
+
+    .highlight {
+      color: #FFD500;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -247,11 +288,8 @@
 </div>
 
 <div id="modal">
-  <div class="modal-box">
-    <h2 style="margin-bottom:20px;">Бронирование<br><span id="carName"></span></h2>
-    <p style="color:#aaa; margin-bottom:24px;">Автомобиль выбран</p>
-    <button class="btn-cta" style="width:100%; margin-bottom:12px;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить</button>
-    <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:12px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
+  <div class="modal-box" id="modalContent">
+    <!-- Контент будет подставляться динамически -->
   </div>
 </div>
 
@@ -267,17 +305,25 @@ if (window.Telegram?.WebApp) {
 }
 
 const cars = [
-  {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
+  // Эконом — убрали Solaris, т.к. он теперь в Комфорт как OMODA S5
   {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
+
+  // Комфорт — сюда переместили бывшую 1.jpg и переименовали
+  {id:1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
+
   {id:3, category: "Комфорт", name: "Skoda Octavia", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg"},
   {id:4, category: "Комфорт", name: "Volkswagen Polo", year: "2022–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
+
   {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
+
   {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
   {id:8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg"},
   {id:9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg"},
+
   {id:10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C%D0%AC%D0%95%D0%A0.jpg"},
-  {id:11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg"},
   {id:7, category: "Premier", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
+
+  {id:11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg"},
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -322,10 +368,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function openModal(id) {
   const car = cars.find(c => c.id === id);
-  if (car) {
-    document.getElementById('carName').textContent = car.name;
-    document.getElementById('modal').style.display = 'flex';
+  if (!car) return;
+
+  const modal = document.getElementById('modal');
+  const content = document.getElementById('modalContent');
+
+  if (car.id === 1) {
+    // Специальное оформление для OMODA S5
+    content.innerHTML = `
+      <h2 class="modal-title">OMODA S5</h2>
+      
+      <div class="modal-section-title">Почему именно OMODA S5:</div>
+      <ul class="modal-list">
+        <li>Новый, современный автомобиль <span class="highlight">2024–2025</span> года выпуска.</li>
+        <li>Просторный и комфортный салон — пассажиры ставят <span class="highlight">высокие оценки</span>.</li>
+        <li>Экономичный двигатель + <span class="highlight">низкий расход</span> топлива.</li>
+        <li>Статус <span class="highlight">Комфорт</span> → повышенные заказы и доход.</li>
+      </ul>
+
+      <div class="modal-section-title">⚡ Условия аренды:</div>
+      <ul class="modal-list">
+        <li>Без залога и скрытых платежей.</li>
+        <li>От <span class="highlight">2600 ₽ в сутки</span> (всё включено).</li>
+        <li>ОСАГО + КАСКО уже оформлены.</li>
+        <li>Подключение к Яндекс GO за 10 минут.</li>
+        <li>Поддержка 24/7.</li>
+      </ul>
+
+      <button class="btn-book" style="width:100%; margin: 24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
+      <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:14px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
+    `;
+  } else {
+    // Обычное окно для остальных машин
+    content.innerHTML = `
+      <h2 style="margin-bottom:20px; text-align:center;">Бронирование<br><span style="color:#FFD500;">${car.name}</span></h2>
+      <p style="color:#aaa; margin-bottom:24px; text-align:center;">Автомобиль выбран</p>
+      <button class="btn-book" style="width:100%; margin-bottom:12px;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить</button>
+      <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:12px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
+    `;
   }
+
+  modal.style.display = 'flex';
 }
 
 document.addEventListener('touchmove', () => {}, { passive: true });
