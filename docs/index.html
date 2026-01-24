@@ -149,7 +149,7 @@
   <div id="catalog">
 
     <div class="video-banner">
-      <video preload="none" muted loop playsinline>
+      <video id="topVideo" preload="metadata" muted loop playsinline poster="https://via.placeholder.com/320x180/000/fff?text=ПитерПарк+Видео">
         <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
       </video>
     </div>
@@ -196,21 +196,20 @@ if (window.Telegram?.WebApp) {
   swipeBehavior.disableVertical();
 }
 
-// Массив машин — маленький, грузится мгновенно
-const cars = [
-  {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
-  {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
-  {id:3, category: "Комфорт", name: "Skoda Octavia", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg"},
-  {id:4, category: "Комфорт", name: "Volkswagen Polo", year: "2022–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
-  {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
-  {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
-  {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
-];
-
-// Заполняем каталог мгновенно при DOM ready
+// Заполняем каталог мгновенно
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
+
+  const cars = [
+    {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
+    {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
+    {id:3, category: "Комфорт", name: "Skoda Octavia", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg"},
+    {id:4, category: "Комфорт", name: "Volkswagen Polo", year: "2022–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
+    {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
+    {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
+    {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
+  ];
 
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
@@ -241,6 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     container.appendChild(fragment);
   });
+
+  // Запускаем видео после заполнения страницы
+  const video = document.getElementById('topVideo');
+  if (video) {
+    video.play().catch(() => {}); // Игнорируем ошибки autoplay в некоторых браузерах
+  }
 });
 
 function openModal(id) {
@@ -250,9 +255,6 @@ function openModal(id) {
     document.getElementById('modal').style.display = 'flex';
   }
 }
-
-// Разрешаем скролл везде
-document.addEventListener('touchmove', () => {}, { passive: true });
 </script>
 
 </body>
