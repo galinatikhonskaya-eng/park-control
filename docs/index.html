@@ -91,10 +91,10 @@
     }
 
     .video-banner {
-      margin: 16px -16px 32px;
-      width: calc(100% + 32px);
-      max-width: none;
-      border-radius: 16px;
+      margin: 16px auto 32px;
+      max-width: 320px;
+      width: 90%;
+      border-radius: 0 0 16px 16px; /* верх прямой, низ скруглён */
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
@@ -105,7 +105,6 @@
       height: auto;
       display: block;
       object-fit: cover;
-      border-radius: inherit;
     }
 
     .horizontal-scroll {
