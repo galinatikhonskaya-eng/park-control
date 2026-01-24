@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ПитерПарк — авто под такси</title>
 
+  <!-- TMA.js SDK (для надёжного отключения вертикального свайпа в Telegram) -->
+  <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
+
   <style>
     :root {
       --bg: #000000;
@@ -16,13 +19,15 @@
 
     * { margin:0; padding:0; box-sizing:border-box; }
 
-    body {
+    html, body {
       font-family: system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      overscroll-behavior: none; /* дополнительная защита от overscroll */
+      overscroll-behavior-y: none;
+      overscroll-behavior-x: auto;
+      touch-action: pan-x;
     }
 
     .container {
@@ -118,6 +123,7 @@
       padding: 12px 0 24px;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
+      touch-action: pan-x;
     }
 
     .car-card {
@@ -249,19 +255,20 @@
 </div>
 
 <script>
-if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.ready();
+const { swipeBehavior } = window.TelegramMiniApps || {};
 
-  // Отключаем вертикальный свайп полностью (только кнопка закрытия работает)
-  window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
-    allow_vertical_swipe: false
-  }, (err) => {
-    if (err) {
-      console.error('Ошибка настройки swipe:', err);
-      // Fallback на старый метод, если новый не поддерживается
-      window.Telegram.WebApp.disableVerticalSwipes?.();
-    }
-  });
+if (swipeBehavior?.isAvailable?.()) {
+  swipeBehavior.disableVertical();  // TMA.js — отключает вертикальный свайп
+} else if (window.Telegram?.WebApp) {
+  window.Telegram.WebApp.ready();
+  setTimeout(() => {
+    window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
+      allow_vertical_swipe: false
+    }, (err) => {
+      if (err) console.error('Ошибка swipe_behavior:', err);
+    });
+    window.Telegram.WebApp.disableVerticalSwipes?.();
+  }, 300);
 }
 
 const cars = [
