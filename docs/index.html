@@ -4,38 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ПитерПарк — авто под такси</title>
+
   <style>
     :root {
       --bg: #000000;
       --yellow: #FFD500;
-      --yellow-dark: #e6bf00;
-      --card-bg: #111111;
-      --text: #f0f0f0;
-      --text-secondary: #aaaaaa;
+      --yellow-glow: #FFEA80;
+      --card: #111111;
+      --text: #F5F5F5;
+      --text2: #AAAAAA;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    .container {
-      padding: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
+    .container { max-width: 460px; margin: 0 auto; padding: 16px; }
 
-    /* ─── Landing ─── */
+    /* Landing с видео-фоном */
     #landing {
+      position: relative;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -43,156 +36,168 @@
       align-items: center;
       text-align: center;
       padding: 0 20px;
+      background: rgba(0,0,0,0.35); /* оверлей для читаемости */
+      transition: opacity 0.5s ease;
+      z-index: 1;
     }
 
-    .logo {
-      font-size: 3.8rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      background: linear-gradient(90deg, #FFD500 30%, #ffea80 70%, #FFD500 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      background-size: 200% auto;
-      animation: shine 6s linear infinite;
-      text-shadow: 0 0 40px rgba(255,213,0,0.4);
-      margin-bottom: 16px;
+    .video-bg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: -2;
     }
 
-    @keyframes shine {
-      0%   { background-position: 0% center; }
-      100% { background-position: 200% center; }
+    .video-element {
+      position: absolute;
+      top: 50%; left: 50%;
+      min-width: 100%; min-height: 100%;
+      width: auto; height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      filter: brightness(0.55) contrast(1.15);
+    }
+
+    /* Логотип (замени src на свой) */
+    .logo-wrapper {
+      margin: 0 auto 32px;
+      max-width: 280px;
+    }
+
+    .logo-img {
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      filter: drop-shadow(0 8px 24px rgba(255, 213, 0, 0.45));
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 8px 24px rgba(255, 213, 0, 0.45)); }
+      50%      { filter: drop-shadow(0 12px 36px rgba(255, 213, 0, 0.7)); }
     }
 
     .subtitle {
-      font-size: 1.24rem;
-      color: var(--text-secondary);
-      margin: 8px 0 32px;
-      line-height: 1.4;
+      font-size: 1.22rem;
+      color: var(--text2);
+      line-height: 1.45;
+      margin: 12px 0 40px;
     }
 
-    .btn {
-      display: inline-block;
+    .btn-cta {
       background: var(--yellow);
       color: #000;
-      font-size: 1.1rem;
+      font-size: 1.18rem;
       font-weight: 700;
-      padding: 16px 40px;
+      padding: 18px 60px;
       border-radius: 999px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      box-shadow: 0 8px 24px rgba(255,213,0,0.22);
       border: none;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(255,213,0,0.28);
+      transition: all 0.22s ease;
       touch-action: manipulation;
     }
 
-    .btn:active {
-      transform: scale(0.94);
-      box-shadow: 0 4px 12px rgba(255,213,0,0.3);
+    .btn-cta:active {
+      transform: scale(0.96);
+      box-shadow: 0 6px 20px rgba(255,213,0,0.4);
     }
 
-    .btn-yellow {
-      background: var(--yellow);
-    }
-
-    .btn-yellow:hover {
-      background: #ffea80;
-    }
-
-    /* ─── Cars ─── */
-    #catalog {
-      display: none;
-    }
+    /* Каталог */
+    #catalog { display: none; }
 
     .section-title {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      margin: 24px 0 16px;
+      margin: 28px 0 16px;
     }
 
-    .horizontal-scroll {
+    .horizontal {
       display: flex;
       gap: 16px;
       overflow-x: auto;
-      padding: 12px 0;
-      scroll-snap-type: x mandatory;
+      padding: 12px 0 20px;
       -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
     }
 
-    .car-card-horizontal {
-      flex: 0 0 260px;
-      height: 340px;
-      background: var(--card-bg);
+    .car-h {
+      flex: 0 0 280px;
+      background: var(--card);
       border-radius: 20px;
       overflow: hidden;
-      position: relative;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
       scroll-snap-align: start;
     }
 
-    .car-card-horizontal img {
+    .car-h img {
       width: 100%;
-      height: 220px;
+      height: 180px;
       object-fit: cover;
     }
 
-    .car-info {
+    .car-h-info {
       padding: 14px;
+      text-align: center;
     }
 
     .car-name {
-      font-size: 1.18rem;
+      font-size: 1.24rem;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
-    /* Вертикальный список */
+    .car-year { color: var(--text2); font-size: 0.94rem; }
+
     .car-list {
       display: flex;
       flex-direction: column;
       gap: 16px;
-      margin-top: 12px;
     }
 
     .car-tile {
       display: flex;
-      background: var(--card-bg);
+      background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-      height: 110px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      height: 120px;
     }
 
     .car-tile img {
-      width: 110px;
-      height: 110px;
+      width: 120px;
+      height: 120px;
       object-fit: cover;
     }
 
-    .car-tile-info {
+    .car-tile-right {
       flex: 1;
-      padding: 12px 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    .car-tile-title {
-      font-size: 1.15rem;
+    .car-tile-title { font-size: 1.18rem; font-weight: 700; }
+    .car-tile-year  { font-size: 0.96rem; color: var(--text2); margin-top: 4px; }
+
+    .btn-book {
+      background: var(--yellow);
+      color: #000;
+      font-size: 0.98rem;
       font-weight: 700;
-    }
-
-    .car-tile-subtitle {
-      font-size: 0.92rem;
-      color: var(--text-secondary);
-    }
-
-    .car-tile .btn {
-      font-size: 0.96rem;
-      padding: 10px 20px;
+      padding: 10px 24px;
+      border-radius: 999px;
+      border: none;
       align-self: flex-start;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255,213,0,0.25);
     }
+
+    .btn-book:active { transform: scale(0.97); }
 
     /* Модалка */
     #modal {
@@ -213,73 +218,70 @@
       max-width: 420px;
       padding: 28px 24px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-    }
-
-    .modal-title {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
       text-align: center;
     }
 
-    input[type="datetime-local"] {
-      width: 100%;
-      padding: 14px;
-      font-size: 1.05rem;
-      background: #222;
-      color: white;
-      border: 1px solid #444;
-      border-radius: 12px;
-      margin: 12px 0 24px;
+    .modal-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
     }
-
-    .btn-row {
-      display: flex;
-      gap: 12px;
-    }
-
-    .btn-secondary {
-      background: #333;
-      color: white;
-    }
-
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- Экран приветствия -->
+  <!-- Главный экран с видео -->
   <div id="landing">
-    <div class="logo">ПитерПарк</div>
-    <div class="subtitle">Аренда автомобилей под такси в Санкт-Петербурге</div>
-    <button class="btn btn-yellow" onclick="showCatalog()">Выбрать автомобиль</button>
+    <div class="video-bg">
+      <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline 
+        class="video-element"
+      >
+        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/IMG_8208.mp4" type="video/mp4">
+        Твой браузер не поддерживает видео.
+      </video>
+    </div>
+
+    <div class="logo-wrapper">
+      <!-- Замени src на путь к своему логотипу (например logo.png в корне или docs/logo.png) -->
+      <img src="https://via.placeholder.com/260x100/FFD500/000000?text=ПитерПарк" alt="ПитерПарк" class="logo-img">
+    </div>
+
+    <div class="subtitle">
+      Аренда автомобилей под такси<br>в Санкт-Петербурге
+    </div>
+
+    <button class="btn-cta" onclick="showCatalog()">Выбрать автомобиль</button>
   </div>
 
   <!-- Каталог -->
   <div id="catalog">
 
     <div class="section-title">Рекомендуем</div>
-    <div class="horizontal-scroll">
-      <div class="car-card-horizontal">
-        <img src="https://images.unsplash.com/photo-1502877338535-766e3a6052c0?w=800" alt="Hyundai Solaris">
-        <div class="car-info">
+    <div class="horizontal">
+      <div class="car-h">
+        <img src="https://images.unsplash.com/photo-1502877338535-766e3a6052c0?auto=format&fit=crop&w=800&q=80" alt="Solaris">
+        <div class="car-h-info">
           <div class="car-name">Hyundai Solaris</div>
-          <div style="color:#aaa; font-size:0.9rem;">2022–2024</div>
+          <div class="car-year">2022–2025</div>
         </div>
       </div>
-      <div class="car-card-horizontal">
-        <img src="https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?w=800" alt="Kia Rio">
-        <div class="car-info">
+      <div class="car-h">
+        <img src="https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?auto=format&fit=crop&w=800&q=80" alt="Kia">
+        <div class="car-h-info">
           <div class="car-name">Kia Rio</div>
-          <div style="color:#aaa; font-size:0.9rem;">2021–2023</div>
+          <div class="car-year">2021–2024</div>
         </div>
       </div>
-      <div class="car-card-horizontal">
-        <img src="https://images.unsplash.com/photo-1502489597346-d8389a3b1d3d?w=800" alt="Skoda Octavia">
-        <div class="car-info">
+      <div class="car-h">
+        <img src="https://images.unsplash.com/photo-1502489597346-d8389a3b1d3d?auto=format&fit=crop&w=800&q=80" alt="Octavia">
+        <div class="car-h-info">
           <div class="car-name">Skoda Octavia</div>
-          <div style="color:#aaa; font-size:0.9rem;">2023</div>
+          <div class="car-year">2023–2025</div>
         </div>
       </div>
     </div>
@@ -291,93 +293,63 @@
 
 </div>
 
-
-<!-- Модальное окно брони -->
+<!-- Модальное окно -->
 <div id="modal">
   <div class="modal-content">
-    <h2 class="modal-title">Бронирование<br><span id="modalCarName"></span></h2>
-    
-    <label>Дата и время начала аренды</label>
-    <input type="datetime-local" id="datetime" required>
-
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
-      <button class="btn btn-yellow" onclick="confirmBooking()">Забронировать</button>
-    </div>
+    <h2 class="modal-title">Бронирование<br><span id="carName"></span></h2>
+    <p style="color:#aaa; margin: 16px 0 24px;">Автомобиль выбран.<br>Подтвердите бронь (дата/время добавим позже)</p>
+    <button class="btn-cta" style="width:100%; margin-bottom:12px;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить</button>
+    <button class="btn-cta" style="background:#444; color:#fff; width:100%;" onclick="closeModal()">Отмена</button>
   </div>
 </div>
 
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-// Telegram WebApp
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-
-// Данные автомобилей (можно вынести в отдельный файл позже)
+// Массив автомобилей
 const cars = [
-  { id:1, name:"Hyundai Solaris", year:"2022–2024", img:"https://images.unsplash.com/photo-1502877338535-766e3a6052c0?w=800" },
-  { id:2, name:"Kia Rio",         year:"2021–2023", img:"https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?w=800" },
-  { id:3, name:"Skoda Octavia",   year:"2023",      img:"https://images.unsplash.com/photo-1502489597346-d8389a3b1d3d?w=800" },
-  { id:4, name:"Volkswagen Polo", year:"2022–2023", img:"https://images.unsplash.com/photo-1618843479313-40f2e308a518?w=800" },
-  { id:5, name:"Lada Vesta",      year:"2023–2024", img:"https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800" },
+  {id:1, name:"Hyundai Solaris", year:"2022–2025", img:"https://images.unsplash.com/photo-1502877338535-766e3a6052c0?auto=format&fit=crop&w=800&q=80"},
+  {id:2, name:"Kia Rio",         year:"2021–2024", img:"https://images.unsplash.com/photo-1617814088227-3c4fc0a5d3d0?auto=format&fit=crop&w=800&q=80"},
+  {id:3, name:"Skoda Octavia",   year:"2023–2025", img:"https://images.unsplash.com/photo-1502489597346-d8389a3b1d3d?auto=format&fit=crop&w=800&q=80"},
+  {id:4, name:"Volkswagen Polo", year:"2022–2024", img:"https://images.unsplash.com/photo-1618843479313-40f2e308a518?auto=format&fit=crop&w=800&q=80"},
+  {id:5, name:"Lada Vesta",      year:"2023–2025", img:"https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80"},
 ];
 
 function showCatalog() {
-  document.getElementById("landing").classList.add("hidden");
-  document.getElementById("catalog").style.display = "block";
-  
-  // Рендерим вертикальный список
-  const list = document.getElementById("carList");
-  list.innerHTML = "";
+  document.getElementById('landing').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('catalog').style.display = 'block';
+  }, 400);
+
+  const list = document.getElementById('carList');
+  list.innerHTML = '';
   cars.forEach(car => {
-    const div = document.createElement("div");
-    div.className = "car-tile";
-    div.innerHTML = `
+    const tile = document.createElement('div');
+    tile.className = 'car-tile';
+    tile.innerHTML = `
       <img src="${car.img}" alt="${car.name}">
-      <div class="car-tile-info">
+      <div class="car-tile-right">
         <div>
           <div class="car-tile-title">${car.name}</div>
-          <div class="car-tile-subtitle">${car.year}</div>
+          <div class="car-tile-year">${car.year}</div>
         </div>
-        <button class="btn btn-yellow" onclick="openBookingModal(${car.id})">Забронировать</button>
+        <button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>
       </div>
     `;
-    list.appendChild(div);
+    list.appendChild(tile);
   });
 }
 
-let currentCar = null;
-
-function openBookingModal(carId) {
-  currentCar = cars.find(c => c.id === carId);
-  if (!currentCar) return;
-
-  document.getElementById("modalCarName").textContent = currentCar.name;
-  document.getElementById("modal").style.display = "flex";
+function openModal(id) {
+  const car = cars.find(c => c.id === id);
+  if (!car) return;
+  document.getElementById('carName').textContent = car.name;
+  document.getElementById('modal').style.display = 'flex';
 }
 
 function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
-
-function confirmBooking() {
-  const dt = document.getElementById("datetime").value;
-  if (!dt) {
-    alert("Выберите дату и время");
-    return;
-  }
-
-  const data = {
-    user: tg.initDataUnsafe.user,
-    car: currentCar.name,
-    datetime: dt
-  };
-
-  tg.sendData(JSON.stringify(data));
-  tg.close();
+  document.getElementById('modal').style.display = 'none';
 }
 </script>
+
 </body>
 </html>
