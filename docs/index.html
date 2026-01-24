@@ -85,6 +85,7 @@
       width: 100%;
       height: 160px;
       object-fit: cover;
+      loading: lazy;
     }
 
     .car-info {
@@ -148,9 +149,8 @@
   <div id="catalog">
 
     <div class="video-banner">
-      <video autoplay muted loop playsinline>
+      <video preload="none" muted loop playsinline>
         <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
-        Видео не поддерживается
       </video>
     </div>
 
@@ -188,16 +188,15 @@
 <script>
 const { swipeBehavior } = window.TelegramMiniApps || {};
 
-if (swipeBehavior?.isAvailable?.()) {
-  swipeBehavior.disableVertical();
-} else if (window.Telegram?.WebApp) {
+if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();  // Разворачиваем в полноэкранный режим сразу
-  setTimeout(() => {
-    window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', { allow_vertical_swipe: false });
-  }, 50);
+  window.Telegram.WebApp.expand();
+  window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', { allow_vertical_swipe: false });
+} else if (swipeBehavior?.isAvailable?.()) {
+  swipeBehavior.disableVertical();
 }
 
+// Массив машин — маленький, грузится мгновенно
 const cars = [
   {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
   {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
@@ -208,7 +207,7 @@ const cars = [
   {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
-// Заполняем каталог сразу при загрузке DOM (без ожидания полной загрузки)
+// Заполняем каталог мгновенно при DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
@@ -220,15 +219,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const filteredCars = cars.filter(car => car.category === cat);
 
     if (filteredCars.length === 0) {
-      container.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Пока нет автомобилей в этой категории</p>';
+      container.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Пока нет автомобилей</p>';
       return;
     }
 
+    const fragment = document.createDocumentFragment();
     filteredCars.forEach(car => {
       const card = document.createElement('div');
       card.className = 'car-card';
       card.innerHTML = `
-        <img src="${car.img}" alt="${car.name}">
+        <img src="${car.img}" alt="${car.name}" loading="lazy">
         <div class="car-info">
           <div>
             <div class="car-name">${car.name}</div>
@@ -237,8 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>
         </div>
       `;
-      container.appendChild(card);
+      fragment.appendChild(card);
     });
+    container.appendChild(fragment);
   });
 });
 
@@ -250,7 +251,7 @@ function openModal(id) {
   }
 }
 
-// Разрешаем вертикальный скролл везде
+// Разрешаем скролл везде
 document.addEventListener('touchmove', () => {}, { passive: true });
 </script>
 
