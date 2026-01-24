@@ -22,7 +22,7 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      overscroll-behavior: none; /* помогает против случайного закрытия */
+      overscroll-behavior: none; /* дополнительная защита от overscroll */
     }
 
     .container {
@@ -251,7 +251,17 @@
 <script>
 if (window.Telegram?.WebApp) {
   window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.disableVerticalSwipes(); // Отключаем свайп вниз для закрытия мини-аппа
+
+  // Отключаем вертикальный свайп полностью (только кнопка закрытия работает)
+  window.Telegram.WebApp.invokeCustomMethod('web_app_setup_swipe_behavior', {
+    allow_vertical_swipe: false
+  }, (err) => {
+    if (err) {
+      console.error('Ошибка настройки swipe:', err);
+      // Fallback на старый метод, если новый не поддерживается
+      window.Telegram.WebApp.disableVerticalSwipes?.();
+    }
+  });
 }
 
 const cars = [
