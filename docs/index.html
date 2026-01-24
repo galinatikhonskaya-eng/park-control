@@ -22,6 +22,7 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      overscroll-behavior: none; /* помогает против случайного закрытия */
     }
 
     .container {
@@ -128,7 +129,7 @@
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
-      height: 340px; /* фиксированная высота карточки для единообразия */
+      height: 340px;
     }
 
     .car-card img {
@@ -216,27 +217,21 @@
       </video>
     </div>
 
-    <!-- Эконом -->
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
 
-    <!-- Комфорт -->
     <div class="section-title">Комфорт</div>
     <div class="horizontal-scroll" id="comfort"></div>
 
-    <!-- Комфорт + -->
     <div class="section-title">Комфорт +</div>
     <div class="horizontal-scroll" id="comfort-plus"></div>
 
-    <!-- Business -->
     <div class="section-title">Business</div>
     <div class="horizontal-scroll" id="business"></div>
 
-    <!-- Elite -->
     <div class="section-title">Elite</div>
     <div class="horizontal-scroll" id="elite"></div>
 
-    <!-- Premium -->
     <div class="section-title">Premium</div>
     <div class="horizontal-scroll" id="premium"></div>
 
@@ -254,6 +249,11 @@
 </div>
 
 <script>
+if (window.Telegram?.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.disableVerticalSwipes(); // Отключаем свайп вниз для закрытия мини-аппа
+}
+
 const cars = [
   {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
   {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
@@ -262,7 +262,6 @@ const cars = [
   {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
   {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
   {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
-  // Добавляй новые машины сюда с нужной category
 ];
 
 function showCatalog() {
@@ -312,67 +311,3 @@ function openModal(id) {
 
 </body>
 </html>
-<script>
-if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.ready();
-
-  // Отключаем вертикальный свайп вниз для закрытия мини-аппа
-  window.Telegram.WebApp.disableVerticalSwipes();  // Основной метод с 7.7+
-  // Альтернатива на старых версиях (если не сработает, оставь оба):
-  // window.Telegram.WebApp.setAllowVerticalSwipes?.(false);
-}
-
-const cars = [
-  {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
-  {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
-  {id:3, category: "Комфорт", name: "Skoda Octavia", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg"},
-  {id:4, category: "Комфорт", name: "Volkswagen Polo", year: "2022–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
-  {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
-  {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
-  {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
-];
-
-function showCatalog() {
-  document.getElementById('landing').style.display = 'none';
-  document.getElementById('catalog').style.display = 'block';
-
-  const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
-  const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
-
-  categories.forEach((cat, index) => {
-    const container = document.getElementById(ids[index]);
-    container.innerHTML = '';
-
-    const filteredCars = cars.filter(car => car.category === cat);
-
-    if (filteredCars.length === 0) {
-      container.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Пока нет автомобилей в этой категории</p>';
-      return;
-    }
-
-    filteredCars.forEach(car => {
-      const card = document.createElement('div');
-      card.className = 'car-card';
-      card.innerHTML = `
-        <img src="${car.img}" alt="${car.name}">
-        <div class="car-info">
-          <div>
-            <div class="car-name">${car.name}</div>
-            <div class="car-year">${car.year}</div>
-          </div>
-          <button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  });
-}
-
-function openModal(id) {
-  const car = cars.find(c => c.id === id);
-  if (car) {
-    document.getElementById('carName').textContent = car.name;
-    document.getElementById('modal').style.display = 'flex';
-  }
-}
-</script>
