@@ -33,6 +33,33 @@
     .container {
       padding: 16px;
       min-height: 100vh;
+      padding-top: 70px; /* отступ сверху под кнопки */
+    }
+
+    /* Фиксированные кнопки вверху справа */
+    .floating-buttons {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-float {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--yellow);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      cursor: pointer;
+      text-decoration: none;
     }
 
     .section-title {
@@ -144,6 +171,12 @@
 </head>
 <body>
 
+<!-- Фиксированные кнопки: телефон и WhatsApp -->
+<div class="floating-buttons">
+  <a href="tel:+79000000000" class="btn-float">📞</a> <!-- Замени номер телефона -->
+  <a href="https://wa.me/79000000000" class="btn-float">WA</a> <!-- Замени номер WhatsApp -->
+</div>
+
 <div class="container">
 
   <div id="catalog">
@@ -166,11 +199,11 @@
     <div class="section-title">Business</div>
     <div class="horizontal-scroll" id="business"></div>
 
+    <div class="section-title">Premier</div>
+    <div class="horizontal-scroll" id="premier"></div>
+
     <div class="section-title">Elite</div>
     <div class="horizontal-scroll" id="elite"></div>
-
-    <div class="section-title">Premium</div>
-    <div class="horizontal-scroll" id="premium"></div>
 
   </div>
 
@@ -196,7 +229,6 @@ if (window.Telegram?.WebApp) {
   swipeBehavior.disableVertical();
 }
 
-// Массив автомобилей
 const cars = [
   {id:1, category: "Эконом", name: "Hyundai Solaris", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg"},
   {id:2, category: "Эконом", name: "Kia Rio", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg"},
@@ -204,13 +236,12 @@ const cars = [
   {id:4, category: "Комфорт", name: "Volkswagen Polo", year: "2022–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg"},
   {id:5, category: "Комфорт +", name: "Toyota Camry", year: "2021–2024", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg"},
   {id:6, category: "Business", name: "Kia Cerato", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg"},
-  {id:7, category: "Elite", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
+  {id:7, category: "Premier", name: "Hyundai Creta", year: "2022–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/7.jpg"},
 ];
 
-// Заполняем каталог сразу
 document.addEventListener('DOMContentLoaded', () => {
-  const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Elite", "Premium"];
-  const ids = ["econom", "comfort", "comfort-plus", "business", "elite", "premium"];
+  const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Premier", "Elite"];
+  const ids = ["econom", "comfort", "comfort-plus", "business", "premier", "elite"];
 
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
@@ -242,10 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(fragment);
   });
 
-  // Принудительно запускаем видео (на случай, если autoplay не сработал)
   const video = document.getElementById('topVideo');
   if (video) {
-    video.play().catch(e => console.log('Автозапуск видео заблокирован:', e));
+    video.play().catch(() => {});
   }
 });
 
@@ -257,7 +287,6 @@ function openModal(id) {
   }
 }
 
-// Разрешаем скролл
 document.addEventListener('touchmove', () => {}, { passive: true });
 </script>
 
