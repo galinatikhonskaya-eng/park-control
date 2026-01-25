@@ -96,7 +96,7 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
     }
-    .video-banner video {
+    .video-banner img {
       width: 100%;
       height: auto;
       display: block;
@@ -237,19 +237,12 @@
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <video 
-        id="topVideo" 
-        preload="auto" 
-        autoplay 
-        muted 
-        loop 
-        playsinline 
-        webkit-playsinline="true" 
-        poster="https://via.placeholder.com/800x450/000/FFD500?text=Видео+загружается..."
+      <img 
+        src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732(1).gif"
+        alt="Баннер анимация"
+        loading="eager"
+        style="width: 100%; height: auto; display: block; object-fit: cover;"
       >
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video.mp4" type="video/mp4">
-        Ваш браузер не поддерживает видео.
-      </video>
     </div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
@@ -320,16 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     container.appendChild(fragment);
   });
-
-  const video = document.getElementById('topVideo');
-  if (video) {
-    video.muted = true;
-    video.play().catch(err => {
-      console.log('Автозапуск не удался:', err);
-      // Резерв: запуск после любого касания экрана
-      document.body.addEventListener('touchstart', () => video.play().catch(() => {}), {once: true});
-    });
-  }
 });
 
 function openModal(id) {
