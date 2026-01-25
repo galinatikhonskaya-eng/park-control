@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Аренда авто</title>
-  <link rel="icon" href="https://via.placeholder.com/16?text=!" type="image/x-icon"> <!-- Фикс ошибки favicon -->
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
   <style>
     :root {
@@ -97,7 +96,7 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
     }
-    .video-banner img {
+    .video-banner video {
       width: 100%;
       height: auto;
       display: block;
@@ -116,7 +115,8 @@
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4); /* Светящаяся обводка */
+      animation: softNeon 5s infinite ease-in-out; /* Анимация для заметности */
       display: flex;
       flex-direction: column;
       height: 340px;
@@ -238,13 +238,9 @@
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <img 
-        src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.gif?v=1" 
-        alt="Анимированный баннер"
-        loading="eager"
-        style="width: 100%; height: auto; display: block; object-fit: cover;"
-        onerror="this.src='https://via.placeholder.com/800x450/FFD500/000?text=ПИТЕРПАРК';"
-      >
+      <video id="topVideo" preload="auto" autoplay muted loop playsinline>
+        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
+      </video>
     </div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
@@ -265,43 +261,43 @@
 </div>
 <script>
 const cars = [
+  // Эконом
   { id: 999, category: "Эконом", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true },
+  // Комфорт
   { id: 1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
   { id: 5, category: "Комфорт", name: "Geely Emgrand", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
+  // Комфорт +
   { id: 2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo" },
   { id: 3, category: "Комфорт +", name: "EXEED LX", year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
   { id: 4, category: "Комфорт +", name: "Belgee X70", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
+  // Business
   { id: 8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
   { id: 9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91.jpg" },
+  // Premier
   { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C.jpg" },
+  // Elite — добавлена карточка 11
   { id: 11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg" }
 ];
-
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Premier", "Elite"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "premier", "elite"];
-  
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
     if (!container) return;
-    
     const filtered = cars.filter(car => car.category === cat);
     if (filtered.length === 0) {
       container.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Пока нет автомобилей</p>';
       return;
     }
-    
     const fragment = document.createDocumentFragment();
     filtered.forEach(car => {
       const card = document.createElement('div');
       card.className = 'car-card';
-      
       const buttonHtml = car.booked
         ? `<button class="btn-book" disabled>Забронировано</button>`
         : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
-      
       card.innerHTML = `
-        <img src="${car.img}" alt="${car.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/240x160/111/aaa?text=Фото+${car.name}';">
+        <img src="${car.img}" alt="${car.name}" loading="lazy">
         <div class="car-info">
           <div>
             <div class="car-name">${car.name}</div>
@@ -314,17 +310,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     container.appendChild(fragment);
   });
+  const video = document.getElementById('topVideo');
+  if (video) video.play().catch(() => {});
 });
-
 function openModal(id) {
   const car = cars.find(c => c.id === id);
   if (!car) return;
-  
   const modal = document.getElementById('modal');
   const content = document.getElementById('modalContent');
-  
   let html = `<h2 class="modal-title">${car.name}</h2>`;
-  
   if (car.special === 'omoda') {
     html += `
       <div class="modal-section-title">Почему именно OMODA S5:</div>
@@ -411,17 +405,14 @@ function openModal(id) {
   } else {
     html += `<p style="color:#aaa; text-align:center; margin:24px 0;">Автомобиль выбран</p>`;
   }
-  
   if (!car.booked) {
     html += `
       <button class="btn-book" style="width:100%; margin:24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
     `;
   }
-  
   html += `
     <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:14px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
   `;
-  
   content.innerHTML = html;
   modal.style.display = 'flex';
 }
