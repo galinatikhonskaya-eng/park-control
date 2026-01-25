@@ -307,14 +307,12 @@ document.addEventListener('DOMContentLoaded', () => {
         : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
       
       card.innerHTML = `
-        <img src="${car.img}" alt="${car.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/240x160/111/aaa?text=Фото+${car.name}';">
-        <div class="car-info">
-          <div>
-            <div class="car-name">${car.name}</div>
-            <div class="car-year">${car.year}</div>
-          </div>
-          ${buttonHtml}
-        </div>
+        <img 
+  src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.gif?v=1" 
+  alt="Анимированный баннер"
+  style="width: 100%; height: auto; display: block; object-fit: cover;"
+  onerror="this.src='https://via.placeholder.com/800x450/FFD500/000?text=ПИТЕРПАРК';"
+>
       `;
       fragment.appendChild(card);
     });
