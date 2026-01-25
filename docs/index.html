@@ -122,18 +122,18 @@
       scroll-snap-type: x mandatory;
     }
     .car-card {
-      flex: 0 0 220px; /* Уменьшили ширину */
+      flex: 0 0 200px; /* Уменьшили ширину */
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 4px 12px rgba(255,213,0,0.3); /* Легкое сияние из-под карточки */
       display: flex;
       flex-direction: column;
-      height: 320px; /* Уменьшили высоту */
+      height: 300px; /* Уменьшили высоту */
     }
     .car-card img {
       width: 100%;
-      height: 150px; /* Уменьшили фото */
+      height: 140px; /* Уменьшили фото */
       object-fit: cover;
     }
     .car-info {
@@ -151,7 +151,7 @@
     .car-year {
       font-size: 0.9rem;
       color: var(--text2);
-      margin: 2px 0 8px; /* Уменьшили margins */
+      margin: 2px 0 6px; /* Уменьшили margins */
     }
     .btn-book {
       background: rgba(255,213,0,0.85);
