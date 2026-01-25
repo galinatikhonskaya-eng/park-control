@@ -11,7 +11,7 @@
       --bg: #000000;
       --yellow: #FFD500;
       --card: #111111;
-      --text: #F5F5F5;
+      --text: #FFFFFF; /* Изменено на чисто белый текст */
       --text2: #AAAAAA;
       --disabled: #555555;
     }
@@ -134,11 +134,14 @@
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 6px 18px rgba(255,213,0,0.5); /* Усилили сияние из-под карточки */
-      animation: softNeon 5s infinite ease-in-out; /* Анимация сияния */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 6px 18px rgba(255,213,0,0.3); /* Убавили сияние */
+      animation: softNeon 5s infinite ease-in-out; /* Плавное сияние */
       display: flex;
       flex-direction: column;
       height: 300px; /* Уменьшили высоту */
+      opacity: 0;
+      transform: translateY(50px);
+      animation: appearCard 0.8s ease-out forwards, softNeon 5s infinite ease-in-out; /* Добавлена анимация появления */
     }
     .car-card img {
       width: 100%;
@@ -156,11 +159,17 @@
     .car-name {
       font-size: 1.1rem; /* Чуть меньше шрифт */
       font-weight: 700;
+      white-space: nowrap; /* Текст в одну строку */
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .car-year {
       font-size: 0.9rem;
       color: var(--text2);
       margin: 2px 0 6px; /* Уменьшили margins */
+      white-space: nowrap; /* Текст в одну строку */
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .btn-book {
       background: rgba(255,213,0,0.85);
@@ -184,8 +193,11 @@
       animation: none;
     }
     @keyframes softNeon {
-      0%, 100% { box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 18px rgba(255,213,0,0.4); } /* Усилили анимацию */
-      50% { box-shadow: 0 0 18px rgba(255,213,0,0.9), 0 0 30px rgba(255,213,0,0.6); }
+      0%, 100% { box-shadow: 0 0 12px rgba(255,213,0,0.4), 0 0 18px rgba(255,213,0,0.2); } /* Убавили и сгладили анимацию */
+      50% { box-shadow: 0 0 18px rgba(255,213,0,0.6), 0 0 30px rgba(255,213,0,0.4); }
+    }
+    @keyframes appearCard {
+      to { opacity: 1; transform: translateY(0); }
     }
     #modal {
       position: fixed;
@@ -257,8 +269,8 @@
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <img 
-        src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.gif?v=1" 
+      <img
+        src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.gif?v=1"
         alt=""
         loading="eager"
         style="width: 100%; height: auto; display: block; object-fit: cover;"
@@ -296,10 +308,10 @@ const cars = [
   { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C.jpg" },
   { id: 11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg" }
 ];
-
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Premier", "Elite"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "premier", "elite"];
+  let globalDelay = 0; // Для последовательной анимации по секциям
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
     if (!container) return;
@@ -309,9 +321,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const fragment = document.createDocumentFragment();
-    filtered.forEach(car => {
+    filtered.forEach((car, cardIndex) => {
       const card = document.createElement('div');
       card.className = 'car-card';
+      card.style.animationDelay = `${globalDelay + cardIndex * 0.2}s`; // Задержка для последовательного появления
       const buttonHtml = car.booked
         ? `<button class="btn-book" disabled>Забронировано</button>`
         : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
@@ -328,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fragment.appendChild(card);
     });
     container.appendChild(fragment);
+    globalDelay += filtered.length * 0.2 + 0.5; // Добавляем задержку между секциями
   });
 });
 function openModal(id) {
