@@ -108,17 +108,35 @@
       font-size: 1.5rem;
       font-weight: 900;
       font-family: 'Black Ops One', sans-serif; /* Шрифт INTRO-подобный */
-      color: #000000; /* Черный цвет */
+      color: #FFFFFF; /* Белый цвет */
       text-transform: uppercase;
       letter-spacing: 2px;
-      margin: -24px 0 32px 0; /* Ближе к баннеру */
+      margin: -24px 0 8px 0; /* Ближе к баннеру, уменьшен нижний margin */
       text-shadow: 0 0 10px rgba(255,213,0,0.5); /* Легкий желтый отблеск */
       opacity: 0;
       transform: translateX(-100%);
       animation: slideIn 1.5s ease-out forwards;
     }
+    .slogan2 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 900;
+      font-family: 'Black Ops One', sans-serif; /* Шрифт INTRO-подобный */
+      color: #FFFFFF; /* Белый цвет */
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 0 0 32px 0; /* Margin для позиционирования ниже первого слогана */
+      text-shadow: 0 0 10px rgba(255,213,0,0.5); /* Легкий желтый отблеск */
+      opacity: 0;
+      transform: translateX(100%);
+      animation: slideInFromRight 1.5s ease-out forwards 0.5s; /* Задержка 0.5s */
+    }
     @keyframes slideIn {
       from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideInFromRight {
+      from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
     .horizontal-scroll {
@@ -278,6 +296,7 @@
       >
     </div>
     <div class="slogan">Зарабатывай от 5 000 руб в день</div>
+    <div class="slogan2">Авто под такси - в день обращения</div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
     <div class="section-title">Комфорт</div>
