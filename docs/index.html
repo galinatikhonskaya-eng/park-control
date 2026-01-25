@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Аренда авто</title>
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet"> <!-- Шрифт похожий на INTRO -->
   <style>
     :root {
       --bg: #000000;
@@ -106,12 +107,19 @@
       text-align: center;
       font-size: 1.5rem;
       font-weight: 900;
-      font-family: 'Arial Black', sans-serif; /* Красивый жирный шрифт */
+      font-family: 'Black Ops One', sans-serif; /* Шрифт INTRO-подобный */
       color: #000000; /* Черный цвет */
       text-transform: uppercase;
       letter-spacing: 2px;
       margin: -24px 0 32px 0; /* Ближе к баннеру */
-      text-shadow: 0 0 10px rgba(255,213,0,0.5); /* Легкий желтый отблеск для заметности */
+      text-shadow: 0 0 10px rgba(255,213,0,0.5); /* Легкий желтый отблеск */
+      opacity: 0;
+      transform: translateX(-100%);
+      animation: slideIn 1.5s ease-out forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
     .horizontal-scroll {
       display: flex;
@@ -126,7 +134,8 @@
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 4px 12px rgba(255,213,0,0.3); /* Легкое сияние из-под карточки */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 6px 18px rgba(255,213,0,0.5); /* Усилили сияние из-под карточки */
+      animation: softNeon 5s infinite ease-in-out; /* Анимация сияния */
       display: flex;
       flex-direction: column;
       height: 300px; /* Уменьшили высоту */
@@ -175,8 +184,8 @@
       animation: none;
     }
     @keyframes softNeon {
-      0%, 100% { box-shadow: 0 0 10px rgba(255,213,0,0.5), 0 0 15px rgba(255,213,0,0.3); }
-      50% { box-shadow: 0 0 15px rgba(255,213,0,0.8), 0 0 25px rgba(255,213,0,0.5); }
+      0%, 100% { box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 18px rgba(255,213,0,0.4); } /* Усилили анимацию */
+      50% { box-shadow: 0 0 18px rgba(255,213,0,0.9), 0 0 30px rgba(255,213,0,0.6); }
     }
     #modal {
       position: fixed;
@@ -256,7 +265,7 @@
         onerror="this.src='https://via.placeholder.com/800x450/FFD500/000?text=ПИТЕРПАРК'; this.alt='';"
       >
     </div>
-    <div class="slogan">Зарабатывай от 5000 руб в день</div>
+    <div class="slogan">Зарабатывай от 5 000 руб в день</div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
     <div class="section-title">Комфорт</div>
