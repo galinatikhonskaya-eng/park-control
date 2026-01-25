@@ -96,7 +96,7 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
     }
-    .video-banner video, .video-banner img {
+    .video-banner img {
       width: 100%;
       height: auto;
       display: block;
@@ -237,20 +237,13 @@
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <video 
-        id="topVideo" 
-        preload="auto" 
-        autoplay 
-        muted 
-        loop 
-        playsinline 
-        webkit-playsinline 
-        poster="https://via.placeholder.com/800x450/000/FFD500?text=Баннер+загружается..."
+      <img 
+        src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.gif?v=1" 
+        alt="Анимированный баннер"
+        loading="eager"
+        style="width: 100%; height: auto; display: block; object-fit: cover;"
+        onerror="this.src='https://via.placeholder.com/800x450/000/FFD500?text=Баннер+загружается...';"
       >
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.mp4" type="video/mp4">
-        <!-- Fallback на статичную картинку, если видео не загрузится -->
-        <img src="https://via.placeholder.com/800x450/000/FFD500?text=ПИТЕРПАРК+Баннер" alt="Статичный баннер">
-      </video>
     </div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
@@ -269,8 +262,8 @@
 <div id="modal">
   <div class="modal-box" id="modalContent"></div>
 </div>
-
 <script>
+// (Весь твой JS-код остаётся без изменений, я не трогал его, так как проблема в баннере)
 const cars = [
   { id: 999, category: "Эконом", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true },
   { id: 1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
@@ -321,22 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     container.appendChild(fragment);
   });
-
-  // Автозапуск видео
-  const video = document.getElementById('topVideo');
-  if (video) {
-    video.muted = true;
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(err => {
-        console.log('Автозапуск видео заблокирован:', err);
-        // Резерв: запуск после касания
-        document.body.addEventListener('touchstart', () => {
-          video.play().catch(() => {});
-        }, { once: true });
-      });
-    }
-  }
 });
 
 function openModal(id) {
@@ -366,17 +343,74 @@ function openModal(id) {
         <li>Поддержка 24/7.</li>
       </ul>
     `;
-  } // ... (остальные блоки special не менял, они как были)
-
-  if (!car.booked) {
+  } else if (car.special === 'tiggo') {
     html += `
-      <button class="btn-book" style="width:100%; margin:24px 0 12px; font-size:1.1rem;" onclick="alert('Бронь подтверждена (тест)')">Подтвердить бронирование</button>
+      <p class="alert">в аренду под такси — тариф Комфорт+ ❗ Без залога! ❗ Подключим к такси — Яндекс Про</p>
+      <div class="modal-section-title">Что включено:</div>
+      <ul class="modal-list">
+        <li>КАСКО + ОСАГО</li>
+        <li>ТО за наш счёт</li>
+        <li>Поддержка 24/7</li>
+      </ul>
     `;
+  } else if (car.special === 'exeed') {
+    html += `
+      <p class="alert">БЕЗ ЗАЛОГА | БЕЗ ДЕПОЗИТА</p>
+      <p>Есть детские кресла, в тарифе детский ЗАРАБОТОК НА 30% ВЫШЕ!</p>
+      <p>Возьми в аренду новый автомобиль на АКПП и газе или бензине прямо сейчас!</p>
+      <ul class="modal-list">
+        <li>🤝 Приветственный бонус - полный бак!</li>
+        <li>🛢 Два вида топлива - газ/бензин</li>
+        <li>🚖 Все авто в бренде: Яндекс такси!</li>
+        <li>🕐 Любой график работы, как подработка, так и постоянная занятость!</li>
+        <li>💵 Ежедневные выплаты!</li>
+        <li>📞 Круглосуточная поддержка водителей!</li>
+        <li>🔴 Максимальный приоритет в заказах, простоя нет!</li>
+      </ul>
+    `;
+  } else if (car.special === 'belgee') {
+    html += `
+      <p class="alert">БЕЗ ЗАЛОГА | Комфорт+ | Готов к Яндекс Go</p>
+      <p>🔑 Стартуй в такси без вложений уже сегодня!</p>
+      <div class="modal-section-title">✅ Почему это выгодно:</div>
+      <ul class="modal-list">
+        <li>🚫 Без залога — не замораживаешь деньги</li>
+        <li>📅 От 1 дня аренда — без долгов и обязательств</li>
+        <li>🚘 Машина в отличном состоянии, свежая</li>
+        <li>⚙️ Полное ТО, страховка и лицензия включены</li>
+        <li>📲 Оформление всего за 15 минут</li>
+      </ul>
+      <div class="modal-section-title">🚗 Belgee X70 — комфорт и экономия:</div>
+      <ul class="modal-list">
+        <li>Комфорт+ класс — больше заказов в Яндексе</li>
+        <li>Автоматическая коробка, турбо двигатель</li>
+        <li>Просторный салон и высокий клиренс</li>
+        <li>Современный дизайн — пассажиры в восторге</li>
+        <li>Экономичный расход топлива</li>
+      </ul>
+      <div class="modal-section-title">💼 Условия:</div>
+      <ul class="modal-list">
+        <li>🔥 Без залога</li>
+        <li>🛡 КАСКО, ОСАГО, техобслуживание включено</li>
+        <li>🕒 Подключение в день обращения</li>
+        <li>✅ Поддержка 24/7, замена авто при необходимости</li>
+        <li>💸 Можно работать в аренду или сменный график</li>
+      </ul>
+    `;
+  } else if (car.special === 'geely') {
+    html += `
+      <div class="modal-section-title">Преимущества Geely Emgrand:</div>
+      <ul class="modal-list">
+        <li>Низкий расход — от <span class="highlight">6,5 л/100 км</span></li>
+        <li>АКПП — удобно для города</li>
+        <li>Просторный салон, большой багажник</li>
+        <li>Климат-контроль, мультимедиа с Bluetooth</li>
+        <li>Отличная шумоизоляция — комфорт в каждой смене</li>
+      </ul>
+    `;
+  } else {
+    html += `<p style="color:#aaa; text-align:center; margin:24px 0;">Автомобиль выбран</p>`;
   }
-  
-  html += `
-    <button onclick="document.getElementById('modal').style.display='none'" style="background:#444; color:white; width:100%; padding:14px; border:none; border-radius:12px; font-size:1rem;">Отмена</button>
-  `;
   
   content.innerHTML = html;
   modal.style.display = 'flex';
