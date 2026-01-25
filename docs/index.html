@@ -102,6 +102,17 @@
       display: block;
       object-fit: cover;
     }
+    .slogan {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 900;
+      font-family: 'Arial Black', sans-serif; /* Красивый жирный шрифт */
+      color: #000000; /* Черный цвет */
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: -24px 0 32px 0; /* Ближе к баннеру */
+      text-shadow: 0 0 10px rgba(255,213,0,0.5); /* Легкий желтый отблеск для заметности */
+    }
     .horizontal-scroll {
       display: flex;
       gap: 16px;
@@ -111,23 +122,22 @@
       scroll-snap-type: x mandatory;
     }
     .car-card {
-      flex: 0 0 240px;
+      flex: 0 0 220px; /* Уменьшили ширину */
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4); /* Светящаяся обводка */
-      animation: softNeon 5s infinite ease-in-out; /* Анимация для заметности */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
-      height: 340px;
+      height: 320px; /* Уменьшили высоту */
     }
     .car-card img {
       width: 100%;
-      height: 160px;
+      height: 150px; /* Уменьшили фото */
       object-fit: cover;
     }
     .car-info {
-      padding: 12px;
+      padding: 8px; /* Уменьшили padding для компактности */
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -135,25 +145,25 @@
       text-align: center;
     }
     .car-name {
-      font-size: 1.18rem;
+      font-size: 1.1rem; /* Чуть меньше шрифт */
       font-weight: 700;
     }
     .car-year {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text2);
-      margin: 4px 0 12px;
+      margin: 2px 0 8px; /* Уменьшили margins */
     }
     .btn-book {
       background: rgba(255,213,0,0.85);
       color: #000;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 999px;
       border: none;
       cursor: pointer;
       align-self: center;
-      margin-top: auto;
+      margin-top: 4px; /* Подтянули кнопку ближе к фото */
       box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4);
       animation: softNeon 5s infinite ease-in-out;
     }
@@ -238,10 +248,15 @@
 <div class="container">
   <div id="catalog">
     <div class="video-banner">
-      <video id="topVideo" preload="auto" autoplay muted loop playsinline>
-        <source src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/Grok-Video-AAC97D45-7AB0-4D24-A47D-571AB25F9732.mov" type="video/mp4">
-      </video>
+      <img 
+        src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/banner.gif?v=1" 
+        alt=""
+        loading="eager"
+        style="width: 100%; height: auto; display: block; object-fit: cover;"
+        onerror="this.src='https://via.placeholder.com/800x450/FFD500/000?text=ПИТЕРПАРК'; this.alt='';"
+      >
     </div>
+    <div class="slogan">Зарабатывай от 5000 руб в день</div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
     <div class="section-title">Комфорт</div>
@@ -261,23 +276,18 @@
 </div>
 <script>
 const cars = [
-  // Эконом
   { id: 999, category: "Эконом", name: "Kia Rio", year: "2021", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/6.jpg", booked: true },
-  // Комфорт
   { id: 1, category: "Комфорт", name: "OMODA S5", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/1.jpg", special: "omoda" },
   { id: 5, category: "Комфорт", name: "Geely Emgrand", year: "2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/5.jpg", special: "geely" },
-  // Комфорт +
   { id: 2, category: "Комфорт +", name: "Chery Tiggo 7 Pro", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/2.jpg", special: "tiggo" },
   { id: 3, category: "Комфорт +", name: "EXEED LX", year: "2024–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/3.jpg", special: "exeed" },
   { id: 4, category: "Комфорт +", name: "Belgee X70", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/4.jpg", special: "belgee" },
-  // Business
   { id: 8, category: "Business", name: "Business 8", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/8%20%D0%91%D0%98%D0%97%D0%9D%D0%95%D0%A1.jpg" },
   { id: 9, category: "Business", name: "Business 9", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/9%20%D0%91.jpg" },
-  // Premier
   { id: 10, category: "Premier", name: "Premier 10", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/10%20%D0%9F%D0%A0%D0%95%D0%9C.jpg" },
-  // Elite — добавлена карточка 11
   { id: 11, category: "Elite", name: "Elite 11", year: "2023–2025", img: "https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/11%20%D0%AD%D0%9B%D0%98%D0%A2.jpg" }
 ];
+
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Premier", "Elite"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "premier", "elite"];
@@ -310,8 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     container.appendChild(fragment);
   });
-  const video = document.getElementById('topVideo');
-  if (video) video.play().catch(() => {});
 });
 function openModal(id) {
   const car = cars.find(c => c.id === id);
