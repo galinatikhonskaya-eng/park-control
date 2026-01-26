@@ -103,33 +103,37 @@
       display: block;
       object-fit: cover;
     }
-    .slogan {
+    .slogans {
+      background: rgba(240,240,240,0.8); /* Светлый полупрозрачный фон как на фото */
+      padding: 8px 16px;
+      margin: -16px 0 32px 0;
       text-align: center;
-      font-size: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .slogan {
+      font-size: 1.6rem;
       font-weight: 900;
       font-family: 'Black Ops One', sans-serif; /* Шрифт INTRO-подобный */
-      color: #FFFFFF; /* Белый цвет */
+      color: #FFD500; /* Желтый цвет как на фото */
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: -24px 0 8px 0; /* Ближе к баннеру, уменьшен нижний margin */
-      text-shadow: 0 0 15px rgba(255,213,0,0.8), 0 0 25px rgba(255,213,0,0.5); /* Подсветка желтым золотом */
+      letter-spacing: 1px;
+      margin: 0;
       opacity: 0;
       transform: translateX(-100%);
       animation: slideIn 1.5s ease-out forwards;
     }
     .slogan2 {
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 900;
-      font-family: 'Black Ops One', sans-serif; /* Шрифт INTRO-подобный */
-      color: #FFFFFF; /* Белый цвет */
+      font-size: 1.2rem;
+      font-weight: 600;
+      font-family: system-ui, -apple-system, sans-serif; /* Обычный шрифт как на фото */
+      color: #000000; /* Черный цвет как на фото */
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: 0 0 32px 0; /* Margin для позиционирования ниже первого слогана */
-      text-shadow: 0 0 15px rgba(255,213,0,0.8), 0 0 25px rgba(255,213,0,0.5); /* Подсветка желтым золотом */
+      letter-spacing: 1px;
+      margin: 4px 0 0 0;
       opacity: 0;
       transform: translateX(-100%);
-      animation: slideIn 1.5s ease-out forwards 1.5s; /* Задержка 1.5s, общее время 3s */
+      animation: slideIn 1.5s ease-out forwards 1.5s; /* Задержка для последовательного появления */
     }
     @keyframes slideIn {
       from { transform: translateX(-100%); opacity: 0; }
@@ -291,8 +295,10 @@
         onerror="this.src='https://via.placeholder.com/800x450/FFD500/000?text=ПИТЕРПАРК'; this.alt='';"
       >
     </div>
-    <div class="slogan">Зарабатывай от 5000 руб в день</div>
-    <div class="slogan2">Авто под такси- в день обращения</div>
+    <div class="slogans">
+      <div class="slogan">Зарабатывай от 5000 руб в день</div>
+      <div class="slogan2">Аренда авто под такси в день обращения</div>
+    </div>
     <div class="section-title">Эконом</div>
     <div class="horizontal-scroll" id="econom"></div>
     <div class="section-title">Комфорт</div>
