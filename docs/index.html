@@ -43,7 +43,7 @@
     }
     .floating-buttons {
       position: fixed;
-      top: 20px;
+      top: 40px; /* Опустить ниже */
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -95,16 +95,17 @@
     .video-banner {
       margin: 0 -16px 32px;
       width: calc(100% + 32px);
-      border-radius: 0 0 16px 16px;
+      border-radius: 16px 16px 0 0; /* Закруглить верхние углы */
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
     }
-    .video-banner video {
+    .video-banner img {
       width: 100%;
       height: auto;
       display: block;
       object-fit: cover;
+      opacity: 0.7; /* Сделать гиф прозрачнее */
     }
     .slogans {
       background: transparent; /* Убрали фон */
