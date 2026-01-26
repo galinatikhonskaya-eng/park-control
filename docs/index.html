@@ -19,7 +19,7 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: url('https://images.unsplash.com/photo-1551524559-8af2410f0c3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center fixed;
+      background: url('https://images.unsplash.com/photo-1506617564039-2f3b650b7010?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center fixed; /* Фон как мокрый асфальт */
       background-size: cover;
       color: var(--text);
       height: 100%;
@@ -111,25 +111,39 @@
       text-align: center;
     }
     .slogan {
-      font-size: 1.6rem;
+      font-size: 1.4rem; /* Уменьшили для читаемости и вмещения в строку */
       font-weight: 900;
       font-family: 'Roboto Condensed', sans-serif; /* Приближение к Proxima Nova Condensed Black */
-      color: #FFD500; /* Желтый цвет как на фото */
+      background: linear-gradient(to right, #FFD500, #FFFFFF); /* Градиент желто-белый */
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 0;
+      white-space: nowrap; /* В одну строку */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 8px rgba(0,0,0,0.5); /* Для лучшей читаемости */
       opacity: 0;
       transform: translateX(-100%);
       animation: slideIn 1.5s ease-out forwards;
     }
     .slogan2 {
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* Уменьшили для читаемости и вмещения в строку */
       font-weight: 900;
       font-family: 'Roboto Condensed', sans-serif; /* Приближение к Proxima Nova Condensed Black */
-      color: #000000; /* Черный цвет как на фото */
+      background: linear-gradient(to right, #FFD500, #FFFFFF); /* Градиент желто-белый */
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 4px 0 0 0;
+      white-space: nowrap; /* В одну строку */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 8px rgba(0,0,0,0.5); /* Для лучшей читаемости */
       opacity: 0;
       transform: translateX(-100%);
       animation: slideIn 1.5s ease-out forwards 1.5s; /* Задержка для последовательного появления */
