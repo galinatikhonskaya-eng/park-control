@@ -43,7 +43,7 @@
     }
     .floating-buttons {
       position: fixed;
-      top: 60px; /* Опустить ниже */
+      top: 60px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -66,6 +66,12 @@
       cursor: pointer;
       text-decoration: none;
       backdrop-filter: blur(10px);
+    }
+    .btn-float img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
     }
     .section-title {
       font-size: 2rem;
@@ -93,7 +99,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .video-banner {
-      margin: 16px -16px 32px; /* Опустить баннер ниже */
+      margin: 16px -16px 32px;
       width: calc(100% + 32px);
       border-radius: 16px;
       overflow: hidden;
@@ -298,7 +304,8 @@
 <body>
 <div class="floating-buttons">
   <a href="tel:+79000000000" class="btn-float">📞</a>
-  <a href="https://wa.me/79000000000" class="btn-float">WA</a>
+  <a href="https://wa.me/79000000000" class="btn-float"><img src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/вотс.jpg" alt="WhatsApp"></a>
+  <a href="https://t.me/+79000000000" class="btn-float"><img src="https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/тг.jpg" alt="Telegram"></a>
 </div>
 <div class="container">
   <div id="catalog">
