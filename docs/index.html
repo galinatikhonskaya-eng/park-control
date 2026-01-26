@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Аренда авто</title>
   <script src="https://telegram-mini-apps.github.io/tma.js/sdk/2.0.0/tma.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet"> <!-- Шрифт похожий на INTRO -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@900&display=swap" rel="stylesheet"> <!-- Приближение к Proxima Nova Condensed Black -->
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@900&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #000000;
       --yellow: #FFD500;
       --card: #111111;
-      --text: #FFFFFF; /* Изменено на чисто белый текст */
+      --text: #FFFFFF;
       --text2: #AAAAAA;
       --disabled: #555555;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
       font-family: system-ui, -apple-system, sans-serif;
-      background: url('https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/%D1%84%D0%BE%D0%BD1.jpg') no-repeat center center fixed; /* Новый фон */
+      background: url('https://raw.githubusercontent.com/galinatikhonskaya-eng/park-control/main/docs/%D1%84%D0%BE%D0%BD1.jpg') no-repeat center center fixed;
       background-size: cover;
       color: var(--text);
       height: 100%;
@@ -33,17 +33,17 @@
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(4px); /* Размытие фона */
+      backdrop-filter: blur(4px);
       z-index: -1;
     }
     .container {
       padding: 16px;
       min-height: 100vh;
-      padding-top: 100px; /* Уменьшили для места под кнопками */
+      padding-top: 100px;
     }
     .floating-buttons {
       position: fixed;
-      top: 40px; /* Опустить ниже */
+      top: 40px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
@@ -95,7 +95,7 @@
     .video-banner {
       margin: 0 -16px 32px;
       width: calc(100% + 32px);
-      border-radius: 16px 16px 0 0; /* Закруглить верхние углы */
+      border-radius: 16px; /* Закруглить все углы */
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       background: #000;
@@ -105,51 +105,51 @@
       height: auto;
       display: block;
       object-fit: cover;
-      opacity: 0.7; /* Сделать гиф прозрачнее */
+      opacity: 1; /* Убрать прозрачность */
     }
     .slogans {
-      background: transparent; /* Убрали фон */
+      background: transparent;
       padding: 8px 16px;
       margin: -16px 0 32px 0;
       text-align: center;
     }
     .slogan {
-      font-size: 1.2rem; /* Уменьшили для вмещения в строку */
+      font-size: 1.2rem;
       font-weight: 900;
-      font-family: 'Roboto Condensed', sans-serif; /* Приближение к Proxima Nova Condensed Black */
-      background: linear-gradient(to right, #FFD500, #FFFFFF); /* Градиент желто-белый */
+      font-family: 'Roboto Condensed', sans-serif;
+      background: linear-gradient(to right, #FFD500, #FFFFFF);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 0;
-      white-space: nowrap; /* В одну строку */
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-shadow: 0 0 8px rgba(0,0,0,0.5); /* Для лучшей читаемости */
+      text-shadow: 0 0 8px rgba(0,0,0,0.5);
       opacity: 0;
       transform: translateX(-100%);
       animation: slideIn 1.5s ease-out forwards;
     }
     .slogan2 {
-      font-size: 1.0rem; /* Уменьшили для вмещения в строку */
+      font-size: 1.0rem;
       font-weight: 900;
-      font-family: 'Roboto Condensed', sans-serif; /* Приближение к Proxima Nova Condensed Black */
-      background: linear-gradient(to right, #FFD500, #FFFFFF); /* Градиент желто-белый */
+      font-family: 'Roboto Condensed', sans-serif;
+      background: linear-gradient(to right, #FFD500, #FFFFFF);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 4px 0 0 0;
-      white-space: nowrap; /* В одну строку */
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-shadow: 0 0 8px rgba(0,0,0,0.5); /* Для лучшей читаемости */
+      text-shadow: 0 0 8px rgba(0,0,0,0.5);
       opacity: 0;
       transform: translateX(-100%);
-      animation: slideIn 1.5s ease-out forwards 1.5s; /* Задержка для последовательного появления */
+      animation: slideIn 1.5s ease-out forwards 1.5s;
     }
     @keyframes slideIn {
       from { transform: translateX(-100%); opacity: 0; }
@@ -164,26 +164,26 @@
       scroll-snap-type: x mandatory;
     }
     .car-card {
-      flex: 0 0 200px; /* Уменьшили ширину */
+      flex: 0 0 200px;
       background: var(--card);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 6px 18px rgba(255,213,0,0.3); /* Убавили сияние */
-      animation: softNeon 5s infinite ease-in-out; /* Плавное сияние */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5), 0 6px 18px rgba(255,213,0,0.3);
+      animation: softNeon 5s infinite ease-in-out;
       display: flex;
       flex-direction: column;
-      height: 300px; /* Уменьшили высоту */
+      height: 300px;
       opacity: 0;
       transform: translateY(50px);
-      animation: appearCard 0.8s ease-out forwards, softNeon 5s infinite ease-in-out; /* Добавлена анимация появления */
+      animation: appearCard 0.8s ease-out forwards, softNeon 5s infinite ease-in-out;
     }
     .car-card img {
       width: 100%;
-      height: 140px; /* Уменьшили фото */
+      height: 140px;
       object-fit: cover;
     }
     .car-info {
-      padding: 8px; /* Уменьшили padding для компактности */
+      padding: 8px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -191,17 +191,17 @@
       text-align: center;
     }
     .car-name {
-      font-size: 1.1rem; /* Чуть меньше шрифт */
+      font-size: 1.1rem;
       font-weight: 700;
-      white-space: nowrap; /* Текст в одну строку */
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .car-year {
       font-size: 0.9rem;
       color: var(--text2);
-      margin: 2px 0 6px; /* Уменьшили margins */
-      white-space: nowrap; /* Текст в одну строку */
+      margin: 2px 0 6px;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -215,7 +215,7 @@
       border: none;
       cursor: pointer;
       align-self: center;
-      margin-top: 4px; /* Подтянули кнопку ближе к фото */
+      margin-top: 4px;
       box-shadow: 0 0 12px rgba(255,213,0,0.6), 0 0 20px rgba(255,213,0,0.4);
       animation: softNeon 5s infinite ease-in-out;
     }
@@ -227,7 +227,7 @@
       animation: none;
     }
     @keyframes softNeon {
-      0%, 100% { box-shadow: 0 0 12px rgba(255,213,0,0.4), 0 0 18px rgba(255,213,0,0.2); } /* Убавили и сгладили анимацию */
+      0%, 100% { box-shadow: 0 0 12px rgba(255,213,0,0.4), 0 0 18px rgba(255,213,0,0.2); }
       50% { box-shadow: 0 0 18px rgba(255,213,0,0.6), 0 0 30px rgba(255,213,0,0.4); }
     }
     @keyframes appearCard {
@@ -348,7 +348,7 @@ const cars = [
 document.addEventListener('DOMContentLoaded', () => {
   const categories = ["Эконом", "Комфорт", "Комфорт +", "Business", "Premier", "Elite"];
   const ids = ["econom", "comfort", "comfort-plus", "business", "premier", "elite"];
-  let globalDelay = 0; // Для последовательной анимации по секциям
+  let globalDelay = 0;
   categories.forEach((cat, index) => {
     const container = document.getElementById(ids[index]);
     if (!container) return;
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     filtered.forEach((car, cardIndex) => {
       const card = document.createElement('div');
       card.className = 'car-card';
-      card.style.animationDelay = `${globalDelay + cardIndex * 0.2}s`; // Задержка для последовательного появления
+      card.style.animationDelay = `${globalDelay + cardIndex * 0.2}s`;
       const buttonHtml = car.booked
         ? `<button class="btn-book" disabled>Забронировано</button>`
         : `<button class="btn-book" onclick="openModal(${car.id})">Забронировать</button>`;
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fragment.appendChild(card);
     });
     container.appendChild(fragment);
-    globalDelay += filtered.length * 0.2 + 0.5; // Добавляем задержку между секциями
+    globalDelay += filtered.length * 0.2 + 0.5;
   });
 });
 function openModal(id) {
